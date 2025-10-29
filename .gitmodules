@@ -1,3 +1,0 @@
-[submodule "scripts/geometry"]
-	path = scripts/geometry
-	url = https://github.com/caewok/lib-geometry
