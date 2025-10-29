@@ -52,10 +52,10 @@ function scaledArea({scalingFactor = 1} = {}) {
  * @returns {boolean}
  */
 function overlaps(other) {
-  if ( other instanceof PIXI.Circle ) return this._overlapsCircle(other);
-  if ( other instanceof PIXI.Polygon ) return other._overlapsCircle(this);
-  if ( other instanceof PIXI.Rectangle ) return other._overlapsCircle(this);
-  if ( other.toPolygon) return other.toPolygon()._overlapsCircle(this);
+  if ( other instanceof PIXI.Circle ) {return this._overlapsCircle(other);}
+  if ( other instanceof PIXI.Polygon ) {return other._overlapsCircle(this);}
+  if ( other instanceof PIXI.Rectangle ) {return other._overlapsCircle(this);}
+  if ( other.toPolygon) {return other.toPolygon()._overlapsCircle(this);}
   console.warn("overlaps|shape not recognized.", other);
   return false;
 }
@@ -67,10 +67,10 @@ function overlaps(other) {
  * @returns {boolean}
  */
 function envelops(other) {
-  if ( other instanceof PIXI.Polygon ) return this._envelopsPolygon(other);
-  if ( other instanceof PIXI.Circle ) return this._envelopsCircle(other);
-  if ( other instanceof PIXI.Rectangle ) return this._envelopsRectangle(other);
-  if ( other.toPolygon ) return this._envelopsPolygon(other.toPolygon());
+  if ( other instanceof PIXI.Polygon ) {return this._envelopsPolygon(other);}
+  if ( other instanceof PIXI.Circle ) {return this._envelopsCircle(other);}
+  if ( other instanceof PIXI.Rectangle ) {return this._envelopsRectangle(other);}
+  if ( other.toPolygon ) {return this._envelopsPolygon(other.toPolygon());}
   console.warn("envelops|shape not recognized.", other);
   return false;
 }
@@ -94,8 +94,8 @@ function _overlapsCircle(circle) {
   // if ( dist === Math.pow(r1 + r2, 2) ) return true; // Circles touch.
 
   // Combine the above tests.
-  if ( dist2 <= Math.pow(Math.abs(r1 - r2), 2) ) return true;
-  if ( dist2 <= Math.pow(r1 + r2, 2) ) return true;
+  if ( dist2 <= Math.pow(Math.abs(r1 - r2), 2) ) {return true;}
+  if ( dist2 <= Math.pow(r1 + r2, 2) ) {return true;}
   return false;
 }
 
@@ -136,7 +136,7 @@ function _envelopsPolygon(poly) {
   // All points of the polygon must be contained in the circle.
   const iter = poly.iteratePoints({ close: false });
   for ( const pt of iter ) {
-    if ( !this.contains(pt.x, pt.y) ) return false;
+    if ( !this.contains(pt.x, pt.y) ) {return false;}
   }
   return true;
 }
@@ -154,7 +154,7 @@ function _envelopsPolygon(poly) {
 function lineSegmentIntersects(a, b, { inside = false } = {}) {
   const aContained = this.contains(a.x, a.y);
   const bContained = this.contains(b.x, b.y);
-  if ( aContained && bContained ) return inside;
+  if ( aContained && bContained ) {return inside;}
   return aContained || bContained;
 }
 

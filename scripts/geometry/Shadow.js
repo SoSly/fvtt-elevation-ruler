@@ -129,7 +129,7 @@ export class ShadowProjection {
    * @type {Matrix}
    */
   get shadowMatrix() {
-    if ( this._cacheKey !== this.sourceOrigin.key ) this.updateSourceOrigin();
+    if ( this._cacheKey !== this.sourceOrigin.key ) {this.updateSourceOrigin();}
     return this._shadowMatrix ?? (this._shadowMatrix = this._calculateShadowMatrix());
   }
 
@@ -138,7 +138,7 @@ export class ShadowProjection {
    * @type {number}
    */
   get sourceSide() {
-    if ( this._cacheKey !== this.sourceOrigin.key ) this.updateSourceOrigin();
+    if ( this._cacheKey !== this.sourceOrigin.key ) {this.updateSourceOrigin();}
     return this._sourceSide ?? (this._sourceSide = this.plane.whichSide(this.sourceOrigin));
   }
 
@@ -266,10 +266,10 @@ export class ShadowProjection {
     }
 
     // No shadow if the top of the wall is below the plane.
-    if ( pts.A.top.z <= planeZ ) return [];
+    if ( pts.A.top.z <= planeZ ) {return [];}
 
     // No shadow if the bottom of the wall is above the source.
-    if ( pts.A.bottom.z >= sourceZ ) return [];
+    if ( pts.A.bottom.z >= sourceZ ) {return [];}
 
     const srcOrigin = this.sourceOrigin;
 
@@ -359,7 +359,7 @@ export class ShadowProjection {
     const { plane, sourceSide, sourceOrigin } = this;
     const maxR2 = Math.pow(canvas.dimensions.maxR, 2);
     const ln = pts.length;
-    if ( ln < 3 ) return [];
+    if ( ln < 3 ) {return [];}
 
     let shadowPoints = [];
     let prevSide = plane.whichSide(pts[ln - 1]);
@@ -367,7 +367,7 @@ export class ShadowProjection {
     for ( const pt of pts ) {
       const ptSide = plane.whichSide(pt);
 
-      if ( !ptSide ) shadowPoints.push(pt);
+      if ( !ptSide ) {shadowPoints.push(pt);}
       else if ( ptSide * prevSide < 0 ) {
         // We switched sides of the plane
         // Locate the intersection of the plane with this and the previous point.
@@ -395,7 +395,7 @@ export class ShadowProjection {
           // Use the sourceOrigin elevation in most cases
           // typical case: wall extends below and above source; we are projecting to
           // a plane below source and so we want to look straight out from source.
-          if ( pt.z > sourceOrigin.z ) tmp.z = sourceOrigin.z;
+          if ( pt.z > sourceOrigin.z ) {tmp.z = sourceOrigin.z;}
           sourceOrigin.towardsPointSquared(tmp, maxR2, tmp);
 
           // Use the plane normal to intersect the tmp point with the plane.
@@ -409,7 +409,7 @@ export class ShadowProjection {
     }
 
     // Force clockwise
-    if ( shadowPoints.length < 3 ) return [];
+    if ( shadowPoints.length < 3 ) {return [];}
 
     // Round to avoid numeric inconsistencies
     const PLACES = 4;
@@ -417,7 +417,7 @@ export class ShadowProjection {
 
     // TODO: Is the forcing clockwise necessary, or is it always the same?
     const orient = foundry.utils.orient2dFast(shadowPoints[0], shadowPoints[1], shadowPoints[2]);
-//     if ( orient <= 0 ) console.warn(`_shadowPointsForPoints|orientation ${orient < 0 ? "cw" : orient > 0 ? "ccw" : "0" }`);
+    //     If ( orient <= 0 ) console.warn(`_shadowPointsForPoints|orientation ${orient < 0 ? "cw" : orient > 0 ? "ccw" : "0" }`);
     return orient < 0 ? shadowPoints : shadowPoints.reverse();
   }
 
@@ -476,12 +476,12 @@ export class ShadowProjection {
         // Pt and nextPt are on different sides of the plane
         // We need to use the intersection
         const ix = plane.lineSegmentIntersection(pt, nextPt);
-        if ( ix ) shadowPoints.push(ix);
+        if ( ix ) {shadowPoints.push(ix);}
       }
     }
 
     // Force clockwise
-    if ( shadowPoints.length < 3 ) return [];
+    if ( shadowPoints.length < 3 ) {return [];}
 
     return foundry.utils.orient2dFast(shadowPoints[0], shadowPoints[1], shadowPoints[2]) < 0
       ? shadowPoints : shadowPoints.reverse();
@@ -522,7 +522,7 @@ export class ShadowProjection {
     const { normal: N, point: P } = this.plane;
 
     const dotNdelta = N.dot(delta);
-    if ( dotNdelta.almostEqual(0) ) return null;
+    if ( dotNdelta.almostEqual(0) ) {return null;}
 
     const w = l0.subtract(P);
     const dotNw = N.dot(w);
@@ -617,11 +617,11 @@ export class Shadow extends PIXI.Polygon {
     // TO-DO: allow this to be modified by terrain elevation
     // let Oe = 0;
     let Ve = source.elevationZ;
-    if ( Ve <= Te ) return null; // Vision object blocked completely by wall
+    if ( Ve <= Te ) {return null;} // Vision object blocked completely by wall
 
     // Need the point of the wall that forms a perpendicular line to the vision object
     const Tix = CONFIG.GeometryLib.utils.perpendicularPoint(wall.edge.a, wall.edge.b, source);
-    if ( !Tix ) return null; // Line collinear with vision object
+    if ( !Tix ) {return null;} // Line collinear with vision object
     const VT = new Ray(source, Tix);
 
     // If any elevation is negative, normalize so that the lowest elevation is 0
@@ -769,18 +769,18 @@ export class Shadow extends PIXI.Polygon {
       if ( A.z < ixAB.z ) {
         const newA = new CONFIG.GeometryLib.threeD.Point3d();
         const t = B.projectToAxisValue(A, 0, "z", newA);
-        if ( !t || t < 0 || t > 1 ) return null; // Wall portion completely behind surface.
-        if ( newA.almostEqual(B) ) return null;
+        if ( !t || t < 0 || t > 1 ) {return null;} // Wall portion completely behind surface.
+        if ( newA.almostEqual(B) ) {return null;}
         A = newA;
       } else if ( B.z < ixAB.z ) {
         const newB = new CONFIG.GeometryLib.threeD.Point3d();
         const t = A.projectToAxisValue(B, 0, "z", newB);
-        if ( !t || t < 0 || t > 1 ) return null; // Wall portion completely behind surface.
-        if ( newB.almostEqual(A) ) return null;
+        if ( !t || t < 0 || t > 1 ) {return null;} // Wall portion completely behind surface.
+        if ( newB.almostEqual(A) ) {return null;}
         B = newB;
       }
 
-    } else if ( A.z < surfacePlane.point.z ) return null; // Does not cross the surface. Reject if endpoint is on the wrong side.
+    } else if ( A.z < surfacePlane.point.z ) {return null;} // Does not cross the surface. Reject if endpoint is on the wrong side.
 
     // Intersection points of origin --> wall endpoint --> surface
     const ixOriginA = wallPointSurfaceIntersection(A, origin, surfacePlane);
@@ -794,7 +794,7 @@ export class Shadow extends PIXI.Polygon {
 
     // If the intersection point is above the origin, then the surface is twisted
     // such that the surface is between the origin and the wall at that point.
-    if ( !ixOriginA || !ixOriginB || ixOriginA.z > origin.z || ixOriginB.z > origin.z ) return null;
+    if ( !ixOriginA || !ixOriginB || ixOriginA.z > origin.z || ixOriginB.z > origin.z ) {return null;}
 
     // Find the intersection points of the wall with the surfacePlane
     const ixWallA = surfacePlane.lineIntersection(A, upV);
@@ -861,7 +861,7 @@ export class Shadow extends PIXI.Polygon {
       return null;
     }
 
-    if ( origin.z <= C.z ) return null; // Viewer is below the wall bottom.
+    if ( origin.z <= C.z ) {return null;} // Viewer is below the wall bottom.
 
     // Because the surfacePlane is parallel to XY, we can infer the intersection of the wall.
     const ixAC = new CONFIG.GeometryLib.threeD.Point3d(A.x, A.y, surfacePlane.point.z);
@@ -980,7 +980,7 @@ export class Shadow extends PIXI.Polygon {
    */
   static constructFromPoints3d(A, B, C, D, origin, surfaceElevation) {
     // If the viewer elevation equals the surface elevation, no shadows to be seen.
-    if ( origin.z.almostEqual(surfaceElevation) ) return null;
+    if ( origin.z.almostEqual(surfaceElevation) ) {return null;}
 
     const topZ = A.z;
     const bottomZ = C.z;
@@ -997,7 +997,7 @@ export class Shadow extends PIXI.Polygon {
       || origin.z >= surfaceElevation && origin.z <= bottomZ
 
       // Projecting upward from source; if above bottom of wall, no shadow.
-      || origin.z <= surfaceElevation && origin.z >= topZ ) return null;
+      || origin.z <= surfaceElevation && origin.z >= topZ ) {return null;}
 
     const surfacePlane = new CONFIG.GeometryLib.threeD.Plane(new CONFIG.GeometryLib.threeD.Point3d(0, 0, surfaceElevation), Shadow.upV);
     return origin.z > surfaceElevation
@@ -1027,15 +1027,15 @@ export class Shadow extends PIXI.Polygon {
    * @returns {ClipperPaths|PIXI.Polygon} Array of Clipper paths representing the resulting combination.
    */
   static combinePolygonWithShadows(boundary, shadows, { scalingFactor = 1, cleanDelta = 0.1 } = {}) {
-    if ( shadows instanceof PIXI.Polygon ) shadows = [shadows];
+    if ( shadows instanceof PIXI.Polygon ) {shadows = [shadows];}
 
-    if ( !shadows.length ) return boundary;
+    if ( !shadows.length ) {return boundary;}
 
     const shadowPaths = CONFIG.GeometryLib.ClipperPaths.fromPolygons(shadows, { scalingFactor });
 
     // Make all the shadow paths orient the same direction
     shadowPaths.paths.forEach(path => {
-      if ( !ClipperLib.Clipper.Orientation(path) ) path.reverse();
+      if ( !ClipperLib.Clipper.Orientation(path) ) {path.reverse();}
     });
 
     const combinedShadowPaths = shadowPaths.combine();
@@ -1052,7 +1052,7 @@ export class Shadow extends PIXI.Polygon {
  */
 function wallPointSurfaceIntersection(A, origin, surfacePlane) {
   // Viewer is above top of the wall, so find origin --> A --> surface
-  if ( origin.z > A.z ) return surfacePlane.lineSegmentIntersection(origin, A);
+  if ( origin.z > A.z ) {return surfacePlane.lineSegmentIntersection(origin, A);}
 
   // Viewer is below top of the wall, so find far point to use
   const maxR2 = Math.pow(canvas.dimensions.maxR, 2);

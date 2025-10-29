@@ -63,10 +63,10 @@ class TokenClone {
    * Clear terrains from the token clone
    */
   clearTerrains() {
-    if ( !this.useTerrains ) return;
+    if ( !this.useTerrains ) {return;}
     const Terrain = CONFIG.terrainmapper.Terrain;
     const tokenTerrains = Terrain.allOnToken(this);
-    if ( !tokenTerrains.length ) return;
+    if ( !tokenTerrains.length ) {return;}
     Terrain.removeFromTokenLocally(this, tokenTerrains, { refresh: false });
     this.actor._initialize(); // This is slow
   }
@@ -122,14 +122,14 @@ export class MovePenalty {
     const terrainAPI = this.constructor.terrainAPI;
 
     // Only regions with terrains; tokens if that setting is enabled; drawings if enabled.
-    if ( tokenMultiplier !== 1 ) canvas.tokens.placeables.forEach(t => this.tokens.add(t));
-    if ( terrainAPI ) canvas.regions.placeables.forEach(r => {
-      if ( r.terrainmapper.hasTerrain ) this.regions.add(r);
-    });
+    if ( tokenMultiplier !== 1 ) {canvas.tokens.placeables.forEach(t => this.tokens.add(t));}
+    if ( terrainAPI ) {canvas.regions.placeables.forEach(r => {
+      if ( r.terrainmapper.hasTerrain ) {this.regions.add(r);}
+    });}
     canvas.drawings.placeables.forEach(d => {
       const penalty = d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY) ?? 1;
       const useFlatPenalty = d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY_FLAT);
-      if ( (!useFlatPenalty && penalty !== 1) || (useFlatPenalty && penalty !== 0) ) this.drawings.add(d);
+      if ( (!useFlatPenalty && penalty !== 1) || (useFlatPenalty && penalty !== 0) ) {this.drawings.add(d);}
     });
     this.tokens.delete(moveToken);
 
@@ -162,13 +162,13 @@ export class MovePenalty {
       const a = path[i - 1].center;
       const b = path[i].center;
       this.tokens.forEach(t => {
-        if ( t.constrainedTokenBorder.lineSegmentIntersects(a, b, { inside: true })) this.pathTokens.add(t);
+        if ( t.constrainedTokenBorder.lineSegmentIntersects(a, b, { inside: true })) {this.pathTokens.add(t);}
       });
       this.drawings.forEach(d => {
-        if ( d.bounds.lineSegmentIntersects(a, b, { inside: true })) this.pathDrawings.add(d);
+        if ( d.bounds.lineSegmentIntersects(a, b, { inside: true })) {this.pathDrawings.add(d);}
       });
       this.regions.forEach(r => {
-        if ( r.bounds.lineSegmentIntersects(a, b, { inside: true })) this.pathRegions.add(r);
+        if ( r.bounds.lineSegmentIntersects(a, b, { inside: true })) {this.pathRegions.add(r);}
       });
     }
   }
@@ -207,23 +207,23 @@ export class MovePenalty {
   moveSpeedWithinRegions(regions) {
     // Confirm Terrain Mapper is active; otherwise return the current token speed
     const Terrain = CONFIG.terrainmapper?.Terrain;
-    if ( !Terrain ) return this.moveTokenSpeed;
+    if ( !Terrain ) {return this.moveTokenSpeed;}
 
     // If no terrains in the regions, return the current token speed without regions.
     const terrains = regions.flatMap(region => [...region.terrainmapper.terrains]);
-    if ( !terrains.length ) return this.baseTokenSpeed;
+    if ( !terrains.length ) {return this.baseTokenSpeed;}
 
     // If these regions already encountered, return the cached token speed.
     const key = regions.map(region => region.id).join("|");
-    if ( this._regionPenaltyMap.has(key) ) return this._regionPenaltyMap.get(key);
+    if ( this._regionPenaltyMap.has(key) ) {return this._regionPenaltyMap.get(key);}
 
     // Duplicate the token clone and add the region terrain(s).
     const tClone = this.#localTokenClone.duplicate();
     Terrain.addToTokenLocally(tClone, [...terrains.values()], { refresh: false });
     if ( game.system.id === "dnd5e"
       && OTHER_MODULES.DAE.ACTIVE
-      && !foundry.utils.isNewerVersion(game.system.version, "4") ) tClone.actor.prepareData(); // Slower; fails in v4.
-    else tClone.actor.applyActiveEffects(); // Does not work for DAE (at least in dnd5e v3).
+      && !foundry.utils.isNewerVersion(game.system.version, "4") ) {tClone.actor.prepareData();} // Slower; fails in v4.
+    else {tClone.actor.applyActiveEffects();} // Does not work for DAE (at least in dnd5e v3).
 
     // Determine the speed of the token clone and cache for future reference.
     const speed = SPEED.tokenSpeed(tClone, this.movementType);
@@ -255,12 +255,12 @@ export class MovePenalty {
    */
   measureSegment(a, b, { numPrevDiagonal = 0, forceGridPenalty, diagonals } = {}) {
     const GridCoordinates3d = CONFIG.GeometryLib.threeD.GridCoordinates3d;
-    if ( !(a instanceof GridCoordinates3d) ) a = GridCoordinates3d.fromObject(a);
-    if ( !(b instanceof GridCoordinates3d) ) b = GridCoordinates3d.fromObject(b);
+    if ( !(a instanceof GridCoordinates3d) ) {a = GridCoordinates3d.fromObject(a);}
+    if ( !(b instanceof GridCoordinates3d) ) {b = GridCoordinates3d.fromObject(b);}
     const D = GridCoordinates3d.GRID_DIAGONALS;
     diagonals ??= canvas.grid.diagonals ?? game.settings.get("core", "gridDiagonals");
     if ( diagonals === D.EXACT
-      && Settings.get(Settings.KEYS.MEASURING.EUCLIDEAN_GRID_DISTANCE) ) diagonals = D.EUCLIDEAN;
+      && Settings.get(Settings.KEYS.MEASURING.EUCLIDEAN_GRID_DISTANCE) ) {diagonals = D.EUCLIDEAN;}
     const res = GridCoordinates3d.gridMeasurementForSegment(a, b, { numPrevDiagonal, diagonals });
     this.restrictToPath([a, b]);
     res.cost = this.movementCostForSegment(a, b, res.offsetDistance, forceGridPenalty);
@@ -275,7 +275,7 @@ export class MovePenalty {
    * @returns {number} The costFreeDistance + cost, in grid units.
    */
   movementCostForSegment(startCoords, endCoords, costFreeDistance = 0, forceGridPenalty) { // eslint-disable-line default-param-last
-    if ( startCoords.almostEqual(endCoords) ) return costFreeDistance;
+    if ( startCoords.almostEqual(endCoords) ) {return costFreeDistance;}
 
     forceGridPenalty ??= Settings.get(Settings.KEYS.MEASURING.FORCE_GRID_PENALTIES);
     forceGridPenalty &&= !canvas.grid.isGridless;
@@ -291,7 +291,7 @@ export class MovePenalty {
     if ( this.#penaltyCache.has(key) ) {
       const res = this.#penaltyCache.get(key);
       log(`Using key ${key}: ${res}`);
-      if ( CONFIG[MODULE_ID].debug ) console.groupEnd("movementCostForSegment");
+      if ( CONFIG[MODULE_ID].debug ) {console.groupEnd("movementCostForSegment");}
       return res;
     }
 
@@ -303,7 +303,7 @@ export class MovePenalty {
         && Math.abs(endCoords.j - startCoords.j) < 2
         && Math.abs(endCoords.k - startCoords.k) < 2;
       if ( isOneStep ) {
-        if ( CONFIG[MODULE_ID].debug ) console.groupEnd("movementCostForSegment");
+        if ( CONFIG[MODULE_ID].debug ) {console.groupEnd("movementCostForSegment");}
         return this.movementCostForGridSpace(endCoords, costFreeDistance);
       }
 
@@ -327,7 +327,7 @@ export class MovePenalty {
     this.#penaltyCache.set(key, res);
     const t1 = performance.now();
     log(`Found cost ${res} in ${Math.round(t1 - t0)} ms`);
-    if ( CONFIG[MODULE_ID].debug ) console.groupEnd("movementCostForSegment");
+    if ( CONFIG[MODULE_ID].debug ) {console.groupEnd("movementCostForSegment");}
     return res;
   }
 
@@ -364,15 +364,15 @@ export class MovePenalty {
     // Drawings
     drawings.forEach(d => {
       const penalty = d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY);
-      if ( d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY_FLAT) ) flatPenalty += penalty;
-      else currentMultiplier *= penalty;
+      if ( d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY_FLAT) ) {flatPenalty += penalty;}
+      else {currentMultiplier *= penalty;}
     });
 
     // Tokens
     const tokenMultiplier = this.constructor.tokenMultiplier;
     const useTokenFlat = this.constructor.useFlatTokenMultiplier;
-    if ( useTokenFlat ) flatPenalty += (tokenMultiplier * tokens.length); // Default to 0.
-    else currentMultiplier *= (tokens.length ? (tokenMultiplier * tokens.length) : 1); // Default to 1.
+    if ( useTokenFlat ) {flatPenalty += (tokenMultiplier * tokens.length);} // Default to 0.
+    else {currentMultiplier *= (tokens.length ? (tokenMultiplier * tokens.length) : 1);} // Default to 1.
 
     // Regions
     const testRegions = this.constructor.terrainAPI && regions.length;
@@ -410,7 +410,7 @@ export class MovePenalty {
   proportionalCostForSegment(startCoords, endCoords) {
     // Intersections for each region, token, drawing.
     const cutawayIxs = this._cutawayIntersections(startCoords, endCoords);
-    if ( !cutawayIxs.length ) return 1;
+    if ( !cutawayIxs.length ) {return 1;}
     return this._penaltiesForIntersections(startCoords, endCoords, cutawayIxs);
   }
 
@@ -460,7 +460,7 @@ export class MovePenalty {
    * @returns {number} The penalty multiplier for the given start --> end
    */
   _penaltiesForIntersections(start, end, cutawayIxs) {
-    if ( !cutawayIxs.length ) return 1;
+    if ( !cutawayIxs.length ) {return 1;}
 
     // Tokens
     const tokenMultiplier = this.constructor.tokenMultiplier;
@@ -504,15 +504,15 @@ export class MovePenalty {
 
       // Add in the penalties or multipliers at the current position.
       if ( ix.token ) {
-        if ( useTokenFlat ) currentFlat += addFn(tokenMultiplier);
-        else currentMultiplier *= multFn(tokenMultiplier);
+        if ( useTokenFlat ) {currentFlat += addFn(tokenMultiplier);}
+        else {currentMultiplier *= multFn(tokenMultiplier);}
       }
       if ( ix.drawing ) {
         const penalty = ix.drawing.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY);
-        if ( ix.drawing.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY_FLAT) ) currentFlat += addFn(penalty);
-        else currentMultiplier *= multFn(penalty);
+        if ( ix.drawing.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY_FLAT) ) {currentFlat += addFn(penalty);}
+        else {currentMultiplier *= multFn(penalty);}
       }
-      if ( testRegions && ix.region ) regionFn(ix.region);
+      if ( testRegions && ix.region ) {regionFn(ix.region);}
 
       // Process all intersections at this same point (e.g., multiple regions with same border).
       if ( ix.almostEqual(nextIx) ) {

@@ -68,7 +68,7 @@ PATCHES.BASIC.GETTERS = { movementType };
  * @returns {MOVEMENT_TYPE}
  */
 export function movementTypeForTokenAt(token, position) {
-  if ( game.system.id === "dnd5e" ) return dnd5eMovementType(token, position);
+  if ( game.system.id === "dnd5e" ) {return dnd5eMovementType(token, position);}
   return hudMovementType(token, position);
 }
 
@@ -80,7 +80,7 @@ export function movementTypeForTokenAt(token, position) {
  */
 function hudMovementType(token, position) {
   const selectedMovement = token.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_SELECTION) ?? MOVEMENT_TYPES.AUTO;
-  if ( selectedMovement === MOVEMENT_TYPES.AUTO ) return determineMovementType(token, position);
+  if ( selectedMovement === MOVEMENT_TYPES.AUTO ) {return determineMovementType(token, position);}
   return selectedMovement;
 }
 
@@ -92,10 +92,10 @@ function hudMovementType(token, position) {
  * @type {MOVEMENT_TYPE}
  */
 function dnd5eMovementType(token, position) {
-  if ( !token.actor?.statuses ) return MOVEMENT_TYPES.WALK;
-  if ( token.actor.statuses.has("flying") ) return MOVEMENT_TYPES.FLY;
-  if ( token.actor.statuses.has("burrow") ) return MOVEMENT_TYPES.BURROW;
-  if ( Settings.get(Settings.KEYS.MEASURING.AUTO_MOVEMENT_TYPE) ) return determineMovementType(token, position);
+  if ( !token.actor?.statuses ) {return MOVEMENT_TYPES.WALK;}
+  if ( token.actor.statuses.has("flying") ) {return MOVEMENT_TYPES.FLY;}
+  if ( token.actor.statuses.has("burrow") ) {return MOVEMENT_TYPES.BURROW;}
+  if ( Settings.get(Settings.KEYS.MEASURING.AUTO_MOVEMENT_TYPE) ) {return determineMovementType(token, position);}
   return MOVEMENT_TYPES.WALK;
 }
 

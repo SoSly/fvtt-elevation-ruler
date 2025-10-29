@@ -1,9 +1,12 @@
 {
   "env": {
     "browser": true,
-    "es2021": true,
+    "es2023": true,
     "node": true,
     "jquery": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
   },
   "rules": {
     "array-bracket-spacing": ["warn", "never"],
@@ -13,6 +16,7 @@
     "comma-style": "warn",
     "computed-property-spacing": "warn",
     "constructor-super": "error",
+    "curly": ["error", "all"],
     "default-param-last": "warn",
     "dot-location": ["warn", "property"],
     "eol-last": ["error", "always"],

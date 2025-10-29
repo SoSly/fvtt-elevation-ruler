@@ -16,7 +16,7 @@ PATCHES.BASIC = {};
  * Wipe the settings cache on update
  */
 async function set(wrapper, namespace, key, value, options) {
-  if ( namespace === MODULE_ID ) ModuleSettingsAbstract.cache.delete(key);
+  if ( namespace === MODULE_ID ) {ModuleSettingsAbstract.cache.delete(key);}
   return wrapper(namespace, key, value, options);
 }
 
@@ -32,8 +32,8 @@ PATCHES.BASIC.WRAPS = { set };
  */
 function updateSetting(document, _changed, _options, _userId) {
   const [theNamespace, key] = document.key.split(".", 2);
-  if ( !(theNamespace || key) ) return;
-  if ( theNamespace !== MODULE_ID ) return;
+  if ( !(theNamespace || key) ) {return;}
+  if ( theNamespace !== MODULE_ID ) {return;}
   ModuleSettingsAbstract.cache.delete(key);
 }
 
@@ -119,8 +119,8 @@ export class ModuleSettingsAbstract {
    * @returns {string|undefined} The stored setting as a string
    */
   static _getStorageValue(storageKey, storageType = "world") {
-    if ( !game.settings?.storage ) return undefined;
-    if ( storageType === "client" ) return game.settings.storage.get(storageType).getItem(`${MODULE_ID}.${storageKey}`);
+    if ( !game.settings?.storage ) {return undefined;}
+    if ( storageType === "client" ) {return game.settings.storage.get(storageType).getItem(`${MODULE_ID}.${storageKey}`);}
     return game.settings.storage.get(storageType).getSetting(`${MODULE_ID}.${storageKey}`).value;
   }
 }

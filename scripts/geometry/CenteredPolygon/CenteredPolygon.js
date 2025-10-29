@@ -80,7 +80,7 @@ export class CenteredPolygon extends GEOMETRY_CONFIG.CenteredPolygons.CenteredPo
     // Close the polygon
     const lastY = pts[ln - 1];
     const lastX = pts[ln - 2];
-    if ( pts[0] !== lastX || pts[1] !== lastY ) this._fixedPoints.push(new PIXI.Point(lastX, lastY));
+    if ( pts[0] !== lastX || pts[1] !== lastY ) {this._fixedPoints.push(new PIXI.Point(lastX, lastY));}
   }
 
   /**

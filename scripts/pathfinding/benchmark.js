@@ -24,14 +24,14 @@ export async function benchPathfinding(nPaths = 100, type = "all", nIterations =
   const pf = new Pathfinder(token);
 
   let message = `Testing pathfinding for ${nPaths} random start/end locations.`;
-  if ( token ) message += ` Using size of ${token.name} token.`;
+  if ( token ) {message += ` Using size of ${token.name} token.`;}
   console.log(message);
 
-  const startPoints = Array.fromRange(nPaths).map(elem => randomPoint());
-  const endPoints = Array.fromRange(nPaths).map(elem => randomPoint());
+  const startPoints = Array.fromRange(nPaths).map(_elem => randomPoint());
+  const endPoints = Array.fromRange(nPaths).map(_elem => randomPoint());
 
   const types = type === "all" ? Object.keys(Pathfinder.ALGORITHMS) : type;
-  for ( const type of types ) await QBenchmarkLoopFn(nIterations, benchPointSet, type, pf, type, startPoints, endPoints);
+  for ( const type of types ) {await QBenchmarkLoopFn(nIterations, benchPointSet, type, pf, type, startPoints, endPoints);}
 }
 
 function benchPointSet(pf, type, startPoints, endPoints) {

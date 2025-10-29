@@ -97,7 +97,7 @@ class CutawayPolygon extends PIXI.Polygon {
     const TR3d = this._from2d(TR);
     const steps = stepsFn(TL3d, TR3d);
     const steps2d = steps.map(step => this._to2d(step));
-    if ( isHole ) this.points.slice(2, 0, ...steps2d.flatMap(step => [step.x, step.y]))
+    if ( isHole ) {this.points.slice(2, 0, ...steps2d.flatMap(step => [step.x, step.y]));}
     else {
       steps2d.reverse();
       this.points.push(...steps2d.flatMap(step => [step.x, step.y]));
@@ -114,7 +114,7 @@ class CutawayPolygon extends PIXI.Polygon {
     const a2d = this._to2d(a);
     const b2d = this._to2d(b);
     const ixs = this.segmentIntersections(a2d, b2d).map(ix => PIXI.Point.fromObject(ix));
-    if ( !ixs.length ) return ixs;
+    if ( !ixs.length ) {return ixs;}
 
     // Shoelace in case the polygon is not simple. Right now, only b/c of steps.
     let isOutside = !this.contains(a2d.x, a2d.y);
@@ -149,12 +149,12 @@ class CutawayPolygon extends PIXI.Polygon {
    * @returns {CutawayPolygon[]}
    */
   static cutawayBasicShape(shape, a, b, opts = {}) {
-    if ( !shape.lineSegmentIntersects(a, b, { inside: true }) ) return [];
+    if ( !shape.lineSegmentIntersects(a, b, { inside: true }) ) {return [];}
     opts.start ??= a;
     opts.end ??= b;
 
     const ixs = shape.segmentIntersections(a, b);
-    if ( ixs.length === 0 ) return [this.quadCutaway(a, b, opts)];
+    if ( ixs.length === 0 ) {return [this.quadCutaway(a, b, opts)];}
     if ( ixs.length === 1 ) {
       const ix0 = CONFIG.GeometryLib.threeD.Point3d.fromObject(ixs[0]);
       ix0.t0 = ixs[0].t0;
@@ -164,7 +164,7 @@ class CutawayPolygon extends PIXI.Polygon {
       // Intersects only at start point.
       if ( ix0.t0.almostEqual(0) ) {
         const bInside = shape.contains(b.x, b.y);
-        if ( bInside ) return [this.quadCutaway(a, b, opts)];
+        if ( bInside ) {return [this.quadCutaway(a, b, opts)];}
 
         // A is the end. Back up one to construct proper polygon and return.
         const newA = a2.towardsPoint(b2, -1);
@@ -174,7 +174,7 @@ class CutawayPolygon extends PIXI.Polygon {
       // Intersects only at end point.
       if ( ix0.t0.almostEqual(1) ) {
         const aInside = shape.contains(a.x, a.y);
-        if ( aInside ) return [this.quadCutaway(a, b, opts)];
+        if ( aInside ) {return [this.quadCutaway(a, b, opts)];}
 
         // B is at end. Move one step further from the end to construct proper polygon and return.
         const newB = b2.towardsPoint(a2, -1);
@@ -182,15 +182,15 @@ class CutawayPolygon extends PIXI.Polygon {
       }
 
       // Intersects somewhere along the segment.
-      if ( shape.contains(a.x, a.y) ) return [this.quadCutaway(a, ix0, opts)];
-      else return [this.quadCutaway(ix0, b, opts)];
+      if ( shape.contains(a.x, a.y) ) {return [this.quadCutaway(a, ix0, opts)];}
+      else {return [this.quadCutaway(ix0, b, opts)];}
     }
 
     // Handle 2+ intersections with a polygon shape.
     // More than 2 are possible if the polygon is not simple. May go in and out of it.
     ixs.sort((a, b) => a.t0 - b.t0);
-    if ( !ixs.at(-1).t0.almostEqual(1) ) ixs.push(b);
-    if ( ixs[0].t0.almostEqual(0) ) ixs.shift();
+    if ( !ixs.at(-1).t0.almostEqual(1) ) {ixs.push(b);}
+    if ( ixs[0].t0.almostEqual(0) ) {ixs.shift();}
 
     // Shoelace: move in and out of the polygon, constructing a quad for every "in"
     // Go from a --> ix --> ... --> ix --> b unless last ix is at b.
@@ -198,7 +198,7 @@ class CutawayPolygon extends PIXI.Polygon {
     let prevIx = a;
     let isInside = shape.contains(prevIx.x, prevIx.y);
     for ( const ix of ixs ) {
-      if ( isInside ) quads.push(this.quadCutaway(prevIx, ix, opts));
+      if ( isInside ) {quads.push(this.quadCutaway(prevIx, ix, opts));}
       isInside = !isInside;
       prevIx = ix;
     }
@@ -225,7 +225,7 @@ class CutawayPolygon extends PIXI.Polygon {
     bottomElevationFn ??= () => -1e06;
 
     // Retrieve the pixel elevation for the a and b points. Holes should extend very high and very low so they cut everything.
-    let topA, topB, bottomA, bottomB;
+    let topA; let topB; let bottomA; let bottomB;
     topA = topB = 1e06;
     bottomA = bottomB = -1e06;
     if ( !isHole ) {
@@ -269,7 +269,7 @@ class CutawayPolygon extends PIXI.Polygon {
     const HIGHEST = CONFIG.GeometryLib.utils.gridUnitsToPixels(100);
     for ( let i = 0, n = pts.length; i < n; i += 1 ) {
       const { x, y } = pts[i];
-      const pt = { x, y: -Math.clamp(y, LOWEST, HIGHEST) } // Arbitrary cutoff for low elevations.
+      const pt = { x, y: -Math.clamp(y, LOWEST, HIGHEST) }; // Arbitrary cutoff for low elevations.
 
       // Convert to smaller values for displaying.
       convertToDistance(pt);

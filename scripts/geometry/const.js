@@ -39,7 +39,7 @@ export const MODULE_KEYS = {
 
   TERRAIN_MAPPER: {
     ID: "terrainmapper",
-    ACTIVE: false,
+    ACTIVE: false
   }
 };
 
@@ -57,5 +57,5 @@ MODULE_KEYS.WH.FLAG_WALL_BOTTOM = `flags.${MOD.ID}.${MOD.WALL.BOTTOM}`;
 
 // Hook init b/c game.modules is not initialized at start.
 Hooks.once("init", function() {
-  for ( const obj of Object.values(MODULE_KEYS) ) obj.ACTIVE = game.modules.get(obj.ID)?.active
+  for ( const obj of Object.values(MODULE_KEYS) ) {obj.ACTIVE = game.modules.get(obj.ID)?.active;}
 });

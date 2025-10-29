@@ -15,7 +15,7 @@ import "./RegularPolygon.js";
  */
 export class Hexagon extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon {
   constructor(origin, radius = 0, { rotation = 0, width = 0, height = 0 } = {}) {
-    if ( !(radius || width || height) ) console.error("Hexagon requires radius, width, or height.");
+    if ( !(radius || width || height) ) {console.error("Hexagon requires radius, width, or height.");}
 
     // For calculating radius, divide width and height in half.
     const w = width * 0.5;
@@ -25,15 +25,15 @@ export class Hexagon extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon {
     radius = Math.max(radius, w, h);
 
     // If height is greater than width, rotate 90º to make a row hexagon.
-    if ( h > w ) rotation += 90;
+    if ( h > w ) {rotation += 90;}
 
     super(origin, radius, {numSides: 6, rotation});
 
     // Apothem is the smaller dimension.
-    if ( height && width ) this._apothem = Math.min(h, w, radius);
-    else if ( height ) this._apothem = Math.min(radius, h);
-    else if ( width ) this._apothem = Math.min(radius, w);
-    else this._apothem =  Math.SQRT3 * this.radius * 0.5;
+    if ( height && width ) {this._apothem = Math.min(h, w, radius);}
+    else if ( height ) {this._apothem = Math.min(radius, h);}
+    else if ( width ) {this._apothem = Math.min(radius, w);}
+    else {this._apothem = Math.SQRT3 * this.radius * 0.5;}
 
     this.radius2 = Math.pow(this.radius, 2);
   }
@@ -82,7 +82,7 @@ export class Hexagon extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon {
    * @returns {Hexagon}
    */
   static fromTopLeft(point, ...args) {
-      // Offset from top left to center
+    // Offset from top left to center
     const hx = Math.ceil(canvas.grid.sizeX / 2);
     const hy = Math.ceil(canvas.grid.sizeY / 2);
     return new Hexagon({x: point.x + hx, y: point.y + hy}, ...args);
@@ -123,7 +123,7 @@ export class Hexagon extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon {
       case 0:
       case 180:
         return [
-          radius + x, y ,
+          radius + x, y,
           r1_2 + x, apothem + y,
           -r1_2 + x, apothem + y,
           -radius + x, y,

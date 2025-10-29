@@ -29,13 +29,13 @@ export const GRID_DIAGONALS = { EUCLIDEAN: -1, ...CONST.GRID_DIAGONALS };
  */
 export function gridDistanceBetween(a, b, { altGridDistFn, diagonals } = {}) {
   const geom = CONFIG.GeometryLib;
-  if ( canvas.grid.isGridless ) return geom.utils.pixelsToGridUnits(geom.threeD.Point3d.distanceBetween(a, b));
+  if ( canvas.grid.isGridless ) {return geom.utils.pixelsToGridUnits(geom.threeD.Point3d.distanceBetween(a, b));}
   const distFn = canvas.grid.isHexagonal ? hexGridDistanceBetween : squareGridDistanceBetween;
   const dist = distFn(a, b, altGridDistFn, diagonals);
 
   // Round to the nearest grid distance if close.
   const gridD = canvas.grid.distance;
-  if ( (dist % gridD).almostEqual(0) ) return Math.round(dist / gridD) * gridD;
+  if ( (dist % gridD).almostEqual(0) ) {return Math.round(dist / gridD) * gridD;}
   return dist;
 }
 
@@ -51,8 +51,8 @@ export function gridDistanceBetween(a, b, { altGridDistFn, diagonals } = {}) {
 function hexGridDistanceBetween(p0, p1, altGridDistFn, diagonals) {
   diagonals ??= canvas.grid.diagonals ?? game.settings.get("core", "gridDiagonals");
   const D = GRID_DIAGONALS;
-  if ( !(p0 instanceof CONFIG.GeometryLib.threeD.Point3d) ) p0 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p0);
-  if ( !(p1 instanceof CONFIG.GeometryLib.threeD.Point3d) ) p1 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p1);
+  if ( !(p0 instanceof CONFIG.GeometryLib.threeD.Point3d) ) {p0 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p0);}
+  if ( !(p1 instanceof CONFIG.GeometryLib.threeD.Point3d) ) {p1 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p1);}
 
 
   // Translate the 2d movement to cube units. Elevation is in grid size units.
@@ -94,8 +94,8 @@ function hexGridDistanceBetween(p0, p1, altGridDistFn, diagonals) {
 function squareGridDistanceBetween(p0, p1, altGridDistFn, diagonals) {
   diagonals ??= canvas.grid.diagonals ?? game.settings.get("core", "gridDiagonals");
   const D = GRID_DIAGONALS;
-  if ( !(p0 instanceof CONFIG.GeometryLib.threeD.Point3d) ) p0 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p0);
-  if ( !(p1 instanceof CONFIG.GeometryLib.threeD.Point3d) ) p1 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p1);
+  if ( !(p0 instanceof CONFIG.GeometryLib.threeD.Point3d) ) {p0 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p0);}
+  if ( !(p1 instanceof CONFIG.GeometryLib.threeD.Point3d) ) {p1 = CONFIG.GeometryLib.threeD.Point3d.fromObject(p1);}
 
   // Normalize so that dx === 1 when traversing 1 grid space.
   const dx = Math.abs(p0.x - p1.x) / canvas.grid.size;

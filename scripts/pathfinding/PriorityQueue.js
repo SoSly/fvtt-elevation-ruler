@@ -30,19 +30,19 @@ export class PriorityQueue {
   clear() { this.data.length = 0; }
 
 
- /**
+  /**
   * Convert a sorted array to a queue
   */
- static fromArray(arr, priorityFn) {
-   const pq = new this();
+  static fromArray(arr, priorityFn) {
+    const pq = new this();
 
-   pq.values = arr.map(elem => new Node(elem, priorityFn(elem)));
-   pq.values = radixSortObj(pq.values, "priority").reverse();
+    pq.values = arr.map(elem => new Node(elem, priorityFn(elem)));
+    pq.values = radixSortObj(pq.values, "priority").reverse();
 
-   return pq;
- }
+    return pq;
+  }
 
- /**
+  /**
   * Add an object to the queue.
   * @param {Object} val      Object to store in the queue
   * @param {number} priority Priority of the object to store
@@ -53,25 +53,25 @@ export class PriorityQueue {
     let index = this.values.length - 1;
     const current = this.values[index];
 
-    while(index > 0) {
+    while (index > 0) {
       let parentIndex = Math.floor((index - 1) / 2);
       let parent = this.values[parentIndex];
 
-      if(parent.priority <= current.priority) {
+      if (parent.priority <= current.priority) {
         this.values[parentIndex] = current;
         this.values[index] = parent;
         index = parentIndex;
-      } else break;
+      } else {break;}
     }
   }
 
- /**
+  /**
   * Remove the highest-remaining-priority object from the queue.
   * @return {Object|undefined}  The highest-priority object stored.
   *                             Undefined if queue is empty.
   */
   dequeue() {
-    if(this.values.length < 2) return this.values.pop();
+    if (this.values.length < 2) {return this.values.pop();}
 
     const max = this.values[0];
     const end = this.values.pop();
@@ -80,26 +80,26 @@ export class PriorityQueue {
     let index = 0;
     const length = this.values.length;
     const current = this.values[0];
-    while(true) {
+    while (true) {
       let leftChildIndex = 2 * index + 1;
       let rightChildIndex = 2 * index + 2;
-      let leftChild, rightChild;
+      let leftChild; let rightChild;
       let swap = null;
 
-      if(leftChildIndex < length) {
+      if (leftChildIndex < length) {
         leftChild = this.values[leftChildIndex];
-        if(leftChild.priority > current.priority) swap = leftChildIndex;
+        if (leftChild.priority > current.priority) {swap = leftChildIndex;}
       }
 
-      if(rightChildIndex < length) {
+      if (rightChildIndex < length) {
         rightChild = this.values[rightChildIndex];
-        if((swap === null && rightChild.priority > current.priority) ||
-           (swap !== null && rightChild.priority > leftChild.priority)) {
+        if ((swap === null && rightChild.priority > current.priority)
+           || (swap !== null && rightChild.priority > leftChild.priority)) {
           swap = rightChildIndex;
         }
       }
 
-      if(swap === null) break;
+      if (swap === null) {break;}
       this.values[index] = this.values[swap];
       this.values[swap] = current;
       index = swap;
@@ -109,7 +109,7 @@ export class PriorityQueue {
   }
 }
 
-/* test
+/* Test
 let tree = new PriorityQueue();
 tree.enqueue(3,2);
 tree.enqueue(4, 5);

@@ -153,9 +153,9 @@ export class Draw {
    * @param {number}  [fillAlpha=1]           Alpha of the fill, if any.
    */
   shape(shape, { color = Draw.COLORS.black, width = 1, fill = null, fillAlpha = 1 } = {}) {
-    if ( fill ) this.g.beginFill(fill, fillAlpha);
+    if ( fill ) {this.g.beginFill(fill, fillAlpha);}
     this.g.lineStyle(width, color).drawShape(shape);
-    if ( fill ) this.g.endFill();
+    if ( fill ) {this.g.endFill();}
   }
 
   /**
@@ -189,7 +189,7 @@ export class Draw {
     const polygonText = this.g.polygonText;
     // Remove existing label if it exists at or very near Poly endpoint
     const idx = polygonText.children.findIndex(c => p.x.almostEqual(c.position.x) && p.y.almostEqual(c.position.y));
-    if ( ~idx ) return this.g.polygonText.removeChildAt(idx);
+    if ( ~idx ) {return this.g.polygonText.removeChildAt(idx);}
     return undefined;
   }
 

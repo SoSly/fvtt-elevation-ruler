@@ -34,7 +34,7 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
    */
   static get(token) {
     let polygon = this._cache.get(token);
-    if ( !polygon ) this._cache.set(token, polygon = new this());
+    if ( !polygon ) {this._cache.set(token, polygon = new this());}
     polygon.initialize(token);
     polygon.compute();
     return polygon;
@@ -63,7 +63,7 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
     elevation: null,
     width: null,
     height: null
-  }
+  };
 
   /** @type {Token} */
   _token;
@@ -101,7 +101,7 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
       _tokenDocumentProperties[key] = value;
     }
 
-    if ( tokenMoved ||  this.#wallsID !== ConstrainedTokenBorder._wallsID ) {
+    if ( tokenMoved || this.#wallsID !== ConstrainedTokenBorder._wallsID ) {
       this.#wallsID = ConstrainedTokenBorder._wallsID;
       this.#dirty = true;
       const config = {
@@ -146,7 +146,7 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
     this.rays.length = 0;
 
     // If we screwed up, fall back on unrestricted.
-    if ( this.points.length < 6 ) this._unrestricted = true;
+    if ( this.points.length < 6 ) {this._unrestricted = true;}
   }
 
   /**
@@ -159,13 +159,13 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
    * @protected
    */
   _testEdgeInclusion(edge, edgeTypes, bounds) {
-     // Need to include scene boundaries in case we need to run sweep.
+    // Need to include scene boundaries in case we need to run sweep.
     const m = edgeTypes[edge.type];
-    if ( !m ) return false;
-    if ( m === 2 ) return true;
+    if ( !m ) {return false;}
+    if ( m === 2 ) {return true;}
 
     // Drop edges collinear to the border.
-    if ( this.#edgeIsCollinearToBoundary(edge) ) return false;
+    if ( this.#edgeIsCollinearToBoundary(edge) ) {return false;}
 
     return super._testEdgeInclusion(edge, edgeTypes, bounds);
   }
@@ -179,13 +179,13 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
     const boundary = this.config.boundaryShapes[0]; // Always a single shape b/c set in initialize.
     if ( boundary instanceof PIXI.Rectangle ) {
       const delta = edge.b.subtract(edge.a, PIXI.Point._tmp);
-      if ( !delta.x && (edge.a.x.almostEqual(boundary.left) || edge.a.x.almostEqual(boundary.right)) ) return true;
-      if ( !delta.y && (edge.a.y.almostEqual(boundary.top) || edge.a.y.almostEqual(boundary.bottom)) ) return true;
+      if ( !delta.x && (edge.a.x.almostEqual(boundary.left) || edge.a.x.almostEqual(boundary.right)) ) {return true;}
+      if ( !delta.y && (edge.a.y.almostEqual(boundary.top) || edge.a.y.almostEqual(boundary.bottom)) ) {return true;}
     } else if ( boundary instanceof PIXI.Polygon ) {
       const orient2d = foundry.utils.orient2dFast;
       for ( const boundaryEdge of boundary.iterateEdges() ) {
         // Works b/c the boundary polygon is simple.
-        if ( orient2d(boundaryEdge.A, boundaryEdge.B, edge.a, edge.b).almostEqual(0) ) return true;
+        if ( orient2d(boundaryEdge.A, boundaryEdge.B, edge.a, edge.b).almostEqual(0) ) {return true;}
       }
     }
     return false;
@@ -201,9 +201,9 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
     // Can skip sweep if only border edges left and those edges don't intersect the boundary.
     const boundary = this.config.boundaryShapes[0];
     for ( const edge of this.edges ) {
-      if ( !(edge.type === "innerBounds" || edge.type === "outerBounds") ) return true;
-      if ( boundary.lineSegmentIntersects(edge.a, edge.b, { inside: true }) &&
-          !this.#edgeIsCollinearToBoundary(edge) ) return true;
+      if ( !(edge.type === "innerBounds" || edge.type === "outerBounds") ) {return true;}
+      if ( boundary.lineSegmentIntersects(edge.a, edge.b, { inside: true })
+          && !this.#edgeIsCollinearToBoundary(edge) ) {return true;}
     }
     return false; // Can skip the sweep.
   }
@@ -211,7 +211,7 @@ export class ConstrainedTokenBorder extends ClockwiseSweepPolygon {
   /** @override */
   contains(x, y) {
     const inBounds = this._token.bounds.contains(x, y);
-    if ( this._unrestricted || !inBounds ) return inBounds;
+    if ( this._unrestricted || !inBounds ) {return inBounds;}
 
     return PIXI.Polygon.prototype.contains.call(this, x, y);
   }

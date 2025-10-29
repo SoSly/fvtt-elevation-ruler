@@ -59,7 +59,7 @@ export class BreadthFirstPathSearch {
   _run() {
     const frontier = this.frontier;
     frontier.unshift(this.start);
-    while ( frontier.length ) { if ( this._step() ) break; }
+    while ( frontier.length ) { if ( this._step() ) {break;} }
   }
 
   /**
@@ -69,9 +69,9 @@ export class BreadthFirstPathSearch {
   _step() {
     const { frontier } = this;
     const current = frontier.pop();
-    if ( this.debug ) current.entryTriangle.drawEdges();
-    if ( this.debug ) Draw.point(current.entryPoint, { color: Draw.COLORS.lightgreen });
-    if ( this.goalReached(current) ) return true;
+    if ( this.debug ) {current.entryTriangle.drawEdges();}
+    if ( this.debug ) {Draw.point(current.entryPoint, { color: Draw.COLORS.lightgreen });}
+    if ( this.goalReached(current) ) {return true;}
     this._evaluateNeighbors(current);
     return false;
   }
@@ -81,7 +81,7 @@ export class BreadthFirstPathSearch {
    * @param {PathNode} current
    */
   _evaluateNeighbors(current) {
-    for ( const next of this.getNeighbors(current, this.goal) ) this._evaluateNeighbor(current, next);
+    for ( const next of this.getNeighbors(current, this.goal) ) {this._evaluateNeighbor(current, next);}
   }
 
   /**
@@ -92,7 +92,7 @@ export class BreadthFirstPathSearch {
   _evaluateNeighbor(current, next) {
     const { cameFrom, frontier } = this;
     if ( !cameFrom.has(next.key) ) {
-      if ( this.debug ) Draw.point(next.entryPoint, { color: Draw.COLORS.lightyellow });
+      if ( this.debug ) {Draw.point(next.entryPoint, { color: Draw.COLORS.lightyellow });}
       frontier.unshift(next);
       cameFrom.set(next.key, current);
     }
@@ -186,7 +186,7 @@ export class UniformCostPathSearch extends BreadthFirstPathSearch {
     const { costSoFar, frontier } = this;
     frontier.enqueue(this.start, 0);
     costSoFar.set(this.start.key, 0);
-    while ( frontier.length ) { if ( this._step() ) break; }
+    while ( frontier.length ) { if ( this._step() ) {break;} }
   }
 
   /**
@@ -196,9 +196,9 @@ export class UniformCostPathSearch extends BreadthFirstPathSearch {
   _step() {
     const { frontier } = this;
     const current = frontier.dequeue();
-    if ( this.debug ) current.entryTriangle.drawEdges();
-    if ( this.debug ) Draw.point(current.entryPoint, { color: Draw.COLORS.lightgreen });
-    if ( this.goalReached(current) ) return true;
+    if ( this.debug ) {current.entryTriangle.drawEdges();}
+    if ( this.debug ) {Draw.point(current.entryPoint, { color: Draw.COLORS.lightgreen });}
+    if ( this.goalReached(current) ) {return true;}
     this._evaluateNeighbors(current);
     return false;
   }
@@ -212,9 +212,9 @@ export class UniformCostPathSearch extends BreadthFirstPathSearch {
     const MAX_COST = canvas.dimensions.maxR;
     const { costSoFar, frontier } = this;
     const newCost = (costSoFar.get(current.key) ?? MAX_COST) + next.cost;
-    if ( costSoFar.has(next.key) && newCost >= costSoFar.get(next.key) ) return;
+    if ( costSoFar.has(next.key) && newCost >= costSoFar.get(next.key) ) {return;}
 
-    if ( this.debug ) Draw.point(next.entryPoint, { color: Draw.COLORS.orange });
+    if ( this.debug ) {Draw.point(next.entryPoint, { color: Draw.COLORS.orange });}
     costSoFar.set(next.key, newCost);
     frontier.enqueue(next, newCost); // Priority is newCost
     this.cameFrom.set(next.key, current);
@@ -251,7 +251,7 @@ export class GreedyPathSearch extends BreadthFirstPathSearch {
   _run() {
     const frontier = this.frontier;
     frontier.enqueue(this.start, 0);
-    while ( frontier.length ) { if ( this._step() ) break; }
+    while ( frontier.length ) { if ( this._step() ) {break;} }
   }
 
   /**
@@ -261,10 +261,10 @@ export class GreedyPathSearch extends BreadthFirstPathSearch {
    */
   _evaluateNeighbor(current, next) {
     const cameFrom = this.cameFrom;
-    if ( cameFrom.has(next.key) ) return;
+    if ( cameFrom.has(next.key) ) {return;}
 
     const MAX_COST = canvas.dimensions.maxR;
-    if ( this.debug ) Draw.point(next.entryPoint, { color: Draw.COLORS.orange });
+    if ( this.debug ) {Draw.point(next.entryPoint, { color: Draw.COLORS.orange });}
     const priority = this.heuristic(this.goal, next) ?? MAX_COST;
     this.frontier.enqueue(next, priority);
     cameFrom.set(next.key, current);
@@ -290,9 +290,9 @@ export class AStarPathSearch extends UniformCostPathSearch {
     const MAX_COST = canvas.dimensions.maxR;
     const { costSoFar, frontier } = this;
     const newCost = (costSoFar.get(current.key) ?? MAX_COST) + next.cost;
-    if ( costSoFar.has(next.key) && newCost >= costSoFar.get(next.key) ) return;
+    if ( costSoFar.has(next.key) && newCost >= costSoFar.get(next.key) ) {return;}
 
-    if ( this.debug ) Draw.point(next.entryPoint, { color: Draw.COLORS.orange });
+    if ( this.debug ) {Draw.point(next.entryPoint, { color: Draw.COLORS.orange });}
     costSoFar.set(next.key, newCost);
     const priority = newCost + this.heuristic(this.goal, next);
     frontier.enqueue(next, priority);

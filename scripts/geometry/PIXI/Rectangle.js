@@ -28,7 +28,7 @@ function* iteratePoints({close = true} = {}) {
   yield new PIXI.Point(this.x + this.width, this.y);
   yield new PIXI.Point(this.x + this.width, this.y + this.height);
   yield new PIXI.Point(this.x, this.y + this.height);
-  if ( close ) yield A;
+  if ( close ) {yield A;}
 }
 
 /**
@@ -49,7 +49,7 @@ function* iterateEdges({close = true} = {}) {
 
   const D = new PIXI.Point(this.x, this.y + this.height);
   yield { A: C, B: D };
-  if ( close ) yield { A: D, B: A };
+  if ( close ) {yield { A: D, B: A };}
 }
 
 /**
@@ -61,7 +61,7 @@ function overlaps(shape) {
   if ( shape instanceof PIXI.Polygon ) { return this._overlapsPolygon(shape); }
   if ( shape instanceof PIXI.Circle ) { return this._overlapsCircle(shape); }
   if ( shape instanceof PIXI.Rectangle ) { return this._overlapsRectangle(shape); }
-  if ( shape.toPolygon) return this._overlapsPolygon(shape.toPolygon());
+  if ( shape.toPolygon) {return this._overlapsPolygon(shape.toPolygon());}
   console.warn("overlaps|shape not recognized.", shape);
   return false;
 }
@@ -76,7 +76,7 @@ function envelops(shape) {
   if ( shape instanceof PIXI.Polygon ) { return this._envelopsPolygon(shape); }
   if ( shape instanceof PIXI.Circle ) { return this._envelopsCircle(shape); }
   if ( shape instanceof PIXI.Rectangle ) { return this._envelopsRectangle(shape); }
-  if ( shape.toPolygon) return this._envelopsPolygon(shape.toPolygon());
+  if ( shape.toPolygon) {return this._envelopsPolygon(shape.toPolygon());}
   console.warn("overlaps|shape not recognized.", shape);
   return false;
 }
@@ -108,14 +108,14 @@ function _overlapsPolygon(poly) {
   if ( poly.contains(this.left, this.top)
     || poly.contains(this.right, this.top)
     || poly.contains(this.left, this.bottom)
-    || poly.contains(this.right, this.bottom)) return true;
+    || poly.contains(this.right, this.bottom)) {return true;}
 
   const pts = poly.iteratePoints({ close: true });
   let a = pts.next().value;
-  if ( this.contains(a.x, a.y) ) return true;
+  if ( this.contains(a.x, a.y) ) {return true;}
 
   for ( const b of pts ) {
-    if ( this.lineSegmentIntersects(a, b) || this.contains(b.x, b.y) ) return true;
+    if ( this.lineSegmentIntersects(a, b) || this.contains(b.x, b.y) ) {return true;}
     a = b;
   }
 
@@ -130,10 +130,10 @@ function _overlapsPolygon(poly) {
 function _overlapsRectangle(rect) {
   // https://www.geeksforgeeks.org/find-two-rectangles-overlap
   // One rectangle is completely above the other
-  if ( this.top > rect.bottom || rect.top > this.bottom ) return false;
+  if ( this.top > rect.bottom || rect.top > this.bottom ) {return false;}
 
   // One rectangle is completely to the left of the other
-  if ( this.left > rect.right || rect.left > this.right ) return false;
+  if ( this.left > rect.right || rect.left > this.right ) {return false;}
 
   return true;
 }
@@ -159,7 +159,7 @@ function _envelopsRectangle(rect) {
  */
 function _envelopsCircle(circle) {
   // Center point must be contained.
-  if ( !this.contains(circle.x, circle.y) ) return false;
+  if ( !this.contains(circle.x, circle.y) ) {return false;}
 
   // Four compass points extending from the circle must be contained.
   const r = circle.radius;
@@ -178,7 +178,7 @@ function _envelopsPolygon(poly) {
   // All points of the polygon must be contained in the circle.
   const iter = poly.iteratePoints({ close: false });
   for ( const pt of iter ) {
-    if ( !this.contains(pt.x, pt.y) ) return false;
+    if ( !this.contains(pt.x, pt.y) ) {return false;}
   }
   return true;
 }
@@ -215,7 +215,7 @@ function scaledArea({scalingFactor = 1} = {}) {
 function viewablePoints(origin, { outermostOnly = true } = {}) {
   const pts = getViewablePoints(this, origin);
 
-  if ( !pts || !outermostOnly ) return pts;
+  if ( !pts || !outermostOnly ) {return pts;}
 
   const ln = pts.length;
   return [pts[0], pts[ln - 1]];
@@ -281,16 +281,16 @@ function union(other) {
  *   B: portion of other rectangle
  */
 function difference(other, recurse = true) {
-  if ( this.right < other.x ) return null; // Left
-  if ( this.bottom < other.y ) return null; // Top
-  if ( this.x > other.right ) return null; // Right
-  if ( this.y > other.bottom ) return null; // Bottom
+  if ( this.right < other.x ) {return null;} // Left
+  if ( this.bottom < other.y ) {return null;} // Top
+  if ( this.x > other.right ) {return null;} // Right
+  if ( this.y > other.bottom ) {return null;} // Bottom
 
   // Completely equal
   if ( this.x === other.x
     && this.y === other.y
     && this.width === other.width
-    && this.height === other.height ) return null;
+    && this.height === other.height ) {return null;}
 
   // Options:
   // 1. One rectangle contains only 1 corner of the other.
@@ -420,7 +420,7 @@ function rotateAroundCenter(rotation = 0) {
   rotation = normalizeDegrees(rotation);
 
   // Handle the simple cases where the shape is still a rectangle after rotation.
-  if ( rotation === 0 || rotation === 180 ) return this.clone();
+  if ( rotation === 0 || rotation === 180 ) {return this.clone();}
   const center = this.center;
   if ( rotation === 90 || rotation === 270 ) {
     const dx1_2 = center.x - this.x;

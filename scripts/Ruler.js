@@ -103,16 +103,16 @@ function _getMeasurementData(wrapper) {
 
   // Segment information
   // Simplify the ray.
-  if ( this.segments ) myObj._segments = this.segments.map(segment => {
+  if ( this.segments ) {myObj._segments = this.segments.map(segment => {
     const newObj = { ...segment };
     newObj.ray = {
       A: segment.ray.A,
       B: segment.ray.B
     };
     newObj.label = Boolean(segment.label);
-    if ( segment.speed ) newObj.speed = segment.speed.name;
+    if ( segment.speed ) {newObj.speed = segment.speed.name;}
     return newObj;
-  });
+  });}
 
   myObj.totalDistance = this.totalDistance;
   myObj.totalOffsetDistance = this.totalOffsetDistance;
@@ -128,25 +128,25 @@ function _getMeasurementData(wrapper) {
  * Retrieve the current snap status.
  */
 function update(wrapper, data) {
-  if ( !data || (data.state === Ruler.STATES.INACTIVE) ) return wrapper(data);
+  if ( !data || (data.state === Ruler.STATES.INACTIVE) ) {return wrapper(data);}
   const myData = data[MODULE_ID];
-  if ( !myData ) return wrapper(data); // Just in case.
+  if ( !myData ) {return wrapper(data);} // Just in case.
 
   // Hide GM token ruler
   if ( data.token
     && this.user.isGM
-    && !game.user.isGM && Settings.get(Settings.KEYS.TOKEN_RULER.HIDE_GM)) return wrapper(data);
+    && !game.user.isGM && Settings.get(Settings.KEYS.TOKEN_RULER.HIDE_GM)) {return wrapper(data);}
 
   // Fix for displaying user elevation increments as they happen.
   const triggerMeasure = this._userElevationIncrements !== myData._userElevationIncrements;
   this._isTokenRuler = myData._isTokenRuler;
 
   // Reconstruct segments.
-  if ( myData._segments ) this.segments = myData._segments.map(segment => {
+  if ( myData._segments ) {this.segments = myData._segments.map(segment => {
     segment.ray = new Ray3d(segment.ray.A, segment.ray.B);
-    if ( segment.speed ) segment.speed = SPEED.CATEGORIES.find(category => category.name === segment.speed);
+    if ( segment.speed ) {segment.speed = SPEED.CATEGORIES.find(category => category.name === segment.speed);}
     return segment;
-  });
+  });}
 
   // Add the calculated distance totals.
   this.totalDistance = myData.totalDistance;
@@ -187,7 +187,7 @@ function _broadcastMeasurement(wrapped) {
     && this.token
     && (this.token.document.disposition === CONST.TOKEN_DISPOSITIONS.SECRET
      || this.token.document.hasStatusEffect(CONFIG.specialStatusEffects.INVISIBLE)
-     || this.token.document.hidden) ) return;
+     || this.token.document.hidden) ) {return;}
 
   wrapped();
 }
@@ -202,7 +202,7 @@ function _broadcastMeasurement(wrapped) {
  * @param {boolean} [options.snap=true]    Snap the waypoint?
  */
 function _addWaypoint(point, {snap=true}={}) {
-  if ( (this.state !== Ruler.STATES.STARTING) && (this.state !== Ruler.STATES.MEASURING ) ) return;
+  if ( (this.state !== Ruler.STATES.STARTING) && (this.state !== Ruler.STATES.MEASURING ) ) {return;}
   const waypoint = this.state === Ruler.STATES.STARTING
     ? this._getMeasurementOrigin(point, {snap})
     : this._getMeasurementDestination(point, {snap});
@@ -232,7 +232,7 @@ function _addWaypoint(point, {snap=true}={}) {
  * Remove calculated path.
  */
 function _removeWaypoint(wrapper, point, { snap = true } = {}) {
-  if ( this._pathfindingSegmentMap ) this._pathfindingSegmentMap.delete(this.waypoints.at(-1));
+  if ( this._pathfindingSegmentMap ) {this._pathfindingSegmentMap.delete(this.waypoints.at(-1));}
   wrapper(point, { snap });
 }
 
@@ -248,7 +248,7 @@ function _removeWaypoint(wrapper, point, { snap = true } = {}) {
 function _getMeasurementOrigin(wrapped, point, {snap=true}={}) {
   point = wrapped(point, { snap });
   const token = this.token;
-  if ( !this._isTokenRuler || !token ) return point;
+  if ( !this._isTokenRuler || !token ) {return point;}
   return token.getCenterPoint();
 }
 
@@ -267,11 +267,11 @@ function _getMeasurementDestination(wrapped, point, {snap=true}={}) {
 
   point = wrapped(point, { snap });
   const token = this.token;
-  if ( !this._isTokenRuler || !token ) return point;
-  if ( !token._preview ) return point;
+  if ( !this._isTokenRuler || !token ) {return point;}
+  if ( !token._preview ) {return point;}
 
   // Shift to token center or snapped center
-  if ( !snap ) return point;
+  if ( !snap ) {return point;}
 
   // See Token#_onDragLeftMove.
   const origin = token.getCenterPoint();
@@ -298,7 +298,7 @@ function constructSecondaryLabel(name) {
   newLabel.style.fontSize = Math.round(defaultStyle.fontSize * secondaryTextScale);
   newLabel.anchor = { x: 0.5, y: 0.5 };
   if ( CONFIG[MODULE_ID].SPEED.useFontAwesome
-    && !newLabel.style.fontFamily.includes("fontAwesome") ) newLabel.style.fontFamily += ",fontAwesome";
+    && !newLabel.style.fontFamily.includes("fontAwesome") ) {newLabel.style.fontFamily += ",fontAwesome";}
   return newLabel;
 }
 
@@ -313,7 +313,7 @@ function _getMeasurementSegments(wrapped) {
   const nSegments = this.history.length + this.waypoints.length + 1;
   if ( this.labels.children.length > nSegments ) {
     this.labels.children.forEach((l, idx) => {
-      if ( idx < nSegments ) return;
+      if ( idx < nSegments ) {return;}
       l.children.forEach(c => c.destroy());
     });
   }
@@ -323,7 +323,7 @@ function _getMeasurementSegments(wrapped) {
   for (let i = this.labels.children.length; i < nSegments; i += 1 ) {
     const newLabel = new PreciseText("", CONFIG.canvasTextStyle.clone());
     if ( CONFIG[MODULE_ID].SPEED.useFontAwesome
-      && !newLabel.style.fontFamily.includes("fontAwesome") ) newLabel.style.fontFamily += ",fontAwesome";
+      && !newLabel.style.fontFamily.includes("fontAwesome") ) {newLabel.style.fontFamily += ",fontAwesome";}
 
     // Add in additional containers for customized labels.
     if ( Settings.get(Settings.KEYS.LABELING.CUSTOMIZED) ) {
@@ -341,9 +341,9 @@ function _getMeasurementSegments(wrapped) {
     let labelIndex = 0;
     this.segments ??= [];
     for ( const s of this.segments ) {
-      if ( !s.label ) continue; // Not every segment has a label.
+      if ( !s.label ) {continue;} // Not every segment has a label.
       s.label = this.labels.children[labelIndex++];
-      if ( !s.label ) console.error(`${MODULE_ID}|_getMeasurementSegments label not found.`);
+      if ( !s.label ) {console.error(`${MODULE_ID}|_getMeasurementSegments label not found.`);}
     }
     return this.segments;
   }
@@ -362,13 +362,13 @@ function _getMeasurementSegments(wrapped) {
 
   // If no movement token, then no region paths or pathfinding.
   const token = this.token;
-  if ( !token ) return segments;
+  if ( !token ) {return segments;}
 
   const usePathfinding = Settings.get(Settings.KEYS.CONTROLS.PATHFINDING) ^ Settings.FORCE_TOGGLE_PATHFINDING;
   let pathPoints = [];
   const t0 = performance.now();
   const lastSegment = segments.at(-1);
-  if ( CONFIG[MODULE_ID].debug ) console.groupCollapsed(`${MODULE_ID}|_getMeasurementSegments`);
+  if ( CONFIG[MODULE_ID].debug ) {console.groupCollapsed(`${MODULE_ID}|_getMeasurementSegments`);}
   if ( usePathfinding ) {
     // If currently pathfinding, set path for the last segment, overriding any prior path.
     // Pathfinding when: the pathfinding icon is enabled or the temporary toggle key is held.
@@ -386,10 +386,10 @@ function _getMeasurementSegments(wrapped) {
     if ( initialPath.length ) {
       initialPath.forEach(pt => pt.z = lastSegment.ray.A.z);
       initialPath.at(-1).z = lastSegment.ray.B.z;
-    } else initialPath.push(
+    } else {initialPath.push(
       RegionMovementWaypoint3d.fromObject(lastSegment.ray.A),
       RegionMovementWaypoint3d.fromObject(lastSegment.ray.B)
-    );
+    );}
 
     // Determine the region path.
     pathPoints.length = 0;
@@ -417,14 +417,14 @@ function _getMeasurementSegments(wrapped) {
   if ( pathPoints.length > 2 ) {
     segmentMap.set(key, pathPoints);
     log(`Found path with ${pathPoints.length} points in ${t1-t0} ms.`, pathPoints);
-  } else segmentMap.delete(key);
+  } else {segmentMap.delete(key);}
 
   // For each segment, replace with path sub-segment if pathfinding or region paths were used for that segment.
   const t2 = performance.now();
   const newSegments = constructPathfindingSegments(segments, segmentMap);
   const t3 = performance.now();
   log(`${newSegments.length} segments processed in ${t3-t2} ms.`);
-  if ( CONFIG[MODULE_ID].debug ) console.groupEnd(`${MODULE_ID}|_getMeasurementSegments`);
+  if ( CONFIG[MODULE_ID].debug ) {console.groupEnd(`${MODULE_ID}|_getMeasurementSegments`);}
   return newSegments;
 }
 
@@ -438,7 +438,7 @@ function _computeDistance(wrapped) {
   log("_computeDistance");
 
   // If not this ruler's user, use the segments already calculated and passed via socket.
-  if ( this.user !== game.user ) return;
+  if ( this.user !== game.user ) {return;}
 
   wrapped();
 
@@ -447,7 +447,7 @@ function _computeDistance(wrapped) {
   // Add in the 3d points.
   const Point3d = CONFIG.GeometryLib.threeD.Point3d;
   let path = [];
-  if ( this.segments.length ) path.push(Point3d.fromObject(this.segments[0].ray.A));
+  if ( this.segments.length ) {path.push(Point3d.fromObject(this.segments[0].ray.A));}
   for ( const segment of this.segments ) {
     const B = Point3d.fromObject(segment.ray.B);
     B.teleport = segment.teleport;
@@ -480,7 +480,7 @@ function _computeDistance(wrapped) {
 
     // Values relating the prior waypoint to this segment.
     segment.waypoint ??= {};
-    if ( !Object.hasOwn(segment.waypoint, "idx") ) console.log("_computeDistance|No waypoint index!");
+    if ( !Object.hasOwn(segment.waypoint, "idx") ) {console.log("_computeDistance|No waypoint index!");}
     if ( Object.hasOwn(segment.waypoint, "idx") && segment.waypoint.idx !== currWaypointIdx ) {
       currWaypointIdx = segment.waypoint.idx;
       waypointDistance = 0;
@@ -501,7 +501,7 @@ function _computeDistance(wrapped) {
  * Return the movement penalty calculator.
  */
 function _getCostFunction() {
-  if ( !this.token ) return undefined;
+  if ( !this.token ) {return undefined;}
 
   // Construct a move penalty instance that covers all the segments.
   const movePenaltyInstance = this._movePenaltyInstance ??= new MovePenalty(this.token);
@@ -511,8 +511,8 @@ function _getCostFunction() {
     movePenaltyInstance.restrictToPath(path);
   }
   return (prevOffset, currOffset, offsetDistance) => {
-    if ( !(prevOffset instanceof GridCoordinates3d) ) prevOffset = GridCoordinates3d.fromOffset(prevOffset);
-    if ( !(currOffset instanceof GridCoordinates3d) ) currOffset = GridCoordinates3d.fromOffset(currOffset);
+    if ( !(prevOffset instanceof GridCoordinates3d) ) {prevOffset = GridCoordinates3d.fromOffset(prevOffset);}
+    if ( !(currOffset instanceof GridCoordinates3d) ) {currOffset = GridCoordinates3d.fromOffset(currOffset);}
     return movePenaltyInstance.movementCostForSegment(prevOffset, currOffset, offsetDistance);
   };
 }
@@ -550,9 +550,9 @@ function _getSegmentLabel(wrapped, segment) {
       * CONFIG[MODULE_ID].labeling.textScale);
   }
 
-  if ( !segment.label.style.fontFamily.includes("fontAwesome") ) segment.label.style.fontFamily += ",fontAwesome";
+  if ( !segment.label.style.fontFamily.includes("fontAwesome") ) {segment.label.style.fontFamily += ",fontAwesome";}
 
-  if ( Settings.get(Settings.KEYS.LABELING.CUSTOMIZED) ) return customizedTextLabel(this, segment, origLabel);
+  if ( Settings.get(Settings.KEYS.LABELING.CUSTOMIZED) ) {return customizedTextLabel(this, segment, origLabel);}
   return basicTextLabel(this, segment, origLabel);
 }
 
@@ -585,7 +585,7 @@ function _highlightMeasurementSegment(wrapped, segment) {
           wrapped(segment);
 
           // If gridless, highlight a rectangular shaped portion of the line.
-          if ( canvas.grid.isGridless ) highlightLineRectangle(segment, this.color, this.name);
+          if ( canvas.grid.isGridless ) {highlightLineRectangle(segment, this.color, this.name);}
         }
         // Reset to the default color.
         this.color = priorColor;
@@ -606,7 +606,7 @@ function _highlightMeasurementSegment(wrapped, segment) {
  * Add additional controlled tokens to the move, if permitted.
  */
 async function _animateMovement(wrapped, token) {
-  if ( !this.segments || !this.segments.length ) return wrapped(token); // Ruler._animateMovement expects at least one segment.
+  if ( !this.segments || !this.segments.length ) {return wrapped(token);} // Ruler._animateMovement expects at least one segment.
 
   if ( CONFIG[MODULE_ID].debug ) {
     console.groupCollapsed(`${MODULE_ID}|_animateMovement`);
@@ -628,7 +628,7 @@ async function _animateMovement(wrapped, token) {
   // _recalculateOffset.call(this, token);
   const promises = [wrapped(token)];
   for ( const controlledToken of canvas.tokens.controlled ) {
-    if ( controlledToken === token ) continue;
+    if ( controlledToken === token ) {continue;}
     if ( !(this.user.isGM || testMovement.call(this, controlledToken)) ) {
       ui.notifications.error(`${game.i18n.localize("RULER.MovementNotAllowed")} for ${controlledToken.name}`);
       continue;
@@ -649,7 +649,7 @@ async function _animateMovement(wrapped, token) {
 function testMovement(token) {
   let error;
   try {
-    if ( !this._canMove(token) ) error = "RULER.MovementNotAllowed";
+    if ( !this._canMove(token) ) {error = "RULER.MovementNotAllowed";}
   } catch(err) {
     error = err.message;
   }
@@ -668,12 +668,12 @@ function testMovement(token) {
 function _getMeasurementHistory(wrapped) {
   const history = wrapped();
   const token = this.token;
-  if ( !(token && game.combat?.active) ) return history;
-  if ( !Settings.get(Settings.KEYS.MEASURING.COMBAT_HISTORY) ) return history;
+  if ( !(token && game.combat?.active) ) {return history;}
+  if ( !Settings.get(Settings.KEYS.MEASURING.COMBAT_HISTORY) ) {return history;}
 
   token[MODULE_ID] ??= {};
   const tokenHistory = token[MODULE_ID].measurementHistory;
-  if ( !tokenHistory || !tokenHistory.length ) return history;
+  if ( !tokenHistory || !tokenHistory.length ) {return history;}
   const combatData = token._combatMoveData;
   if ( combatData.lastRound < game.combat.round ) {
     token[MODULE_ID].measurementHistory = [];
@@ -689,11 +689,11 @@ function _getMeasurementHistory(wrapped) {
  */
 function _createMeasurementHistory(wrapped) {
   const history = wrapped();
-  if ( !history.length ) return history;
+  if ( !history.length ) {return history;}
   history[0].z = this.segments[0].ray.A.z;
   for ( let i = 0, h = 1, n = this.segments.length; i < n; i += 1 ) {
     const s = this.segments[i];
-    if ( s.ray.distance === 0 ) continue;
+    if ( s.ray.distance === 0 ) {continue;}
     history[h].z = s.ray.B.z;
     h += 1;
   }
@@ -705,10 +705,10 @@ function _createMeasurementHistory(wrapped) {
  * Allow GM full reign to move tokens.
  */
 function _canMove(wrapper, token) {
-  if ( this.user.isGM ) return true;
-  if ( token.document?.allowPlayerMove && token.document.allowPlayerMove() ) return true; // Move-that-for-you module. See issue #241.
+  if ( this.user.isGM ) {return true;}
+  if ( token.document?.allowPlayerMove && token.document.allowPlayerMove() ) {return true;} // Move-that-for-you module. See issue #241.
   const baseCanMove = wrapper(token);
-  if ( !baseCanMove) return false;
+  if ( !baseCanMove) {return false;}
 
   // Adjust each segment for the difference from the original token position.
   // Important when dragging multiple tokens.
@@ -718,7 +718,7 @@ function _canMove(wrapper, token) {
   const dy = token.document.y - origin.y;
   let {x, y} = token.document._source;
   for ( const segment of this.segments ) {
-    if ( segment.history || (segment.ray.distance === 0) ) continue;
+    if ( segment.history || (segment.ray.distance === 0) ) {continue;}
     const r = segment.ray;
     const adjustedDestination = {x: Math.round(r.B.x + dx), y: Math.round(r.B.y + dy)};
     const a = token.getCenterPoint({x, y});
@@ -747,7 +747,7 @@ async function _animateSegment(wrapped, token, segment, destination, updateOptio
   // If moving multiple tokens, take into account the current token's elevation differential.
   const origE = this.waypoints[0].elevation || 0;
   let diffE = 0;
-  if ( this.token !== token ) diffE = token.elevationE - origE;
+  if ( this.token !== token ) {diffE = token.elevationE - origE;}
   destination.elevation += diffE;
 
   foundry.utils.mergeObject(updateOptions, {
@@ -801,7 +801,7 @@ function _onDragStart(wrapped, event, { isTokenDrag = false } = {}) {
 function _onMoveKeyDown(wrapped, context) {
   const teleportKeys = new Set(game.keybindings.get(MODULE_ID, Settings.KEYBINDINGS.TELEPORT).map(binding =>
     binding.key));
-  if ( teleportKeys.intersects(game.keyboard.downKeys) ) this.segments.forEach(s => s.teleport = true);
+  if ( teleportKeys.intersects(game.keyboard.downKeys) ) {this.segments.forEach(s => s.teleport = true);}
   wrapped(context);
 }
 
@@ -814,7 +814,7 @@ function _onMoveKeyDown(wrapped, context) {
  */
 function incrementElevation() {
   const ruler = this;
-  if ( !ruler || !ruler.active ) return;
+  if ( !ruler || !ruler.active ) {return;}
 
   // Increment the elevation at the last waypoint.
   log("incrementElevation");
@@ -832,7 +832,7 @@ function incrementElevation() {
  */
 function decrementElevation() {
   const ruler = this;
-  if ( !ruler || !ruler.active ) return;
+  if ( !ruler || !ruler.active ) {return;}
 
   // Decrement the elevation at the last waypoint.
   log("decrementElevation");
@@ -853,8 +853,8 @@ function decrementElevation() {
  * @returns {boolean} False if the movement did not occur
  */
 async function teleport(_context) {
-  if ( this._state !== this.constructor.STATES.MEASURING ) return false;
-  if ( !this._canMove(this.token) ) return false;
+  if ( this._state !== this.constructor.STATES.MEASURING ) {return false;}
+  if ( !this._canMove(this.token) ) {return false;}
 
   // Change all segments to teleport.
   this.segments.forEach(s => s.teleport = true);

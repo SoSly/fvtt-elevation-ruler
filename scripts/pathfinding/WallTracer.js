@@ -19,7 +19,7 @@ import { Draw } from "../geometry/Draw.js";
 import { Graph, GraphVertex, GraphEdge } from "../geometry/Graph.js";
 import { Settings } from "../settings.js";
 import { doSegmentsOverlap, IX_TYPES, segmentCollision } from "../geometry/util.js";
-import { MODULE_ID, OTHER_MODULES, FLAGS } from "../const.js";
+import { MODULE_ID, OTHER_MODULES } from "../const.js";
 
 /* WallTracerVertex
 
@@ -263,7 +263,7 @@ export class WallTracerEdge extends GraphEdge {
   static fromToken(token) {
     const edgeIter = token.constrainedTokenBorder.iterateEdges();
     const edges = [];
-    for ( const edge of edgeIter ) edges.push(this.fromObject(edge.A, edge.B, [token]));
+    for ( const edge of edgeIter ) {edges.push(this.fromObject(edge.A, edge.B, [token]));}
     return edges;
   }
 
@@ -275,8 +275,8 @@ export class WallTracerEdge extends GraphEdge {
    * @returns {PIXI.Point} The point along the wall line. Ratio 0: endpoint A; 1: endpoint B.
    */
   static pointAtEdgeRatio(edgeA, edgeB, edgeT) {
-    if ( edgeT.almostEqual(0) ) return edgeA;
-    if ( edgeT.almostEqual(1) ) return edgeB;
+    if ( edgeT.almostEqual(0) ) {return edgeA;}
+    if ( edgeT.almostEqual(1) ) {return edgeB;}
     return edgeA.projectToward(edgeB, edgeT);
   }
 
@@ -309,7 +309,7 @@ export class WallTracerEdge extends GraphEdge {
    */
   splitAtT(edgeT, vertices = new Map()) {
     edgeT = Math.clamp(edgeT, 0, 1);
-    if ( edgeT.almostEqual(0) || edgeT.almostEqual(1) ) return null;
+    if ( edgeT.almostEqual(0) || edgeT.almostEqual(1) ) {return null;}
 
     // Determine the intersection point based on the edgeT.
     const { A, B } = this;
@@ -320,7 +320,7 @@ export class WallTracerEdge extends GraphEdge {
     for ( const x of [0, -0.1, 0.1] ) {
       for ( const y of [0, -0.1, 0.1] ) {
         const testIx = ix.add({ x, y }, PIXI.Point._tmp);
-        if ( !vertices.has(testIx.key) ) continue;
+        if ( !vertices.has(testIx.key) ) {continue;}
         ix.copyFrom(testIx);
         break;
       }
@@ -350,9 +350,9 @@ export class WallTracerEdge extends GraphEdge {
    */
   edgeBlocks(origin, moveToken, tokenBlockType, elevation = 0) {
     return this.objects.some(obj =>
-        (obj instanceof Wall) ? this.constructor.wallBlocks(obj, origin, moveToken, elevation)
-          : (obj instanceof Token) ? this.constructor.tokenEdgeBlocks(obj, moveToken, tokenBlockType, elevation)
-            : false);
+      (obj instanceof Wall) ? this.constructor.wallBlocks(obj, origin, moveToken, elevation)
+        : (obj instanceof Token) ? this.constructor.tokenEdgeBlocks(obj, moveToken, tokenBlockType, elevation)
+          : false);
   }
 
   /**
@@ -364,7 +364,7 @@ export class WallTracerEdge extends GraphEdge {
    * @returns {boolean}
    */
   static wallBlocks(wall, origin, moveToken, elevation = 0) {
-    if ( !wall.document.move || wall.isOpen ) return false;
+    if ( !wall.document.move || wall.isOpen ) {return false;}
 
     // Ignore one-directional walls which are facing away from the center
     const side = wall.edge.orientPoint(origin);
@@ -376,14 +376,14 @@ export class WallTracerEdge extends GraphEdge {
     */
 
     if ( wall.document.dir
-      && side === wall.document.dir ) return false;
+      && side === wall.document.dir ) {return false;}
 
     // Test for wall height. If elevation at the wall bottom, wall blocks; if at wall top it does not.
-    if ( !elevation.between(wall.bottomZ, wall.topZ, false) && elevation !== wall.bottomZ ) return false;
+    if ( !elevation.between(wall.bottomZ, wall.topZ, false) && elevation !== wall.bottomZ ) {return false;}
 
     // If Wall Height vaulting is enabled, walls less than token vision height do not block.
     const wh = OTHER_MODULES.WALL_HEIGHT;
-    if ( wh.ACTIVE && moveToken.visionZ >= wall.topZ ) return false;
+    if ( wh.ACTIVE && moveToken.visionZ >= wall.topZ ) {return false;}
     return true;
   }
 
@@ -397,30 +397,30 @@ export class WallTracerEdge extends GraphEdge {
    */
   static tokenEdgeBlocks(token, moveToken, tokenBlockType, elevation = 0) {
     // Don't block hidden tokens.
-    if ( token.document.hidden ) return false;
+    if ( token.document.hidden ) {return false;}
 
     // Don't block oneself.
-    if ( !moveToken || moveToken === token ) return false;
+    if ( !moveToken || moveToken === token ) {return false;}
 
     // Must be within the elevation bounds.
-    if ( !elevation.between(token.topZ, token.bottomZ) ) return false;
+    if ( !elevation.between(token.topZ, token.bottomZ) ) {return false;}
 
     // Don't block dead tokens (HP <= 0).
     const { tokenHPAttribute, pathfindingIgnoreStatuses } = CONFIG[MODULE_ID];
     let tokenHP = Number(foundry.utils.getProperty(token, tokenHPAttribute));
 
-    //DemonLord using damage system
-    if ( game.system.id === 'demonlord')
-       {
-        let health = Number(foundry.utils.getProperty(token, "actor.system.characteristics.health.max"));
-        let damage = Number(foundry.utils.getProperty(token, "actor.system.characteristics.health.value"));
-        tokenHP = health - damage;
-       }
+    // DemonLord using damage system
+    if ( game.system.id === "demonlord")
+    {
+      let health = Number(foundry.utils.getProperty(token, "actor.system.characteristics.health.max"));
+      let damage = Number(foundry.utils.getProperty(token, "actor.system.characteristics.health.value"));
+      tokenHP = health - damage;
+    }
 
-    if ( Number.isFinite(tokenHP) && tokenHP <= 0 ) return false;
+    if ( Number.isFinite(tokenHP) && tokenHP <= 0 ) {return false;}
 
     // Don't block tokens with certain status.
-    if ( token.actor?.statuses && token.actor.statuses.intersects(pathfindingIgnoreStatuses) ) return false;
+    if ( token.actor?.statuses && token.actor.statuses.intersects(pathfindingIgnoreStatuses) ) {return false;}
 
     // Don't block tokens that share specific disposition with the moving token.
     tokenBlockType ??= Settings._tokenBlockType();
@@ -508,13 +508,13 @@ export class WallTracer extends Graph {
    * @inherited
    */
   addEdge(edge) {
-    if ( edge.A.key === edge.B.key ) return null;
+    if ( edge.A.key === edge.B.key ) {return null;}
     if ( this.edges.has(edge.key) ) {
       // This edge already exists. But this edge's objects may not be in the existing edge objects.
       const existingEdge = this.edges.get(edge.key);
       edge.objects.forEach(obj => this._addEdgeToObjectSet(obj.id, existingEdge));
       edge.objects.forEach(obj => existingEdge.objects.add(obj));
-      return ;
+      return;
     }
 
     // Construct a new edge.
@@ -531,7 +531,7 @@ export class WallTracer extends Graph {
    * @param {GraphEdge} edge
    */
   deleteEdge(edge) {
-    if ( !this.edges.has(edge.key) ) return;
+    if ( !this.edges.has(edge.key) ) {return;}
     super.deleteEdge(edge);
     this.edgesQuadtree.remove(edge);
 
@@ -545,8 +545,8 @@ export class WallTracer extends Graph {
    * @param {WallTracerEdge} edge   Edge to add
    */
   _addEdgeToObjectSet(id, edge) {
-    if ( edge.A.key === edge.B.key ) return null;
-    if ( !this.objectEdges.get(id) ) this.objectEdges.set(id, new Set());
+    if ( edge.A.key === edge.B.key ) {return null;}
+    if ( !this.objectEdges.get(id) ) {this.objectEdges.set(id, new Set());}
     const edgeSet = this.objectEdges.get(id);
     edgeSet.add(edge);
   }
@@ -558,7 +558,7 @@ export class WallTracer extends Graph {
    */
   _removeEdgeFromObjectSet(id, edge) {
     const edgeSet = this.objectEdges.get(id);
-    if ( !edgeSet ) return;
+    if ( !edgeSet ) {return;}
 
     // Stop tracking this edge.
     edgeSet.delete(edge);
@@ -566,7 +566,7 @@ export class WallTracer extends Graph {
     edge.objects.delete(obj); // Delink the object from the edge.
 
     // If this edge has no associated objects, delete the edge.
-    if ( !edge.objects.size ) this.deleteEdge(edge);
+    if ( !edge.objects.size ) {this.deleteEdge(edge);}
   }
 
   /**
@@ -616,7 +616,7 @@ export class WallTracer extends Graph {
     // Add this object to the overlapping edge's objects.
     // By definition, should only be a single overlap at a time.
     // Possible for there to be collisions in between, b/c collisions checked by edgeA --> edgeB. Ignore.
-    if ( !collisions.has(1) ) tArr.push(1);
+    if ( !collisions.has(1) ) {tArr.push(1);}
     let priorT = 0;
     const OVERLAP = IX_TYPES.OVERLAP;
 
@@ -664,7 +664,7 @@ export class WallTracer extends Graph {
 
         // Jump to new t position in the array.
         const idx = tArr.findIndex(t => t >= overlapC.endT0);
-        if ( ~idx ) i = idx - 1; // Will be increased by the for loop. Avoid getting into infinite loop.
+        if ( ~idx ) {i = idx - 1;} // Will be increased by the for loop. Avoid getting into infinite loop.
         priorT = overlapC.endT0;
         continue;
 
@@ -693,16 +693,16 @@ export class WallTracer extends Graph {
    */
   addToken(token) {
     const tokenId = token.id;
-    if ( this.edges.has(tokenId) ) return;
+    if ( this.edges.has(tokenId) ) {return;}
 
     // Pad the constrained token border as necessary.
     const borderShape = token.constrainedTokenBorder;
     const buffer = CONFIG[MODULE_ID].tokenPathfindingBuffer ?? 0;
-    if ( buffer ) borderShape.pad(buffer);
+    if ( buffer ) {borderShape.pad(buffer);}
 
     // Construct a new token edge set.
     const edgeIter = borderShape.iterateEdges();
-    for ( const edge of edgeIter ) this.addObjectEdge(edge.A, edge.B, token);
+    for ( const edge of edgeIter ) {this.addObjectEdge(edge.A, edge.B, token);}
     this.tokenIds.add(tokenId);
   }
 
@@ -712,7 +712,7 @@ export class WallTracer extends Graph {
    */
   addWall(wall) {
     const wallId = wall.id;
-    if ( this.edges.has(wallId) ) return;
+    if ( this.edges.has(wallId) ) {return;}
 
     // Construct a new wall edge set.
     this.addObjectEdge(wall.edge.a, wall.edge.b, wall);
@@ -725,7 +725,7 @@ export class WallTracer extends Graph {
    */
   addCanvasEdge(edge) {
     const id = edge.id;
-    if ( this.edges.has(id) ) return;
+    if ( this.edges.has(id) ) {return;}
 
     // Construct a new canvas edge set
     this.addObjectEdge(PIXI.Point.fromObject(edge.a), PIXI.Point.fromObject(edge.b), edge);
@@ -739,7 +739,7 @@ export class WallTracer extends Graph {
    */
   removeObject(id, _recurse = true) {
     const edges = [...this.objectEdges.get(id)]; // Shallow copy the edges b/c they will be removed from the set.
-    if ( !edges.length ) return;
+    if ( !edges.length ) {return;}
     edges.forEach(edge => this._removeEdgeFromObjectSet(id, edge));
 
     // Stop tracking the object.
@@ -777,8 +777,8 @@ export class WallTracer extends Graph {
    * @param {string|Wall} wallId    Id of the wall to remove, or the wall itself.
    */
   removeWall(wallId, _recurse = true) {
-    if ( wallId instanceof Wall ) wallId = wallId.id;
-    if ( !this.wallIds.has(wallId) ) return;
+    if ( wallId instanceof Wall ) {wallId = wallId.id;}
+    if ( !this.wallIds.has(wallId) ) {return;}
     this.wallIds.delete(wallId);
     return this.removeObject(wallId, _recurse);
   }
@@ -788,8 +788,8 @@ export class WallTracer extends Graph {
    * @param {string|Token} tokenId    Id of the token to remove, or the token itself.
    */
   removeToken(tokenId, _recurse = true) {
-    if ( tokenId instanceof Token ) tokenId = tokenId.id;
-    if ( !this.tokenIds.has(tokenId) ) return;
+    if ( tokenId instanceof Token ) {tokenId = tokenId.id;}
+    if ( !this.tokenIds.has(tokenId) ) {return;}
     this.tokenIds.delete(tokenId);
     return this.removeObject(tokenId, _recurse);
   }
@@ -799,8 +799,8 @@ export class WallTracer extends Graph {
    * @param {string|Edge} edgeId
    */
   removeCanvasEdge(edgeId, _recurse = true) {
-    if ( edgeId instanceof foundry.canvas.edges.Edge ) edgeId = edgeId.id;
-    if ( !this.canvasEdgeIds.has(edgeId) ) return;
+    if ( edgeId instanceof foundry.canvas.edges.Edge ) {edgeId = edgeId.id;}
+    if ( !this.canvasEdgeIds.has(edgeId) ) {return;}
     this.canvasEdgeIds.delete(edgeId);
     return this.removeObject(edgeId, _recurse);
   }
@@ -820,7 +820,7 @@ export class WallTracer extends Graph {
     const ENDPOINT = IX_TYPES.ENDPOINT;
     for ( const edge of collidingEdges ) {
       const collision = edge.findEdgeCollision(edgeA, edgeB);
-      if ( !collision || collision.type === ENDPOINT ) continue;
+      if ( !collision || collision.type === ENDPOINT ) {continue;}
       collision.edge = edge;
       edgeCollisions.push(collision);
     }
@@ -872,7 +872,7 @@ export class WallTracer extends Graph {
       const objectsValid = edge.objects.every(obj => objectIds.has(obj.id));
 
       // Track inconsistencies.
-      if ( !(distinctVertices && verticesInSet && inQuadtree && objectsValid) ) out.badEdges.add(edge);
+      if ( !(distinctVertices && verticesInSet && inQuadtree && objectsValid) ) {out.badEdges.add(edge);}
       out.edgesDistinctVertices &&= distinctVertices;
       out.edgesVerticesInSet &&= verticesInSet;
       out.edgesInQuadtree &&= inQuadtree;
@@ -886,7 +886,7 @@ export class WallTracer extends Graph {
     out.badQuadtreeEdges = new Set([...quadtreeEdges.values()].filter(edge => !this.edges.has(edge.key)));
 
     // Each object has a key in the objectEdges
-    out.badObjects = new Set([...objectIds.values()].filter(id => !this.objectEdges.has(id)))
+    out.badObjects = new Set([...objectIds.values()].filter(id => !this.objectEdges.has(id)));
 
     // Each objectEdges key is in one of the three object sets
     out.badObjectEdges = new Set([...this.objectEdges.keys()].filter(key => !objectIds.has(key)));
@@ -913,14 +913,14 @@ export class WallTracer extends Graph {
     for ( const edge of canvas.edges.values() ) {
       switch ( edge.type ) {
         case "wall": {
-          if ( edge.object.document.move === NORMAL ) modelGraph.addWall(edge.object);
+          if ( edge.object.document.move === NORMAL ) {modelGraph.addWall(edge.object);}
           break;
         }
         case "outerBounds":
         case "innerBounds": modelGraph.addCanvasEdge(edge); break;
       }
     }
-    if ( Settings.useTokensInPathfinding ) canvas.tokens.placeables.forEach(token => modelGraph.addToken(token));
+    if ( Settings.useTokensInPathfinding ) {canvas.tokens.placeables.forEach(token => modelGraph.addToken(token));}
     return modelGraph;
   }
 
@@ -930,7 +930,7 @@ export class WallTracer extends Graph {
   _reset() {
     this.clear();
     const modelGraph = this.constructor.fromCurrentScene();
-    for ( const prop of Object.keys(modelGraph) ) this[prop] = modelGraph[prop];
+    for ( const prop of Object.keys(modelGraph) ) {this[prop] = modelGraph[prop];}
   }
 
   /**
@@ -940,7 +940,7 @@ export class WallTracer extends Graph {
    * Won't work if the token is animating or document ≠ source.
    * @returns {object} Newly constructed graph and list of inconsistencies.
    */
- _checkGraphSceneConsistency() {
+  _checkGraphSceneConsistency() {
     const thisGraph = this;
     const modelGraph = thisGraph.constructor.fromCurrentScene();
 
@@ -969,35 +969,35 @@ export class WallTracer extends Graph {
     consistencyChecks.edges.exists = Object.hasOwn(thisGraph, "edges");
     consistencyChecks.edges.equalSize = thisGraph.edges.size === modelGraph.edges.size;
     consistencyChecks.edges.keysEqual = thisGraph.edges.keys().every(key => modelGraph.edges.has(key));
-    // consistencyChecks.edges.valuesEqual = thisGraph.edges.keys().every(key => thisGraph.edges.get(key) === modelGraph.edges.get(key));
+    // ConsistencyChecks.edges.valuesEqual = thisGraph.edges.keys().every(key => thisGraph.edges.get(key) === modelGraph.edges.get(key));
 
     consistencyChecks.objectEdges = {};
     consistencyChecks.objectEdges.exists = Object.hasOwn(thisGraph, "objectEdges");
     consistencyChecks.objectEdges.equalSize = thisGraph.objectEdges.size === modelGraph.objectEdges.size;
     consistencyChecks.objectEdges.keysEqual = thisGraph.objectEdges.keys().every(key => modelGraph.objectEdges.has(key));
-    // consistencyChecks.objectEdges.valuesEqual = thisGraph.objectEdges.keys().every(key => thisGraph.objectEdges.get(key) === modelGraph.objectEdges.get(key));
+    // ConsistencyChecks.objectEdges.valuesEqual = thisGraph.objectEdges.keys().every(key => thisGraph.objectEdges.get(key) === modelGraph.objectEdges.get(key));
 
     consistencyChecks.vertices = {};
     consistencyChecks.vertices.exists = Object.hasOwn(thisGraph, "vertices");
     consistencyChecks.vertices.equalSize = thisGraph.vertices.size === modelGraph.vertices.size;
     consistencyChecks.vertices.keysEqual = thisGraph.vertices.keys().every(key => modelGraph.vertices.has(key));
-    // consistencyChecks.vertices.valuesEqual = thisGraph.vertices.keys().every(key => thisGraph.vertices.get(key) === modelGraph.vertices.get(key));
+    // ConsistencyChecks.vertices.valuesEqual = thisGraph.vertices.keys().every(key => thisGraph.vertices.get(key) === modelGraph.vertices.get(key));
 
 
     // Do we have all the tokens?
     consistencyChecks.allSceneTokens = canvas.tokens.placeables.filter(t => !SCENE_GRAPH.tokenIds.has(t.id)).length === 0;
 
-    // do we have all the walls?
+    // Do we have all the walls?
     consistencyChecks.allWalls = canvas.walls.placeables.filter(w => !SCENE_GRAPH.wallIds.has(w.id)).length === 0;
 
     // Every object edge id should be in one of the three sets and vice versa.
-    const objectEdgeKeys = new Set(SCENE_GRAPH.objectEdges.keys())
-    SCENE_GRAPH.canvasEdgeIds.difference(objectEdgeKeys).size
-    SCENE_GRAPH.tokenIds.difference(objectEdgeKeys).size
-    SCENE_GRAPH.wallIds.difference(objectEdgeKeys).size
+    const objectEdgeKeys = new Set(SCENE_GRAPH.objectEdges.keys());
+    SCENE_GRAPH.canvasEdgeIds.difference(objectEdgeKeys).size;
+    SCENE_GRAPH.tokenIds.difference(objectEdgeKeys).size;
+    SCENE_GRAPH.wallIds.difference(objectEdgeKeys).size;
     consistencyChecks.ids = objectEdgeKeys.equals(SCENE_GRAPH.canvasEdgeIds.union(SCENE_GRAPH.tokenIds).union(SCENE_GRAPH.wallIds));
 
-    const allConsistent = Object.values(consistencyChecks).every(category => Object.values(category).every(check => check === true))
+    const allConsistent = Object.values(consistencyChecks).every(category => Object.values(category).every(check => check === true));
 
     return { modelGraph, consistencyChecks, allConsistent };
   }
@@ -1028,9 +1028,6 @@ SCENE_GRAPH.wallIds.difference(objectEdgeKeys).size
 objectEdgeKeys.equals(SCENE_GRAPH.canvasEdgeIds.union(SCENE_GRAPH.tokenIds).union(SCENE_GRAPH.wallIds))
 
 
-
-
-
 // Draw all edges
 SCENE_GRAPH.drawEdges()
 
@@ -1055,8 +1052,8 @@ wt.tokenEdges.forEach(s => s.forEach(e => e.draw({color: Draw.COLORS.orange})))
  * Handles when the segment is split moving from 1 --> 0, indicated by secondT < firstT.
  */
 function prorateTSplit(firstT, secondT) {
-  if ( secondT.almostEqual(0) ) return 1;
-  if ( firstT.almostEqual(secondT) ) return 0;
-  if ( secondT < firstT ) return secondT / firstT;
+  if ( secondT.almostEqual(0) ) {return 1;}
+  if ( firstT.almostEqual(secondT) ) {return 0;}
+  if ( secondT < firstT ) {return secondT / firstT;}
   return (secondT - firstT) / (1 - firstT);
 }

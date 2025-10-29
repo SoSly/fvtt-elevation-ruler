@@ -77,7 +77,7 @@ export class MatrixFlat {
       next() {
         if ( index < ln ) {
           return { value: dat[index++], done: false };
-        } else return { done: true };
+        } else {return { done: true };}
       }
     };
   }
@@ -94,7 +94,7 @@ export class MatrixFlat {
   forEach(callback) {
     const { nrow, ncol } = this;
     for ( let r = 0; r < nrow; r += 1 ) {
-      for ( let c = 0; c < ncol; c += 1 ) callback(this.getIndex(r, c), r, c, this);
+      for ( let c = 0; c < ncol; c += 1 ) {callback(this.getIndex(r, c), r, c, this);}
     }
   }
 
@@ -107,7 +107,7 @@ export class MatrixFlat {
    */
   _forEach(callback) {
     const ln = this.length;
-    for ( let i = 0; i < ln; i += 1 ) callback(this.arr[i], i, this);
+    for ( let i = 0; i < ln; i += 1 ) {callback(this.arr[i], i, this);}
   }
 
   /**
@@ -134,7 +134,7 @@ export class MatrixFlat {
 
   forEachDiagonal(callback) {
     const ln = Math.min(this.nrow, this.ncol);
-    for ( let i = 0; i < ln; i += 1 ) callback(this.getIndex(i, i), i, this);
+    for ( let i = 0; i < ln; i += 1 ) {callback(this.getIndex(i, i), i, this);}
   }
 
   setDiagonal(callback) {
@@ -246,7 +246,7 @@ export class MatrixFlat {
     mat.arr[0] = p.x;
     mat.arr[1] = p.y;
     mat.arr[2] = p.z;
-    if ( homogenous ) mat.arr[3] = 1;
+    if ( homogenous ) {mat.arr[3] = 1;}
     return mat;
   }
 
@@ -259,11 +259,11 @@ export class MatrixFlat {
     // Only single row, so can process the array directly.
     mat.arr[0] = p.x;
     mat.arr[1] = p.y;
-    if ( homogenous ) mat.arr[2] = 1;
+    if ( homogenous ) {mat.arr[2] = 1;}
     return mat;
   }
 
- /**
+  /**
    * Convert matrix to a PIXI.Point.
    * Any index in the first row can be chosen for x and y.
    * If homogenous is true, the last column [0, col - 1] is assumed to be the divisor.
@@ -348,10 +348,10 @@ export class MatrixFlat {
     const DIAG2 = (zNear + zFar) * rangeInv;
     const A = zNear * zFar * rangeInv * 2;
     return this.fromRowMajorArray([
-      DIAG0,   0,    0,      0,
-      0,       f,    0,      0,
-      0,       0,    DIAG2,  -1,
-      0,       0,    A,      0
+      DIAG0, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, DIAG2, -1,
+      0, 0, A, 0
     ], 4, 4);
   }
 
@@ -379,10 +379,10 @@ export class MatrixFlat {
     const D = -((2 * zFar * zNear) / (zFar - zNear));
 
     return this.fromRowMajorArray([
-      (2 * zNear) / (right - left),  0,                            A,  0,
-      0,                             (2 * zNear) / (top - bottom), B,  0,
-      0,                             0,                            C,  D,
-      0,                             0,                            -1, 0
+      (2 * zNear) / (right - left), 0, A, 0,
+      0, (2 * zNear) / (top - bottom), B, 0,
+      0, 0, C, D,
+      0, 0, -1, 0
     ], 4, 4);
   }
 
@@ -404,13 +404,13 @@ export class MatrixFlat {
     // NOTE: Foundry uses a left-hand coordinate system, with y reversed.
 
     const zAxis = cameraPosition.subtract(targetPosition); // ZAxis = forward
-    if ( zAxis.magnitudeSquared ) zAxis.normalize(zAxis); // Don't normalize if 0, 0, 0
+    if ( zAxis.magnitudeSquared ) {zAxis.normalize(zAxis);} // Don't normalize if 0, 0, 0
 
     const xAxis = new CONFIG.GeometryLib.threeD.Point3d(1, 0, 0);
     const yAxis = new CONFIG.GeometryLib.threeD.Point3d(0, 1, 0);
     if ( zAxis.x || zAxis.y ) {
       up.cross(zAxis, xAxis); // XAxis = right
-      if ( xAxis.magnitudeSquared() ) xAxis.normalize(xAxis); // Don't normalize if 0, 0, 0
+      if ( xAxis.magnitudeSquared() ) {xAxis.normalize(xAxis);} // Don't normalize if 0, 0, 0
       zAxis.cross(xAxis, yAxis); // YAxis = up
 
     } else {
@@ -448,15 +448,15 @@ export class MatrixFlat {
   static rotationX(angle, d3 = true, outMatrix) {
     const n = 3 + d3;
     outMatrix = this.identity(n, n, outMatrix);
-    if ( !angle ) return outMatrix;
+    if ( !angle ) {return outMatrix;}
 
     let c = Math.cos(angle);
     let s = Math.sin(angle);
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     /*
     [1, 0, 0, 0],
@@ -485,15 +485,15 @@ export class MatrixFlat {
   static rotationY(angle, d3 = true, outMatrix) {
     const n = 3 + d3;
     outMatrix = this.identity(n, n, outMatrix);
-    if ( !angle ) return outMatrix;
+    if ( !angle ) {return outMatrix;}
 
     let c = Math.cos(angle);
     let s = Math.sin(angle);
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     /*
     [c, 0, s, 0],
@@ -521,15 +521,15 @@ export class MatrixFlat {
   static rotationZ(angle, d3 = true, outMatrix) {
     const n = 3 + d3;
     outMatrix = this.identity(n, n, outMatrix);
-    if ( !angle ) return outMatrix;
+    if ( !angle ) {return outMatrix;}
 
     let c = Math.cos(angle);
     let s = Math.sin(angle);
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     /*
       [c, s, 0, 0],
@@ -607,10 +607,10 @@ export class MatrixFlat {
     [0, 0, z, 0],
     [0, 0, 0, 1]
     */
-   outMatrix.setIndex(0, 0, x);
-   outMatrix.setIndex(1, 1, y);
-   if ( typeof z !== "undefined" ) outMatrix.setIndex(2, 2, z);
-   return outMatrix;
+    outMatrix.setIndex(0, 0, x);
+    outMatrix.setIndex(1, 1, y);
+    if ( typeof z !== "undefined" ) {outMatrix.setIndex(2, 2, z);}
+    return outMatrix;
   }
 
   /**
@@ -627,8 +627,8 @@ export class MatrixFlat {
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     const cNeg = 1 - c;
     const xy = axis.x * axis.y * cNeg;
@@ -650,7 +650,6 @@ export class MatrixFlat {
   }
 
 
-
   // ----- NOTE: Basic math operations ----- //
 
   /**
@@ -659,7 +658,7 @@ export class MatrixFlat {
    * @returns {boolean}
    */
   equal(other) {
-    if ( this.nrow !== other.nrow || this.ncol !== other.ncol ) return false;
+    if ( this.nrow !== other.nrow || this.ncol !== other.ncol ) {return false;}
     return this.arr.every((elem, i) => elem === other.arr[i]);
   }
 
@@ -670,7 +669,7 @@ export class MatrixFlat {
    * @returns {boolean}
    */
   almostEqual(other, epsilon = 1e-8) {
-    if ( this.nrow !== other.nrow || this.ncol !== other.ncol ) return false;
+    if ( this.nrow !== other.nrow || this.ncol !== other.ncol ) {return false;}
     return this.arr.every((elem, i) => elem.almostEqual(other.arr[i], epsilon));
   }
 
@@ -681,8 +680,8 @@ export class MatrixFlat {
    */
   clean(epsilon = 1e-08) {
     this._setElements(elem => {
-      if ( elem.almostEqual(0, epsilon) ) return 0;
-      if ( elem.almostEqual(1, epsilon) ) return 1;
+      if ( elem.almostEqual(0, epsilon) ) {return 0;}
+      if ( elem.almostEqual(1, epsilon) ) {return 1;}
       return elem;
     });
   }
@@ -695,8 +694,8 @@ export class MatrixFlat {
   transpose(outMatrix) {
     outMatrix ??= this.constructor.empty(this.nrow, this.ncol);
     this.forEach((elem, r, c) => {
-      if ( r === c ) outMatrix.setIndex(r, c, elem);
-      else outMatrix.setIndex(c, r, elem);
+      if ( r === c ) {outMatrix.setIndex(r, c, elem);}
+      else {outMatrix.setIndex(c, r, elem);}
     });
     return outMatrix;
   }
@@ -738,7 +737,7 @@ export class MatrixFlat {
     const rowsB = B.nrow;
     const colsB = B.ncol;
 
-    outMatrix = this.constructor.zeroes(rowsA, colsB, outMatrix)
+    outMatrix = this.constructor.zeroes(rowsA, colsB, outMatrix);
 
     if ( colsA !== rowsB || outMatrix.nrow !== rowsA || outMatrix.ncol !== colsB ) {
       console.error("Matrices cannot be multiplied.");
@@ -746,8 +745,8 @@ export class MatrixFlat {
     }
 
     // Cannot have the outMatrix reference A or B, because the outMatrix values get modified in the loop.
-    if ( A === outMatrix ) A = A.clone();
-    if ( B === outMatrix ) B = B.clone();
+    if ( A === outMatrix ) {A = A.clone();}
+    if ( B === outMatrix ) {B = B.clone();}
 
     for ( let x = 0; x < rowsA; x += 1 ) {
       for ( let y = 0; y < colsB; y += 1 ) {
@@ -770,7 +769,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = other.arr[0]; // aRC
+    const a00 = other.arr[0]; // ARC
     const a01 = other.arr[1];
     const a02 = other.arr[2];
 
@@ -804,7 +803,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = other.arr[0]; // aRC
+    const a00 = other.arr[0]; // ARC
     const a01 = other.arr[1];
     const a02 = other.arr[2];
     const a03 = other.arr[3];
@@ -848,7 +847,7 @@ export class MatrixFlat {
   multiplyPoint2d(point, outPoint = new PIXI.Point()) {
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = this.arr[0]; // aRC
+    const a00 = this.arr[0]; // ARC
     const a01 = this.arr[1];
     const a02 = this.arr[2];
 
@@ -886,7 +885,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = this.arr[0]; // aRC
+    const a00 = this.arr[0]; // ARC
     const a01 = this.arr[1];
     const a02 = this.arr[2];
     const a03 = this.arr[3];
@@ -936,13 +935,13 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = this.arr[0]; // aRC
+    const a00 = this.arr[0]; // ARC
     const a01 = this.arr[1];
 
     const a10 = this.arr[2];
     const a11 = this.arr[3];
 
-    const b00 = other.arr[0]; // aRC
+    const b00 = other.arr[0]; // ARC
     const b01 = other.arr[1];
 
     const b10 = other.arr[2];
@@ -981,7 +980,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = this.arr[0]; // aRC
+    const a00 = this.arr[0]; // ARC
     const a01 = this.arr[1];
     const a02 = this.arr[2];
 
@@ -995,7 +994,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const b00 = other.arr[0]; // aRC
+    const b00 = other.arr[0]; // ARC
     const b01 = other.arr[1];
     const b02 = other.arr[2];
 
@@ -1063,7 +1062,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const a00 = this.arr[0]; // aRC
+    const a00 = this.arr[0]; // ARC
     const a01 = this.arr[1];
     const a02 = this.arr[2];
     const a03 = this.arr[3];
@@ -1085,7 +1084,7 @@ export class MatrixFlat {
 
     // For speed, assume _idx is (col * this.nrow) + row
     // Array organized col0, row0, row1, row2, ... col1, row0, row1, ...
-    const b00 = other.arr[0]; // aRC
+    const b00 = other.arr[0]; // ARC
     const b01 = other.arr[1];
     const b02 = other.arr[2];
     const b03 = other.arr[3];
@@ -1163,7 +1162,7 @@ export class MatrixFlat {
     const y = Array.fromRange(n);
     const k = {};
     let det = this.optimizedNDet(n, this, x, y, k);
-    if ( !det ) throw new Error("Matrix is not invertible");
+    if ( !det ) {throw new Error("Matrix is not invertible");}
 
     det = 1 / det;
 
@@ -1243,17 +1242,17 @@ export class MatrixFlat {
   // ----- NOTE: Debugging ----- //
 
   print() {
-    // console.table prints arrays of arrays nicely.
+    // Console.table prints arrays of arrays nicely.
     const out = new Array(this.nrow);
-    for ( let r = 0; r < this.nrow; r += 1 ) out[r] = new Array(this.ncol);
+    for ( let r = 0; r < this.nrow; r += 1 ) {out[r] = new Array(this.ncol);}
     for ( let r = 0; r < this.nrow; r += 1 ) {
       const arrR = out[r];
-      for ( let c = 0; c < this.ncol; c += 1 ) arrR[c] = this.getIndex(r, c);
+      for ( let c = 0; c < this.ncol; c += 1 ) {arrR[c] = this.getIndex(r, c);}
     }
     console.table(out);
   }
 
-  toString() { return `Matrix<${this.nrow},${this.ncol}>`}
+  toString() { return `Matrix<${this.nrow},${this.ncol}>`;}
 }
 
 // For backwards compatibility.
@@ -1325,7 +1324,6 @@ m.invert().arr.every((elem, idx) => elem === resInv[idx])
 m = Matrix.fromFlatArray(arr, 4, 4)
 m2 = new MatrixFlat(arr, 4, 4)
 m3 = MatrixTyped.fromRowMajorArray(arr, 4, 4)
-
 
 
 N = 10000

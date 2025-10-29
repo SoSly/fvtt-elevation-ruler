@@ -23,13 +23,13 @@ import { renderTemplateSync } from "./util.js";
  * @param {object} data                 The object of data used when rendering the application
  */
 function renderCombatTracker(app, html, data) {
-  if ( !game.user.isGM ) return;
+  if ( !game.user.isGM ) {return;}
   const encounterControlsDiv = html.find(".encounter-controls")[0];
-  if ( !encounterControlsDiv ) return;
+  if ( !encounterControlsDiv ) {return;}
   const combatButtons = encounterControlsDiv.getElementsByClassName("combat-button");
-  if ( !combatButtons.length ) return;
+  if ( !combatButtons.length ) {return;}
   const dividers = encounterControlsDiv.getElementsByTagName("h3");
-  if ( !dividers.length ) return;
+  if ( !dividers.length ) {return;}
 
   const myHtml = renderTemplateSync(TEMPLATES.COMBAT_TRACKER, data);
   dividers[0].insertAdjacentHTML("beforebegin", myHtml);
@@ -43,7 +43,7 @@ async function clearMovement(event) {
   event.stopPropagation();
   const combat = this.viewed;
   const tokenD = combat?.combatant?.token;
-  if ( !tokenD ) return;
+  if ( !tokenD ) {return;}
   await tokenD.unsetFlag(MODULE_ID, FLAGS.MOVEMENT_HISTORY);
   ui.notifications.notify(`Combat movement history for ${tokenD.name} reset.`);
 

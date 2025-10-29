@@ -116,8 +116,8 @@ export class BorderEdge {
    * @param {BorderTriangle}
    */
   removeTriangle(triangle) {
-    if ( this.cwTriangle === triangle ) this.cwTriangle = undefined;
-    if ( this.ccwTriangle === triangle ) this.ccwTriangle = undefined;
+    if ( this.cwTriangle === triangle ) {this.cwTriangle = undefined;}
+    if ( this.ccwTriangle === triangle ) {this.ccwTriangle = undefined;}
   }
 
   /**
@@ -143,16 +143,16 @@ export class BorderEdge {
     // Otherwise, don't test for spacer because edges could be non-blocking on either side,
     // which increases the size of the space.
     // For doors, let the token through regardless.
-    if ( this.edgeBlocks(origin, elevation) ) return destinations;
+    if ( this.edgeBlocks(origin, elevation) ) {return destinations;}
     if ( !this.isOpenDoor
        && this.vertexBlocks(this.a.key)
        && this.vertexBlocks(this.b.key)
-       && length < (spacer * 1.9) ) return destinations;
+       && length < (spacer * 1.9) ) {return destinations;}
     destinations.push(this.median);
 
     // Skip corners if not at least spacer away from median.
     // Again, cheat a little on the spacing.
-    if ( length < (spacer * 3.9) ) return destinations;
+    if ( length < (spacer * 3.9) ) {return destinations;}
 
     const { a, b } = this;
     const t = spacer / length;
@@ -167,7 +167,7 @@ export class BorderEdge {
    * @type {boolean}
    */
   get isOpenDoor() {
-    if ( !this.objects.size ) return false;
+    if ( !this.objects.size ) {return false;}
     const { moveToken, tokenBlockType } = this.constructor;
     return this.objects.every(obj =>
       (obj instanceof Wall) ? obj.isOpen
@@ -189,8 +189,8 @@ export class BorderEdge {
 
     const { moveToken, tokenBlockType } = this.constructor;
     return this.objects.some(obj => {
-      if ( obj instanceof Wall ) return WallTracerEdge.wallBlocks(obj, origin, moveToken, elevation);
-      if ( obj instanceof Token ) return WallTracerEdge.tokenEdgeBlocks(obj, moveToken, tokenBlockType, elevation);
+      if ( obj instanceof Wall ) {return WallTracerEdge.wallBlocks(obj, origin, moveToken, elevation);}
+      if ( obj instanceof Token ) {return WallTracerEdge.tokenEdgeBlocks(obj, moveToken, tokenBlockType, elevation);}
       return false;
     });
   }
@@ -201,7 +201,7 @@ export class BorderEdge {
   linkTriangle(triangle) {
     const { a, b } = this;
     if ( !triangle.endpointKeys.has(a.key)
-      || !triangle.endpointKeys.has(b.key) ) throw new Error("Triangle does not share this edge!");
+      || !triangle.endpointKeys.has(b.key) ) {throw new Error("Triangle does not share this edge!");}
 
     const { a: aTri, b: bTri, c: cTri } = triangle.vertices;
     const otherEndpoint = !this.endpointKeys.has(aTri.key) ? aTri
@@ -211,16 +211,16 @@ export class BorderEdge {
     // Debugging
     if ( !this.endpointKeys.has(aTri.key)
       && !this.endpointKeys.has(bTri.key)
-      && !this.endpointKeys.has(cTri.key) ) console.error(`Triangle ${triangle.id} keys not found ${aTri.key}, ${bTri.key}, ${cTri.key}`, this);
+      && !this.endpointKeys.has(cTri.key) ) {console.error(`Triangle ${triangle.id} keys not found ${aTri.key}, ${bTri.key}, ${cTri.key}`, this);}
 
     const orient2d = foundry.utils.orient2dFast;
     const oABE = orient2d(a, b, otherEndpoint);
 
     // Debugging
-    if ( oABE === 0 ) console.error(`Triangle ${triangle.id} collinear to this edge at ${otherEndpoint.x},${otherEndpoint.y}`, this);
+    if ( oABE === 0 ) {console.error(`Triangle ${triangle.id} collinear to this edge at ${otherEndpoint.x},${otherEndpoint.y}`, this);}
 
-    if ( orient2d(a, b, otherEndpoint) > 0 ) this.ccwTriangle = triangle;
-    else this.cwTriangle = triangle;
+    if ( orient2d(a, b, otherEndpoint) > 0 ) {this.ccwTriangle = triangle;}
+    else {this.cwTriangle = triangle;}
   }
 
   /**
@@ -234,8 +234,8 @@ export class BorderEdge {
   vertexBlocks(vertexKey, elevation = 0) {
     const iter = this.sharedVertexEdges(vertexKey);
     for ( const edge of iter ) {
-      if ( edge === this ) continue; // Could break here b/c this edge implicitly is always last.
-      if ( edge.edgeBlocks(undefined, elevation) ) return true;
+      if ( edge === this ) {continue;} // Could break here b/c this edge implicitly is always last.
+      if ( edge.edgeBlocks(undefined, elevation) ) {return true;}
     }
   }
 
@@ -268,11 +268,11 @@ export class BorderEdge {
    */
   _nextEdge(vertexKey, dir = "ccw", _recurse = true) {
     const tri = this.findTriangleFromVertexKey(vertexKey, dir);
-    if ( tri ) return Object.values(tri.edges).find(e => e !== this && e.endpointKeys.has(vertexKey));
+    if ( tri ) {return Object.values(tri.edges).find(e => e !== this && e.endpointKeys.has(vertexKey));}
 
     // Edge is at a border, vertex at the corner of the border.
     // Need to run the opposite direction until we get undefined in that direction.
-    if ( !_recurse ) return null;
+    if ( !_recurse ) {return null;}
     const maxIter = 100;
     let iter = 0;
     let edge = this;
@@ -344,7 +344,7 @@ export class BorderTriangle {
     let c = edgeBC.endpointKeys.has(edgeCA.a.key) ? edgeCA.a : edgeCA.b;
 
     const oABC = foundry.utils.orient2dFast(a, b, c);
-    if ( !oABC ) throw Error("BorderTriangle requires three non-collinear points.");
+    if ( !oABC ) {throw Error("BorderTriangle requires three non-collinear points.");}
     if ( oABC < 0 ) {
       // Flip to ccw.
       [a, c] = [c, a];
@@ -440,7 +440,7 @@ export class BorderTriangle {
     const center = this.center;
     for ( const edge of Object.values(this.edges) ) {
       const entryTriangle = edge.otherTriangle(this); // Neighbor
-      if ( !entryTriangle || (priorTriangle && priorTriangle === entryTriangle) ) continue;
+      if ( !entryTriangle || (priorTriangle && priorTriangle === entryTriangle) ) {continue;}
       const pts = edge.getValidDestinations(center, elevation, spacer);
       pts.forEach(entryPoint => {
         destinations.push({
@@ -469,7 +469,7 @@ export class BorderTriangle {
       d.cost = this._calculateMovementCost(fromPoint, d.entryPoint, token, movePenaltyInstance);
 
       // NaN is bad--results in infinite loop; probably don't want to set NaN to 0 cost.
-      if ( !Number.isFinite(d.cost) ) d.cost = 1e06;
+      if ( !Number.isFinite(d.cost) ) {d.cost = 1e06;}
       d.fromPoint = fromPoint;
     });
     return destinations;
@@ -491,7 +491,7 @@ export class BorderTriangle {
     if ( CONFIG[MODULE_ID].pathfindingCheckTerrains ) {
       const res = movePenaltyInstance.measureSegment(fromPoint, toPoint, { numPrevDiagonal: 0, diagonals });
       distance = res.cost;
-    } else distance = GridCoordinates3d.gridDistanceBetween(fromPoint, toPoint, { diagonals });
+    } else {distance = GridCoordinates3d.gridDistanceBetween(fromPoint, toPoint, { diagonals });}
     return CONFIG.GeometryLib.utils.gridUnitsToPixels(distance);
   }
 
@@ -529,16 +529,16 @@ export class BorderTriangle {
    * @returns {string|null} Edge name or null if none.
    */
   _edgeNameForKeys(key0, key1) {
-    if ( !(this.endpointKeys.has(key0) && this.endpointKeys.has(key1)) ) return undefined;
+    if ( !(this.endpointKeys.has(key0) && this.endpointKeys.has(key1)) ) {return undefined;}
 
     const keysAB = this.edges.AB.endpointKeys;
-    if ( keysAB.has(key0) && keysAB.has(key1) ) return "AB";
+    if ( keysAB.has(key0) && keysAB.has(key1) ) {return "AB";}
 
     const keysBC = this.edges.BC.endpointKeys;
-    if ( keysBC.has(key0) && keysBC.has(key1) ) return "BC";
+    if ( keysBC.has(key0) && keysBC.has(key1) ) {return "BC";}
 
     const keysCA = this.edges.CA.endpointKeys;
-    if ( keysCA.has(key0) && keysCA.has(key1) ) return "CA";
+    if ( keysCA.has(key0) && keysCA.has(key1) ) {return "CA";}
 
     return undefined; // Should not be reached.
   }
@@ -589,9 +589,9 @@ export class BorderTriangle {
     const pointMap = new Map();
     for ( const borderTriangle of borderTriangles ) {
       const { a, b, c } = borderTriangle.vertices;
-      if ( !pointMap.has(a.key) ) pointMap.set(a.key, new Set());
-      if ( !pointMap.has(b.key) ) pointMap.set(b.key, new Set());
-      if ( !pointMap.has(c.key) ) pointMap.set(c.key, new Set());
+      if ( !pointMap.has(a.key) ) {pointMap.set(a.key, new Set());}
+      if ( !pointMap.has(b.key) ) {pointMap.set(b.key, new Set());}
+      if ( !pointMap.has(c.key) ) {pointMap.set(c.key, new Set());}
 
       const aSet = pointMap.get(a.key);
       const bSet = pointMap.get(b.key);
@@ -606,7 +606,7 @@ export class BorderTriangle {
     // Use the point map to determine if a triangle has a shared edge.
     for ( const borderTriangle of borderTriangles ) {
       for ( const edge of Object.values(borderTriangle.edges) ) {
-        if ( edge.cwTriangle && edge.ccwTriangle ) continue; // Already linked.
+        if ( edge.cwTriangle && edge.ccwTriangle ) {continue;} // Already linked.
         const aSet = pointMap.get(edge.a.key);
         const bSet = pointMap.get(edge.b.key);
         const ixSet = aSet.intersection(bSet);
@@ -619,13 +619,13 @@ export class BorderTriangle {
           console.warn("ixSet does not have this borderTriangle", { pointMap, edge, borderTriangle });
         }
 
-        if ( ixSet.size !== 2 ) continue; // No bordering triangle.
+        if ( ixSet.size !== 2 ) {continue;} // No bordering triangle.
         const [tri1, tri2] = ixSet;
         const otherTriangle = borderTriangle === tri1 ? tri2 : tri1;
 
         // Determine where this edge is on the other triangle and replace.
         const otherEdgeName = otherTriangle._edgeNameForKeys(edge.a.key, edge.b.key);
-        if ( !otherEdgeName ) continue; // Should not happen.
+        if ( !otherEdgeName ) {continue;} // Should not happen.
         otherTriangle._setEdge(otherEdgeName, edge);
       }
     }

@@ -32,8 +32,8 @@ PATCHES.CANVAS_EDGES = {};
  */
 function getElevation() {
   const e = this._elevation ??= { a: { top: null, bottom: null }, b: { top: null, bottom: null }};
-  if ( this.object instanceof Wall ) _setWallElevation(this.object, e);
-  else if ( this.object instanceof Region ) _setRegionElevation(this.object, this, e);
+  if ( this.object instanceof Wall ) {_setWallElevation(this.object, e);}
+  else if ( this.object instanceof Region ) {_setRegionElevation(this.object, this, e);}
   return e;
 }
 
@@ -45,8 +45,8 @@ function getElevation() {
 function _setWallElevation(wall, e) {
   let top = wall.topE;
   let bottom = wall.bottomE;
-  if ( !isFinite(top) ) top = null;
-  if ( !isFinite(bottom) ) bottom = null;
+  if ( !isFinite(top) ) {top = null;}
+  if ( !isFinite(bottom) ) {bottom = null;}
   const { a, b } = e;
   a.top = top;
   a.bottom = bottom;
@@ -63,7 +63,7 @@ function _setRegionElevation(region, edge, e) {
   const TM = MODULE_KEYS.TERRAIN_MAPPER;
   let top = region.document.elevation.top;
   if ( TM.ACTIVE && region[TM.ID].isElevated ) {
-    if ( region[TM.ID].isRamp ) return _setRampElevation(region, edge, e);
+    if ( region[TM.ID].isRamp ) {return _setRampElevation(region, edge, e);}
     top = region[TM.ID].plateauElevation;
   }
   const bottom = region.document.elevation.bottom;

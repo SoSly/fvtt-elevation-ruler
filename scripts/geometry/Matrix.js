@@ -71,7 +71,7 @@ export class Matrix {
             c += 1;
           }
           return { value, done: false };
-        } else return { done: true };
+        } else {return { done: true };}
       }
     };
   }
@@ -89,7 +89,7 @@ export class Matrix {
     const { nrow, ncol } = this;
     for ( let r = 0; r < nrow; r += 1 ) {
       const rArr = this.arr[r];
-      for ( let c = 0; c < ncol; c += 1 ) callback(rArr[c], r, c, this);
+      for ( let c = 0; c < ncol; c += 1 ) {callback(rArr[c], r, c, this);}
     }
   }
 
@@ -109,7 +109,7 @@ export class Matrix {
    * @returns {boolean}
    */
   static verify(arr) {
-    if ( !(arr instanceof Array) || arr.length === 0 ) return false;
+    if ( !(arr instanceof Array) || arr.length === 0 ) {return false;}
 
     const innerLength = arr[0].length;
     return arr.every(elem => elem instanceof Array && elem.length === innerLength);
@@ -172,7 +172,7 @@ export class Matrix {
    */
   static empty(rows, cols) {
     const out = new Array(rows);
-    for ( let r = 0; r < rows; r += 1 ) out[r] = new Array(cols);
+    for ( let r = 0; r < rows; r += 1 ) {out[r] = new Array(cols);}
     return new this(out);
   }
 
@@ -184,7 +184,7 @@ export class Matrix {
    */
   static zeroes(rows, cols) {
     const out = new Array(rows);
-    for ( let r = 0; r < rows; r += 1 ) out[r] = (new Array(cols)).fill(0);
+    for ( let r = 0; r < rows; r += 1 ) {out[r] = (new Array(cols)).fill(0);}
     return new this(out);
   }
 
@@ -224,7 +224,7 @@ export class Matrix {
   static random(rows, cols) {
     const mat = this.empty(rows, cols);
     for ( let r = 0; r < rows; r += 1 ) {
-      for ( let c = 0; c < cols; c += 1 ) mat.arr[r][c] = Math.random();
+      for ( let c = 0; c < cols; c += 1 ) {mat.arr[r][c] = Math.random();}
     }
     return mat;
   }
@@ -261,10 +261,10 @@ export class Matrix {
     const DIAG2 = (zNear + zFar) * rangeInv;
     const A = zNear * zFar * rangeInv * 2;
     return new Matrix([
-      [DIAG0,   0,    0,      0],
-      [0,       f,    0,      0],
-      [0,       0,    DIAG2,  -1],
-      [0,       0,    A,      0]
+      [DIAG0, 0, 0, 0],
+      [0, f, 0, 0],
+      [0, 0, DIAG2, -1],
+      [0, 0, A, 0]
     ]);
   }
 
@@ -291,10 +291,10 @@ export class Matrix {
     const C = -((zFar + zNear) / (zFar - zNear));
     const D = -((2 * zFar * zNear) / (zFar - zNear));
     return new Matrix([
-      [(2 * zNear) / (right - left),  0,                            A,  0],
-      [0,                             (2 * zNear) / (top - bottom), B,  0],
-      [0,                             0,                            C,  D],
-      [0,                             0,                            -1, 0]
+      [(2 * zNear) / (right - left), 0, A, 0],
+      [0, (2 * zNear) / (top - bottom), B, 0],
+      [0, 0, C, D],
+      [0, 0, -1, 0]
     ]);
   }
 
@@ -316,13 +316,13 @@ export class Matrix {
     // NOTE: Foundry uses a left-hand coordinate system, with y reversed.
 
     const zAxis = cameraPosition.subtract(targetPosition); // ZAxis = forward
-    if ( zAxis.magnitudeSquared ) zAxis.normalize(zAxis); // Don't normalize if 0, 0, 0
+    if ( zAxis.magnitudeSquared ) {zAxis.normalize(zAxis);} // Don't normalize if 0, 0, 0
 
     const xAxis = new CONFIG.GeometryLib.threeD.Point3d(1, 0, 0);
     const yAxis = new CONFIG.GeometryLib.threeD.Point3d(0, 1, 0);
     if ( zAxis.x || zAxis.y ) {
       up.cross(zAxis, xAxis); // XAxis = right
-      if ( xAxis.magnitudeSquared() ) xAxis.normalize(xAxis); // Don't normalize if 0, 0, 0
+      if ( xAxis.magnitudeSquared() ) {xAxis.normalize(xAxis);} // Don't normalize if 0, 0, 0
       zAxis.cross(xAxis, yAxis); // YAxis = up
 
     } else {
@@ -358,28 +358,28 @@ export class Matrix {
    * @returns {Matrix}
    */
   static rotationX(angle, d3 = true) {
-    if ( !angle ) return d3 ? Matrix.identity(4, 4) : Matrix.identity(3, 3);
+    if ( !angle ) {return d3 ? Matrix.identity(4, 4) : Matrix.identity(3, 3);}
 
     let c = Math.cos(angle);
     let s = Math.sin(angle);
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     const rotX = d3
-    ? [
-      [1, 0, 0, 0],
-      [0, c, s, 0],
-      [0, -s, c, 0],
-      [0, 0, 0, 1]
-    ]
+      ? [
+        [1, 0, 0, 0],
+        [0, c, s, 0],
+        [0, -s, c, 0],
+        [0, 0, 0, 1]
+      ]
       : [
-      [1, 0, 0],
-      [0, c, s],
-      [0, -s, c]
-    ] ;
+        [1, 0, 0],
+        [0, c, s],
+        [0, -s, c]
+      ];
 
     return new Matrix(rotX);
   }
@@ -391,28 +391,28 @@ export class Matrix {
    * @returns {Matrix}
    */
   static rotationY(angle, d3 = true) {
-    if ( !angle ) return d3 ? Matrix.identity(4, 4) : Matrix.identity(3, 3);
+    if ( !angle ) {return d3 ? Matrix.identity(4, 4) : Matrix.identity(3, 3);}
 
     let c = Math.cos(angle);
     let s = Math.sin(angle);
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     const rotY = d3
-    ? [
-      [c, 0, s, 0],
-      [0, 1, 0, 0],
-      [-s, 0, c, 0],
-      [0, 0, 0, 1]
-    ]
+      ? [
+        [c, 0, s, 0],
+        [0, 1, 0, 0],
+        [-s, 0, c, 0],
+        [0, 0, 0, 1]
+      ]
       : [
-      [c, 0, s],
-      [0, 1, 0],
-      [-s, 0, c]
-    ];
+        [c, 0, s],
+        [0, 1, 0],
+        [-s, 0, c]
+      ];
 
     return new Matrix(rotY);
   }
@@ -424,28 +424,28 @@ export class Matrix {
    * @returns {Matrix}
    */
   static rotationZ(angle, d3 = true) {
-    if ( !angle ) return d3 ? Matrix.identity(4, 4) : Matrix.identity(3, 3);
+    if ( !angle ) {return d3 ? Matrix.identity(4, 4) : Matrix.identity(3, 3);}
 
     let c = Math.cos(angle);
     let s = Math.sin(angle);
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     const rotZ = d3
-    ? [
-      [c, s, 0, 0],
-      [-s, c, 0, 0],
-      [0, 0, 1, 0],
-      [0, 0, 0, 1]
-    ]
+      ? [
+        [c, s, 0, 0],
+        [-s, c, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+      ]
       : [
-      [c, s, 0],
-      [-s, c, 0],
-      [0, 0, 1]
-    ];
+        [c, s, 0],
+        [-s, c, 0],
+        [0, 0, 1]
+      ];
 
     return new Matrix(rotZ);
   }
@@ -462,7 +462,7 @@ export class Matrix {
     let rot = angleX ? Matrix.rotationX(angleX, d3) : angleY
       ? Matrix.rotationY(angleY, d3) : angleZ
         ? Matrix.rotationZ(angleZ, d3) : d3
-        ? Matrix.identity(4, 4) : Matrix.identity(3, 3);
+          ? Matrix.identity(4, 4) : Matrix.identity(3, 3);
 
     const multFn = d3 ? "multiply4x4" : "multiply3x3";
 
@@ -481,10 +481,10 @@ export class Matrix {
 
   static translation(x = 0, y = 0, z) {
     const t = typeof z === "undefined"
-    ? [
-      [1, 0, 0],
-      [0, 1, 0],
-      [x, y, 1]]
+      ? [
+        [1, 0, 0],
+        [0, 1, 0],
+        [x, y, 1]]
       : [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
@@ -496,10 +496,10 @@ export class Matrix {
 
   static scale(x = 1, y = 1, z) {
     const t = typeof z === "undefined"
-    ? [
-      [x, 0, 0],
-      [0, y, 0],
-      [0, 0, 1]]
+      ? [
+        [x, 0, 0],
+        [0, y, 0],
+        [0, 0, 1]]
       : [
         [x, 0, 0, 0],
         [0, y, 0, 0],
@@ -523,8 +523,8 @@ export class Matrix {
 
     // Math.cos(Math.PI / 2) ~ 0 but not quite.
     // Same for Math.sin(Math.PI).
-    if ( c.almostEqual(0) ) c = 0;
-    if ( s.almostEqual(0) ) s = 0;
+    if ( c.almostEqual(0) ) {c = 0;}
+    if ( s.almostEqual(0) ) {s = 0;}
 
     const cNeg = 1 - c;
     const xy = axis.x * axis.y * cNeg;
@@ -567,11 +567,11 @@ export class Matrix {
   equal(other) {
     const d1 = this.dim1;
     const d2 = this.dim2;
-    if ( d1 !== other.dim1 || d2 !== other.dim2 ) return false;
+    if ( d1 !== other.dim1 || d2 !== other.dim2 ) {return false;}
 
     for ( let i = 0; i < d1; i += 1 ) {
       for ( let j = 0; j < d2; j += 1 ) {
-        if ( this.arr[i][j] !== other.arr[i][j] ) return false;
+        if ( this.arr[i][j] !== other.arr[i][j] ) {return false;}
       }
     }
 
@@ -587,11 +587,11 @@ export class Matrix {
   almostEqual(other, epsilon = 1e-8) {
     const d1 = this.dim1;
     const d2 = this.dim2;
-    if ( d1 !== other.dim1 || d2 !== other.dim2 ) return false;
+    if ( d1 !== other.dim1 || d2 !== other.dim2 ) {return false;}
 
     for ( let i = 0; i < d1; i += 1 ) {
       for ( let j = 0; j < d2; j += 1 ) {
-        if ( !this.arr[i][j].almostEqual(other.arr[i][j], epsilon) ) return false;
+        if ( !this.arr[i][j].almostEqual(other.arr[i][j], epsilon) ) {return false;}
       }
     }
 
@@ -608,8 +608,8 @@ export class Matrix {
     const d2 = this.dim2;
     for ( let i = 0; i < d1; i += 1 ) {
       for ( let j = 0; j < d2; j += 1 ) {
-        if ( this.arr[i][j].almostEqual(0, epsilon) ) this.arr[i][j] = 0;
-        else if ( this.arr[i][j].almostEqual(1, epsilon) ) this.arr[i][j] = 1;
+        if ( this.arr[i][j].almostEqual(0, epsilon) ) {this.arr[i][j] = 0;}
+        else if ( this.arr[i][j].almostEqual(1, epsilon) ) {this.arr[i][j] = 1;}
       }
     }
   }
@@ -1151,7 +1151,7 @@ export class Matrix {
     const y = Array.fromRange(n);
     const k = {};
     let det = this.optimizedNDet(n, this.arr, x, y, k);
-    if ( !det ) throw new Error("Matrix is not invertible");
+    if ( !det ) {throw new Error("Matrix is not invertible");}
 
     det = 1 / det;
 

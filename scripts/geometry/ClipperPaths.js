@@ -31,7 +31,7 @@ export class ClipperPaths {
    *   or ClipperPaths depending on paths.
    */
   static processPaths(paths) {
-    if (paths.length > 1) return ClipperPaths(paths);
+    if (paths.length > 1) {return ClipperPaths(paths);}
 
     return ClipperPaths.polygonToRectangle(paths[0]);
   }
@@ -70,7 +70,7 @@ export class ClipperPaths {
   static polygonToRectangle(polygon) {
     const pts = polygon.points;
     if ( (polygon.isClosed && pts.length !== 10)
-      || (!polygon.isClosed && pts.length !== 8) ) return polygon;
+      || (!polygon.isClosed && pts.length !== 8) ) {return polygon;}
 
     // Layout must be clockwise.
     // Layout options:
@@ -108,13 +108,13 @@ export class ClipperPaths {
 
     const paths = this.paths;
     const nPaths = paths.length;
-    if ( nPaths === 0 ) return out;
+    if ( nPaths === 0 ) {return out;}
 
     out.vertices = ClipperPaths.flattenPath(paths[0]);
     for ( let i = 1; i < nPaths; i += 1 ) {
       const path = paths[i];
       const isHole = !ClipperLib.Clipper.Orientation(path);
-      if ( !isHole ) console.warn("Earcut may fail with multiple outer polygons.");
+      if ( !isHole ) {console.warn("Earcut may fail with multiple outer polygons.");}
       const category = isHole ? out.holes : out.vertices;
       category.push(ClipperPaths.flattenPath(path));
     }
@@ -189,7 +189,7 @@ export class ClipperPaths {
    * @returns {number}  Positive if clockwise. (b/c y-axis is reversed in Foundry)
    */
   scaledArea({scalingFactor = 1} = {}) {
-    if ( scalingFactor !== this.scalingFactor ) console.warn("ClipperPaths|scaledArea requested scalingFactor does not match.");
+    if ( scalingFactor !== this.scalingFactor ) {console.warn("ClipperPaths|scaledArea requested scalingFactor does not match.");}
     return this.area;
   }
 
@@ -198,8 +198,8 @@ export class ClipperPaths {
    * @returns {PIXI.Polygon|PIXI.Rectangle|ClipperPaths}
    */
   simplify() {
-    if ( this.paths.length > 1 ) return this;
-    if ( this.paths.length === 0 ) return new PIXI.Polygon();
+    if ( this.paths.length > 1 ) {return this;}
+    if ( this.paths.length === 0 ) {return new PIXI.Polygon();}
     return ClipperPaths.polygonToRectangle(this.toPolygons()[0]);
   }
 
@@ -250,7 +250,6 @@ export class ClipperPaths {
   }
 
 
-
   /**
    * Intersect this set of paths with a polygon as subject.
    * @param {PIXI.Polygon}
@@ -266,7 +265,7 @@ export class ClipperPaths {
    * @returns {ClipperPaths}
    */
   add(other) {
-    if ( !other.paths.length ) return this;
+    if ( !other.paths.length ) {return this;}
     this.paths.push(...other.paths);
     return this;
   }
@@ -327,7 +326,7 @@ export class ClipperPaths {
    * @returns {ClipperPaths}
    */
   union() {
-    if ( this.paths.length === 1 ) return this;
+    if ( this.paths.length === 1 ) {return this;}
     const c = new ClipperLib.Clipper();
     const union = new ClipperPaths();
     union.scalingFactor = this.scalingFactor;
@@ -336,7 +335,7 @@ export class ClipperPaths {
       union.paths,
       ClipperLib.PolyFillType.pftNonZero,
       ClipperLib.PolyFillType.pftNonZero
-      );
+    );
     return union;
   }
 
@@ -346,7 +345,7 @@ export class ClipperPaths {
    * @returns {ClipperPaths}
    */
   combine() {
-    if ( this.paths.length === 1 ) return this;
+    if ( this.paths.length === 1 ) {return this;}
 
     const c = new ClipperLib.Clipper();
     const combined = new ClipperPaths();
@@ -370,17 +369,17 @@ export class ClipperPaths {
    */
   static joinPaths(pathsArr) {
     const ln = pathsArr.length;
-    if ( !ln ) return undefined;
+    if ( !ln ) {return undefined;}
 
     const firstPath = pathsArr[0];
-    if ( ln === 1 ) return firstPath;
+    if ( ln === 1 ) {return firstPath;}
 
     const cPaths = new ClipperPaths(firstPath.paths);
     cPaths.scalingFactor = firstPath.scalingFactor;
 
     for ( let i = 1; i < ln; i += 1 ) {
       const obj = pathsArr[i];
-      if ( cPaths.scalingFactor !== obj.scalingFactor ) console.warn("ClipperPaths|combinePaths scalingFactor not equal.");
+      if ( cPaths.scalingFactor !== obj.scalingFactor ) {console.warn("ClipperPaths|combinePaths scalingFactor not equal.");}
 
       cPaths.paths.push(...obj.paths);
     }
@@ -394,7 +393,7 @@ export class ClipperPaths {
    */
   static combinePaths(pathsArr) {
     const cPaths = this.joinPaths(pathsArr);
-    if ( !cPaths ) return undefined;
+    if ( !cPaths ) {return undefined;}
     return cPaths.combine();
   }
 
@@ -426,18 +425,18 @@ export class ClipperPaths {
    * Draw the clipper paths, to the extent possible
    */
   draw({ graphics = canvas.controls.debug, color = CONFIG.GeometryLib.Draw.COLORS.black, width = 1, fill, fillAlpha = 1 } = {}) {
-    if ( !fill ) fill = color;
+    if ( !fill ) {fill = color;}
     const polys = this.toPolygons();
 
     // Sort so holes are last.
     polys.sort((a, b) => a.isHole - b.isHole);
-    if ( !polys.length || polys[0].isHole ) return; // All the polys are holes.
+    if ( !polys.length || polys[0].isHole ) {return;} // All the polys are holes.
 
     graphics.beginFill(fill, fillAlpha);
     for ( const poly of polys ) {
-      if ( poly.isHole ) graphics.beginHole();
+      if ( poly.isHole ) {graphics.beginHole();}
       graphics.lineStyle(width, color).drawShape(poly);
-      if ( poly.isHole ) graphics.endHole();
+      if ( poly.isHole ) {graphics.endHole();}
     }
     graphics.endFill();
   }

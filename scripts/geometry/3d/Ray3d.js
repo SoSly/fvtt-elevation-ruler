@@ -17,8 +17,8 @@ import { Point3d } from "./Point3d.js";
  */
 export class Ray3d extends Ray {
   constructor(A, B) {
-    if ( !(A instanceof Point3d) ) A = new Point3d(A.x, A.y, A.z);
-    if ( !(B instanceof Point3d) ) B = new Point3d(B.x, B.y, B.z);
+    if ( !(A instanceof Point3d) ) {A = new Point3d(A.x, A.y, A.z);}
+    if ( !(B instanceof Point3d) ) {B = new Point3d(B.x, B.y, B.z);}
 
     super(A, B);
 
@@ -84,9 +84,9 @@ export class Ray3d extends Ray {
    * @returns {Ray} The new 2d ray
    */
   projectOntoCanvas() {
-    if ( this.dz.almostEqual(0) ) return new Ray(this.A.to2d({x: "x", y: "y"}), this.B.to2d({x: "x", y: "y"}));
-    if ( this.dx.almostEqual(0) ) return new Ray(this.A.to2d({x: "z", y: "y"}), this.B.to2d({x: "z", y: "y"}));
-    if ( this.dy.almostEqual(0) ) return new Ray(this.A.to2d({x: "x", y: "z"}), this.B.to2d({x: "x", y: "z"}));
+    if ( this.dz.almostEqual(0) ) {return new Ray(this.A.to2d({x: "x", y: "y"}), this.B.to2d({x: "x", y: "y"}));}
+    if ( this.dx.almostEqual(0) ) {return new Ray(this.A.to2d({x: "z", y: "y"}), this.B.to2d({x: "z", y: "y"}));}
+    if ( this.dy.almostEqual(0) ) {return new Ray(this.A.to2d({x: "x", y: "z"}), this.B.to2d({x: "x", y: "z"}));}
 
     switch ( canvas.grid.type ) {
       case CONST.GRID_TYPES.GRIDLESS: return this._projectGridless();
@@ -122,7 +122,7 @@ export class Ray3d extends Ray {
     A.x += ratio * this.dy;
     A.y -= ratio * this.dx;
 
-   // Debug: console.log(`Projecting Gridless: A: (${this.A.x},${this.A.y},${this.A.z})->(${A.x}, ${A.y}); B: (${this.B.x}, ${this.B.y}, ${this.B.z})->(${B.x}, ${B.y})`);
+    // Debug: console.log(`Projecting Gridless: A: (${this.A.x},${this.A.y},${this.A.z})->(${A.x}, ${A.y}); B: (${this.B.x}, ${this.B.y}, ${this.B.z})->(${B.x}, ${B.y})`);
     return new Ray(A, B);
   }
 
@@ -155,7 +155,7 @@ export class Ray3d extends Ray {
     |                /
     B---->Height    B--->Height
     */
-    if ( this.dx.almostEqual(0) ) A.x += height; // East
+    if ( this.dx.almostEqual(0) ) {A.x += height;} // East
 
     // If points are on horizontal line
     // B is either west or east from A
@@ -166,10 +166,10 @@ export class Ray3d extends Ray {
                |                \
     A----------B    ==>           B
     */
-    else if ( this.dy.almostEqual(0) ) A.y += height; // South
+    else if ( this.dy.almostEqual(0) ) {A.y += height;} // South
 
     // Otherwise set B to point south, A pointing east
-    else return this._projectEast();
+    else {return this._projectEast();}
 
     // Debug: console.log(`Projecting Square: A: (${this.A.x},${this.A.y},${this.A.z})->(${A.x},${A.y}); B: (${this.B.x},${this.B.y},${this.B.z})->(${B.x},${B.y})`);
 

@@ -37,7 +37,7 @@ export function highlightLineRectangle(segment, color, name) {
  * @returns {boolean}
  */
 function useLevelsLabels() {
-  if ( !OTHER_MODULES.LEVELS.ACTIVE ) return false;
+  if ( !OTHER_MODULES.LEVELS.ACTIVE ) {return false;}
   const labelOpt = Settings.get(Settings.KEYS.LABELING.USE_LEVELS_LABEL);
   return labelOpt === Settings.KEYS.LABELING.LEVELS_LABELS.ALWAYS
     || (labelOpt === Settings.KEYS.LABELING.LEVELS_LABELS.UI_ONLY && CONFIG.Levels.UI.rendered);
@@ -49,9 +49,9 @@ function useLevelsLabels() {
  * @returns First elevation found that is named and has e within its range.
  */
 export function levelNameAtElevation(e) {
-  if ( !useLevelsLabels() ) return undefined;
+  if ( !useLevelsLabels() ) {return undefined;}
   const sceneLevels = canvas.scene.getFlag("levels", "sceneLevels"); // Array with [0]: bottom; [1]: top; [2]: name
-  if ( !sceneLevels ) return undefined;
+  if ( !sceneLevels ) {return undefined;}
 
   // Just get the first labeled
   const lvl = sceneLevels.find(arr => arr[2] !== "" && e >= arr[0] && e <= arr[1]);
@@ -72,7 +72,7 @@ export function levelNameAtElevation(e) {
 export function segmentElevationLabel(ruler, segment) {
   // Arrows: ↑ ↓ ↕
   // Token ruler uses the preview token for elevation.
-  if ( segment.last && ruler.isTokenRuler ) return "";
+  if ( segment.last && ruler.isTokenRuler ) {return "";}
 
   // If this is the last segment, show the total elevation change if any.
   const { elevation, elevationDelta, elevationChanged } = elevationForRulerLabel(ruler, segment);
@@ -87,7 +87,7 @@ export function segmentElevationLabel(ruler, segment) {
   const units = canvas.scene.grid.units;
   if ( displayCurrentElevation ) {
     let elevLabel = `@${roundMultiple(elevation)}`;
-    if ( units ) elevLabel += ` ${units}`;
+    if ( units ) {elevLabel += ` ${units}`;}
     labelParts.push(elevLabel);
   }
   if ( displayTotalChange ) {
@@ -135,10 +135,10 @@ function elevationForRulerLabel(ruler, segment) {
  * @returns {string} The label or "" if none.
  */
 export function segmentTerrainLabel(s) {
-  if ( s.waypoint.cost.almostEqual(s.waypoint.offsetDistance) ) return "";
+  if ( s.waypoint.cost.almostEqual(s.waypoint.offsetDistance) ) {return "";}
   const units = (canvas.scene.grid.units) ? ` ${canvas.scene.grid.units}` : "";
   const addedCost = roundMultiple(s.waypoint.cost - s.waypoint.offsetDistance);
-  if ( addedCost.almostEqual(0) ) return "";
+  if ( addedCost.almostEqual(0) ) {return "";}
   const symbol = addedCost > 0 ? "+" : "-";
   return `\n${CONFIG[MODULE_ID].SPEED.terrainSymbol} ${symbol}${Math.abs(addedCost)}${units}`;
 }
@@ -162,15 +162,15 @@ export function basicTextLabel(ruler, segment, origLabel = "") {
 
   // Label for Levels floors.
   const levelName = levelNameAtElevation(CONFIG.GeometryLib.utils.pixelsToGridUnits(segment.ray.B.z));
-  if ( levelName ) elevLabel += `\n${levelName}`;
+  if ( levelName ) {elevLabel += `\n${levelName}`;}
 
   // Label for difficult terrain (variation in move distance vs distance).
   const terrainLabel = segment.history ? "" : segmentTerrainLabel(segment);
 
   // Put it all together.
   let label = `${origLabel}`;
-  if ( elevLabel !== "" ) label += `\n${elevLabel}`;
-  if ( terrainLabel !== "" ) label += `${terrainLabel}`;
+  if ( elevLabel !== "" ) {label += `\n${elevLabel}`;}
+  if ( terrainLabel !== "" ) {label += `${terrainLabel}`;}
   return label;
 }
 
@@ -181,7 +181,7 @@ export function basicTextLabel(ruler, segment, origLabel = "") {
  * @returns {string} Text for the top label.
  */
 export function customizedTextLabel(ruler, segment, origLabel = "") {
-  if ( !segment.label ) return "";
+  if ( !segment.label ) {return "";}
 
   /* Format:
   40 ft               (1) <-- total distance, large font
@@ -208,11 +208,11 @@ export function customizedTextLabel(ruler, segment, origLabel = "") {
   origLabel = origLabel.replace(getDefaultLabel(segment), "");
 
   // (3) Waypoint
-  if ( segment.last && segment.waypoint.idx > 0 ) childLabels.waypoint = {
+  if ( segment.last && segment.waypoint.idx > 0 ) {childLabels.waypoint = {
     icon: `${labelIcons.waypoint}`,
     value: segment.waypoint.cost,
     descriptor: game.i18n.localize(`${MODULE_ID}.waypoint`)
-  };
+  };}
 
   // (4) Elevation
   const displayElevation = !Settings.get(Settings.KEYS.LABELING.HIDE_ELEVATION)
@@ -220,27 +220,26 @@ export function customizedTextLabel(ruler, segment, origLabel = "") {
   if ( displayElevation ) {
     const { elevation, elevationDelta, elevationChanged } = elevationForRulerLabel(ruler, segment);
     if ( elevationChanged || (!ruler.token && elevation) || (elevation && segment.history) ) {
-      if ( !segment.last ) childLabels.elevation = {
+      if ( !segment.last ) {childLabels.elevation = {
         icon: `${labelIcons.elevationAt}`,
-        value: elevation };
-      else if ( elevationDelta ) childLabels.elevation = {
+        value: elevation };}
+      else if ( elevationDelta ) {childLabels.elevation = {
         icon: elevationDelta > 0 ? labelIcons.elevationUp : labelIcons.elevationDown,
         value: Math.abs(elevationDelta),
-        descriptor: game.i18n.localize(elevationDelta > 0 ? `${MODULE_ID}.up` : `${MODULE_ID}.down`)};
+        descriptor: game.i18n.localize(elevationDelta > 0 ? `${MODULE_ID}.up` : `${MODULE_ID}.down`)};}
     }
   }
 
   // (5) Terrain
-  if ( segment.last && !segment.waypoint.cost.almostEqual(segment.waypoint.offsetDistance) ) childLabels.terrain = {
+  if ( segment.last && !segment.waypoint.cost.almostEqual(segment.waypoint.offsetDistance) ) {childLabels.terrain = {
     icon: `${CONFIG[MODULE_ID].SPEED.terrainSymbol}`,
     value: segment.waypoint.cost - segment.waypoint.offsetDistance,
     descriptor: game.i18n.localize(`${MODULE_ID}.added`)
-  };
+  };}
 
   // Align so that the icon is left justified and the value is right justified.
   // This aligns the units label or descriptor.
   alignLeftAndRight(childLabels);
-
 
 
   // Build the string for each.
@@ -248,15 +247,15 @@ export function customizedTextLabel(ruler, segment, origLabel = "") {
   const units = canvas.grid.units;
   Object.values(childLabels).forEach(obj => {
     obj.label = `${obj.iconValueStr}`;
-    if ( units ) obj.label += ` ${units}`;
-    if ( obj.descriptor ) obj.label += ` ${obj.descriptor}`;
+    if ( units ) {obj.label += ` ${units}`;}
+    if ( obj.descriptor ) {obj.label += ` ${obj.descriptor}`;}
   });
-  if ( units ) totalDistLabel += ` ${units}`;
+  if ( units ) {totalDistLabel += ` ${units}`;}
 
   // Construct a label style for each.
   if ( origLabel !== "" ) {
     childLabels.other = { label: origLabel };
-    // console.debug(`Ruler original label: ${origLabel}`);
+    // Console.debug(`Ruler original label: ${origLabel}`);
   }
   const childTextContainers = [];
   for ( const name of ["other", "waypoint", "elevation", "terrain"] ) {
@@ -276,15 +275,15 @@ export function customizedTextLabel(ruler, segment, origLabel = "") {
 
 function getDefaultLabel(segment) {
   // Label based on Foundry default _getSegmentLabel.
-  if ( segment.teleport ) return "";
+  if ( segment.teleport ) {return "";}
   const units = canvas.grid.units;
 
   // As modified in _getSegmentLabel wrap.
   let label = `${Math.round(roundMultiple(segment.waypoint.cost) * 100) / 100}`;
-  if ( units ) label += ` ${units}`;
+  if ( units ) {label += ` ${units}`;}
   if ( segment.last ) {
     label += ` [${Math.round(canvas.controls.ruler.totalCost * 100) / 100}`;
-    if ( units ) label += ` ${units}`;
+    if ( units ) {label += ` ${units}`;}
     label += "]";
   }
   return label;
@@ -300,7 +299,7 @@ function alignChildTextLeft(parent, child, priorChildren = []) {
   */
 
   const otherHeights = priorChildren.reduce((acc, curr) => {
-    if ( !curr.visible ) return acc;
+    if ( !curr.visible ) {return acc;}
     return acc + curr.height;
   }, 0);
   child.position.x = (child.width - parent.width) * 0.5;
@@ -326,10 +325,10 @@ function alignLeftAndRight(childLabels) {
   });
 
   Object.entries(childLabels).forEach(([name, obj]) => {
-    if ( obj.iconValueWidth.almostEqual(targetWidth) || obj.iconValueWidth > targetWidth ) return;
+    if ( obj.iconValueWidth.almostEqual(targetWidth) || obj.iconValueWidth > targetWidth ) {return;}
     const tm = PIXI.TextMetrics.measureText(`${SPACER}`, labelStyles[name]);
     const numSpaces = Math.floor(targetWidth - obj.iconValueWidth) / tm.width;
-    if ( numSpaces <= 0 ) return;
+    if ( numSpaces <= 0 ) {return;}
     obj.iconValueStr = [`${obj.icon}`, ...Array.fromRange(numSpaces).map(_elem => SPACER), ` ${roundMultiple(obj.value)}`].join("");
   });
 }

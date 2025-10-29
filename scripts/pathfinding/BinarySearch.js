@@ -51,7 +51,7 @@ export function binaryIndexOf(arr, x) {
   // Iterate, halving the search each time.
   while (start <= end) {
     const mid = Math.floor((start + end) / 2);
-    if (arr[mid] === x) return mid;
+    if (arr[mid] === x) {return mid;}
 
     if (arr[mid] < x) {
       start = mid + 1;
@@ -270,20 +270,20 @@ export function interpolationFindIndexBeforeScalar(arr, x) {
   let start = 0;
   let end = arr.length - 1;
 
-  if (x > arr[end]) return end;
-  if (x < arr[0]) return -1;
+  if (x > arr[end]) {return end;}
+  if (x < arr[0]) {return -1;}
 
   while (start <= end) {
     const delta = (x - arr[start]) / (arr[end] - arr[start]);
     const position = start + Math.floor((end - start) * delta);
 
-    if (arr[position] === x) return position - 1;
+    if (arr[position] === x) {return position - 1;}
 
     if (arr[position] < x) {
-      if (arr[position + 1] > x) return position;
+      if (arr[position + 1] > x) {return position;}
       start = position + 1;
     } else {
-      if (arr[position - 1] < x) return position - 1;
+      if (arr[position - 1] < x) {return position - 1;}
       end = position - 1;
     }
   }
@@ -311,8 +311,8 @@ export function interpolationFindIndexBeforeObject(arr, obj, valuationFn = a => 
   let end = arr.length - 1;
   const x = valuationFn(obj);
 
-  if (x > valuationFn(arr[end])) return end;
-  if (x < valuationFn(arr[0])) return -1;
+  if (x > valuationFn(arr[end])) {return end;}
+  if (x < valuationFn(arr[0])) {return -1;}
 
   while (start <= end) {
     const v_start = valuationFn(arr[start]);
@@ -322,13 +322,13 @@ export function interpolationFindIndexBeforeObject(arr, obj, valuationFn = a => 
     const position = start + Math.floor((end - start) * delta);
     const v_position = valuationFn(arr[position]);
 
-    if (v_position === x) return position - 1;
+    if (v_position === x) {return position - 1;}
 
     if (v_position < x) {
-      if (valuationFn(arr[position + 1]) > x) return position;
+      if (valuationFn(arr[position + 1]) > x) {return position;}
       start = position + 1;
     } else {
-      if (valuationFn(arr[position - 1]) < x) return position - 1;
+      if (valuationFn(arr[position - 1]) < x) {return position - 1;}
       end = position - 1;
     }
   }

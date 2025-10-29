@@ -53,6 +53,6 @@ export function initializePatching() {
   PATCHER.registerGroup("SPEED_HIGHLIGHTING");
   PATCHER.registerGroup("MOVEMENT_TRACKING");
 
-  if ( game.system.id !== "dnd5e" ) PATCHER.registerGroup("MOVEMENT_SELECTION");
+  if ( game.system.id !== "dnd5e" ) {PATCHER.registerGroup("MOVEMENT_SELECTION");}
 }
 

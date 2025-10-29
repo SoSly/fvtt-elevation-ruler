@@ -203,8 +203,8 @@ export class CenteredRectangle extends GEOMETRY_CONFIG.CenteredPolygons.Centered
       case 135:
       case 225:
       case 315:
-        if ( width < height ) return new PIXI.Rectangle(x - h1_2, y - h1_2, height, height);
-        else return new PIXI.Rectangle(x - w1_2, y - w1_2, width, width);
+        if ( width < height ) {return new PIXI.Rectangle(x - h1_2, y - h1_2, height, height);}
+        else {return new PIXI.Rectangle(x - w1_2, y - w1_2, width, width);}
     }
 
     return super.getBounds();

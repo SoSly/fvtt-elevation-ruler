@@ -13,7 +13,7 @@ import { Settings } from "./settings.js";
 
 export function log(...args) {
   try {
-    if ( CONFIG[MODULE_ID].debug ) console.debug(MODULE_ID, "|", ...args);
+    if ( CONFIG[MODULE_ID].debug ) {console.debug(MODULE_ID, "|", ...args);}
   } catch(e) {
     // Empty
   }
@@ -138,8 +138,8 @@ export function groupBy(list, keyGetter) {
     const key = keyGetter(item);
     const collection = map.get(key);
 
-    if (!collection) map.set(key, [item]);
-    else collection.push(item);
+    if (!collection) {map.set(key, [item]);}
+    else {collection.push(item);}
   });
   return map;
 }
@@ -151,7 +151,7 @@ export function groupBy(list, keyGetter) {
  * @returns {PIXI.Rectangle}
  */
 export function segmentBounds(a, b) {
-  if ( !b || (a.x === b.x && a.y === b.y) ) return new PIXI.Rectangle(a.x - 1, a.y - 1, 3, 3);
+  if ( !b || (a.x === b.x && a.y === b.y) ) {return new PIXI.Rectangle(a.x - 1, a.y - 1, 3, 3);}
   const xMinMax = Math.minMax(a.x, b.x);
   const yMinMax = Math.minMax(a.y, b.y);
   return new PIXI.Rectangle(xMinMax.min, yMinMax.min, xMinMax.max - xMinMax.min, yMinMax.max - yMinMax.min);
@@ -179,7 +179,7 @@ export async function injectConfiguration(app, html, data, template, findString)
 export function filterSplice(arr, filterFn) {
   const indices = [];
   const filteredElems = arr.filter((elem, idx, arr) => {
-    if ( !filterFn(elem, idx, arr) ) return false;
+    if ( !filterFn(elem, idx, arr) ) {return false;}
     indices.push(idx);
     return true;
   });
@@ -202,7 +202,7 @@ export function keyForValue(object, value) {
  * @returns {number} Value between 0 and 1.
  */
 export function percentOverlap(overlapShape, areaShape, totalArea) {
-  if ( !overlapShape.overlaps(areaShape) ) return 0;
+  if ( !overlapShape.overlaps(areaShape) ) {return 0;}
   const intersection = overlapShape.intersectPolygon(areaShape.toPolygon());
   const ixArea = intersection.area;
   totalArea ??= areaShape.area;
@@ -220,9 +220,9 @@ export function percentOverlap(overlapShape, areaShape, totalArea) {
  *   returns [row, col] Array for each grid point under the line.
  */
 export function * iterateGridUnderLine(origin, destination, { reverse = false } = {}) {
-  if ( !(origin instanceof PIXI.Point) ) origin = PIXI.Point.fromObject(origin);
-  if ( !(destination instanceof PIXI.Point) ) destination = PIXI.Point.fromObject(destination);
-  if ( reverse ) [origin, destination] = [destination, origin];
+  if ( !(origin instanceof PIXI.Point) ) {origin = PIXI.Point.fromObject(origin);}
+  if ( !(destination instanceof PIXI.Point) ) {destination = PIXI.Point.fromObject(destination);}
+  if ( reverse ) {[origin, destination] = [destination, origin];}
 
   const distance = PIXI.Point.distanceBetween(origin, destination); // We want 2d here.
   const spacer = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1.41 : 1;
@@ -241,7 +241,7 @@ export function * iterateGridUnderLine(origin, destination, { reverse = false } 
     const offset = canvas.grid.getOffset({x, y});
     const r1 = offset.i;
     const c1 = offset.j;
-    if ( r0 === r1 && c0 === c1 ) continue;
+    if ( r0 === r1 && c0 === c1 ) {continue;}
 
     // Skip the first one
     // If the positions are not neighbors, also highlight their halfway point
@@ -269,7 +269,7 @@ export function * iterateGridUnderLine(origin, destination, { reverse = false } 
  * @returns {string|undefined}      Returns the compiled and rendered template as a string
  */
 export function renderTemplateSync(path, data) {
-  if ( !Object.hasOwn(Handlebars.partials, path) ) return;
+  if ( !Object.hasOwn(Handlebars.partials, path) ) {return;}
   const template = Handlebars.partials[path];
   return template(data || {}, {
     allowProtoMethodsByDefault: true,
@@ -285,7 +285,7 @@ export function renderTemplateSync(path, data) {
  */
 export function roundMultiple(num) {
   const multiple = Settings.get(Settings.KEYS.LABELING.ROUND_TO_MULTIPLE);
-  if (multiple) return num.toNearest(multiple);
+  if (multiple) {return num.toNearest(multiple);}
   return num;
 }
 

@@ -17,8 +17,8 @@ function edgesOfTriangle(t) { return [3 * t, 3 * t + 1, 3 * t + 2]; }
 function pointsOfTriangle(delaunay, t) {
   const points = delaunay.coords;
   return edgesOfTriangle(t)
-        .map(e => delaunay.triangles[e])
-        .map(p => new PIXI.Point(points[2 * p], points[(2 * p) + 1]));
+    .map(e => delaunay.triangles[e])
+    .map(p => new PIXI.Point(points[2 * p], points[(2 * p) + 1]));
 }
 
 /**
@@ -28,7 +28,7 @@ function pointsOfTriangle(delaunay, t) {
  */
 function forEachTriangle(delaunay, callback) {
   const nTriangles = delaunay.triangles.length / 3;
-  for ( let t = 0; t < nTriangles; t += 1 ) callback(t, pointsOfTriangle(delaunay, t));
+  for ( let t = 0; t < nTriangles; t += 1 ) {callback(t, pointsOfTriangle(delaunay, t));}
 }
 
 /**
@@ -36,7 +36,7 @@ function forEachTriangle(delaunay, callback) {
  * @param {number} e      Edge index
  * @returns {number} Triangle index
  */
-function triangleOfEdge(e)  { return Math.floor(e / 3); }
+function triangleOfEdge(e) { return Math.floor(e / 3); }
 
 /**
  * For a given half-edge index, go to the next half-edge for the triangle.
@@ -59,16 +59,16 @@ function prevHalfedge(e) { return (e % 3 === 0) ? e + 2 : e - 1; }
  */
 function forEachTriangleEdge(delaunay, callback) {
   const points = delaunay.coords;
-    for (let e = 0; e < delaunay.triangles.length; e++) {
-      if (e > delaunay.halfedges[e]) {
-        const ip = delaunay.triangles[e];
-        const p = new PIXI.Point(points[2 * ip], points[(2 * ip) + 1])
+  for (let e = 0; e < delaunay.triangles.length; e++) {
+    if (e > delaunay.halfedges[e]) {
+      const ip = delaunay.triangles[e];
+      const p = new PIXI.Point(points[2 * ip], points[(2 * ip) + 1]);
 
-        const iq = delaunay.triangles[nextHalfedge(e)];
-        const q = new PIXI.Point(points[2 * iq], points[(2 * iq) + 1])
-        callback(e, p, q);
-      }
+      const iq = delaunay.triangles[nextHalfedge(e)];
+      const q = new PIXI.Point(points[2 * iq], points[(2 * iq) + 1]);
+      callback(e, p, q);
     }
+  }
 }
 
 /**
@@ -81,7 +81,7 @@ function trianglesAdjacentToTriangle(delaunay, t) {
   const adjacentTriangles = [];
   for ( const e of edgesOfTriangle(t) ) {
     const opposite = delaunay.halfedges[e];
-    if (opposite >= 0) adjacentTriangles.push(triangleOfEdge(opposite));
+    if (opposite >= 0) {adjacentTriangles.push(triangleOfEdge(opposite));}
   }
   return adjacentTriangles;
 }

@@ -17,12 +17,12 @@ PATCHES.TOKEN_RULER = {}; // Assume this patch is only present if the token rule
 function _onMeasuredRulerMovement(wrapped, context) {
   // We only care about when tokens are being dragged
   const ruler = canvas.controls.ruler;
-  if ( ui.controls.tool !== "select" ) return wrapped(context);
+  if ( ui.controls.tool !== "select" ) {return wrapped(context);}
 
   // If in token selection, don't use the ruler unless we are already starting a measurement.
   if ( !ruler.active
     || !canvas.controls.ruler._state
-    || !canvas.tokens.active ) return false;
+    || !canvas.tokens.active ) {return false;}
 
   // For each controlled token, end the drag.
   canvas.tokens.clearPreviewContainer();

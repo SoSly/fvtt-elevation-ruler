@@ -79,7 +79,7 @@ export class Plane {
     const V1 = b.subtract(a);
     const V2 = d.subtract(c);
     const mag = (V1.magnitude() * V2.magnitude());
-    if ( !mag ) return 0;
+    if ( !mag ) {return 0;}
 
     return Math.acos(V1.dot(V2) / (V1.magnitude() * V2.magnitude()));
   }
@@ -206,17 +206,17 @@ export class Plane {
 
     // If the determinant is near zero, ray lies in plane of triangle
     const det = edge1.dot(pvec);
-    if (det > -Number.EPSILON && det < Number.EPSILON) return null;  // Ray is parallel to triangle
+    if (det > -Number.EPSILON && det < Number.EPSILON) {return null;}  // Ray is parallel to triangle
     const invDet = 1 / det;
 
     // Calculate the intersection point using barycentric coordinates
     const tvec = rayOrigin.subtract(v0);
     const u = invDet * tvec.dot(pvec);
-    if (u < 0 || u > 1) return null;  // Intersection point is outside of triangle
+    if (u < 0 || u > 1) {return null;}  // Intersection point is outside of triangle
 
     const qvec = tvec.cross(edge1);
     const v = invDet * rayDirection.dot(qvec);
-    if (v < 0 || u + v > 1) return null;  // Intersection point is outside of triangle
+    if (v < 0 || u + v > 1) {return null;}  // Intersection point is outside of triangle
 
     // Calculate the distance to the intersection point
     const t = invDet * edge2.dot(qvec);
@@ -254,7 +254,7 @@ export class Plane {
     for ( let i = 0; i < ln; i += 1 ) {
       const tri = triangles[i];
       const t = Plane.rayIntersectionTriangle3d(rayOrigin, rayDirection, tri[0], tri[1], tri[2]);
-      if ( t ) return t;
+      if ( t ) {return t;}
 
       // Alternatively, could store the minimum t value among the various triangles and
       // return it. Should be roughly equivalent to this version, b/c the triangles share a plane
@@ -277,7 +277,7 @@ export class Plane {
     const denom = normal.dot(rayDirection);
 
     // Check if the ray is parallel to the plane (denom is close to 0)
-    if ( Math.abs(denom) < Number.EPSILON ) return null;
+    if ( Math.abs(denom) < Number.EPSILON ) {return null;}
 
     // Calculate the distance along the ray
     return normal.dot(point.subtract(rayOrigin)) / denom;
@@ -297,10 +297,10 @@ export class Plane {
     // Triangles are 0 - 1 - 2 and 1-2-3
 
     const t0 = Plane.rayIntersectionTriangle3d(rayOrigin, rayDirection, v0, v1, v2);
-    if ( t0 ) return t0;
+    if ( t0 ) {return t0;}
 
     const t1 = Plane.rayIntersectionTriangle3d(rayOrigin, rayDirection, v1, v2, v3);
-    if ( t1 ) return t1;
+    if ( t1 ) {return t1;}
 
     return null;
   }
@@ -324,17 +324,17 @@ export class Plane {
     const E03 = v3.subtract(v0);
     const P = rayDirection.cross(E03);
     const det = E01.dot(P);
-    if ( Math.abs(det) < Number.EPSILON ) return null;
+    if ( Math.abs(det) < Number.EPSILON ) {return null;}
 
     const T = rayOrigin.subtract(v0);
     const alpha = T.dot(P) / det;
-    if ( alpha < 0 ) return null;
-    if ( alpha > 1 ) return null;
+    if ( alpha < 0 ) {return null;}
+    if ( alpha > 1 ) {return null;}
 
     const Q = T.cross(E01);
     const beta = rayDirection.dot(Q) / det;
-    if ( beta < 0 ) return null;
-    if ( beta > 1 ) return null;
+    if ( beta < 0 ) {return null;}
+    if ( beta > 1 ) {return null;}
 
     // Reject rays using the barycentric coordinates of the intersection point with respect to T'
     if ( (alpha + beta) > 1 ) {
@@ -342,19 +342,19 @@ export class Plane {
       const E21 = v1.subtract(v2);
       const Pprime = rayDirection.cross(E21);
       const detprime = E23.dot(Pprime);
-      if ( Math.abs(detprime) < Number.EPSILON ) return null;
+      if ( Math.abs(detprime) < Number.EPSILON ) {return null;}
 
       const Tprime = rayOrigin.subtract(v2);
       const alphaprime = Tprime.dot(Pprime) / detprime;
-      if ( alphaprime < 0 ) return null;
+      if ( alphaprime < 0 ) {return null;}
       const Qprime = Tprime.cross(E23);
       const betaprime = rayDirection.dot(Qprime) / detprime;
-      if ( betaprime < 0 ) return null;
+      if ( betaprime < 0 ) {return null;}
     }
 
     // Compute the ray parameter of the intersection point
     return E03.dot(Q) / det;
-    // if ( t < 0 ) return null;
+    // If ( t < 0 ) return null;
 
     // If barycentric coordinates of the intersection point are needed, this would be done here.
     // See the original Lagae-Dutré paper.
@@ -531,7 +531,7 @@ export class Plane {
     // Right-handed system: const denom = dotNL - dotNV;
     const denom = dotNV - dotNL;
 
-    if ( denom.almostEqual(0) ) return null;
+    if ( denom.almostEqual(0) ) {return null;}
 
     const d = N.dot(P);
 
@@ -560,7 +560,7 @@ export class Plane {
     const dot = N.dot(l);
 
     // Test if line and plane are parallel and do not intersect.
-    if ( dot.almostEqual(0) ) return null;
+    if ( dot.almostEqual(0) ) {return null;}
 
     const w = l0.subtract(P);
     const fac = -N.dot(w) / dot;
@@ -606,7 +606,7 @@ export class Plane {
     const direction = N1.cross(N2);
 
     // Parallel planes have a cross product with zero magnitude
-    if ( !direction.magnitudeSquared() ) return null;
+    if ( !direction.magnitudeSquared() ) {return null;}
 
     // Intersect a line of this plane with the second plane to get a point shared by both
     const thisPoints = this.threePoints;

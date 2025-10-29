@@ -63,7 +63,7 @@ export function tokenSpeedSegmentSplitter(ruler, token) {
         speedCategory = categoryIter.next().value;
         maxDistance = SPEED.maximumCategoryDistance(token, speedCategory, tokenSpeed);
       }
-      if ( !speedCategory ) speedCategory = SPEED.CATEGORIES.at(-1);
+      if ( !speedCategory ) {speedCategory = SPEED.CATEGORIES.at(-1);}
       segment.speed = speedCategory;
       segment.maxSpeedCategoryDistance = maxDistance;
 
@@ -119,8 +119,8 @@ export function tokenSpeedSegmentSplitter(ruler, token) {
  *   Otherwise returns the point at which to break the segment.
  */
 function locateSegmentBreakpoint(segment, splitMoveDistance, { mp, gridless, numPrevDiagonal } = {}) {
-  if ( splitMoveDistance <= 0 ) return null;
-  if ( !segment.cost || splitMoveDistance > segment.cost ) return null;
+  if ( splitMoveDistance <= 0 ) {return null;}
+  if ( !segment.cost || splitMoveDistance > segment.cost ) {return null;}
 
   // Attempt to move the split distance and determine the split location.
   const Point3d = CONFIG.GeometryLib.threeD.Point3d;
@@ -131,8 +131,8 @@ function locateSegmentBreakpoint(segment, splitMoveDistance, { mp, gridless, num
     // Use halfway between the intersection points for this grid shape.
     const halfIx = segmentGridHalfIntersection(breakpoint, A, B) ?? A;
     breakpoint = GridCoordinates3d.fromObject(halfIx);
-    if ( breakpoint.equals(A) ) breakpoint.z = A.z;
-    else if ( breakpoint.equals(B) ) breakpoint.z = B.z;
+    if ( breakpoint.equals(A) ) {breakpoint.z = A.z;}
+    else if ( breakpoint.equals(B) ) {breakpoint.z = B.z;}
     else {
       // For gridded, we want the unit elevation along the segment.
       // This creates "steps", where as we move from A to B we step in unit elevations.
@@ -140,7 +140,7 @@ function locateSegmentBreakpoint(segment, splitMoveDistance, { mp, gridless, num
       breakpoint.z = A.z + ((B.z - A.z) * t);
       const elevation = GridCoordinates3d.elevationForUnit(breakpoint.k);
       const z = CONFIG.GeometryLib.utils.gridUnitsToPixels(elevation);
-      if ( z.between(A.z, B.z) ) breakpoint.z = z;
+      if ( z.between(A.z, B.z) ) {breakpoint.z = z;}
     }
   }
   return breakpoint;
@@ -156,9 +156,9 @@ function locateSegmentBreakpoint(segment, splitMoveDistance, { mp, gridless, num
 function targetSplitForSegment(targetCost, a, b, mp, numPrevDiagonal = 0) {
   // Assume linear cost increment.
   // So divide move in half each time.
-  if ( splitCost(a, b, mp, 0, numPrevDiagonal) > targetCost ) return a;
+  if ( splitCost(a, b, mp, 0, numPrevDiagonal) > targetCost ) {return a;}
   const totalDist = CONFIG.GeometryLib.threeD.Point3d.distanceBetween(a, b);
-  if ( splitCost(a, b, mp, totalDist, numPrevDiagonal) <= targetCost ) return b;
+  if ( splitCost(a, b, mp, totalDist, numPrevDiagonal) <= targetCost ) {return b;}
 
   // Now increment distance until we exceed the target cost.
   // Take 1/2 steps. So if the distance is nearly at the end, we would go 1/2 + 1/4 + 1/8...
@@ -171,7 +171,7 @@ function targetSplitForSegment(targetCost, a, b, mp, numPrevDiagonal = 0) {
     iter += 1;
     step = Math.floor(step * 0.5);
     const testDist = bestDist + step;
-    if ( splitCost(a, b, mp, testDist, numPrevDiagonal) <= targetCost ) bestDist = testDist;
+    if ( splitCost(a, b, mp, testDist, numPrevDiagonal) <= targetCost ) {bestDist = testDist;}
   }
   return a.towardsPoint(b, bestDist).roundDecimals();
 }
@@ -249,8 +249,8 @@ function _splitSegmentAt(segment, breakpoint, mp, numPrevDiagonal = 0) {
 function segmentGridHalfIntersection(gridCoords, a, b) {
   const shape = gridShape(gridCoords);
   const ixs = shape.segmentIntersections(a, b);
-  if ( !ixs || ixs.length === 0 ) return null;
-  if ( ixs.length === 1 ) return shape.contains(a.x, a.y) ? a : b;
+  if ( !ixs || ixs.length === 0 ) {return null;}
+  if ( ixs.length === 1 ) {return shape.contains(a.x, a.y) ? a : b;}
   return PIXI.Point.midPoint(ixs[0], ixs[1]);
 }
 

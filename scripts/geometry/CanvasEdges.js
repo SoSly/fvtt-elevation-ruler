@@ -34,7 +34,7 @@ function edgesSet(wrapped, key, value) {
  */
 function edgesDelete(wrapped, key) {
   const edge = this.get(key);
-  if ( edge ) this.quadtree?.remove?.(edge);
+  if ( edge ) {this.quadtree?.remove?.(edge);}
   return wrapped(key);
 }
 
@@ -53,8 +53,8 @@ function clear(wrapped) {
 function refresh(wrapped) {
   ConstrainedTokenBorder._wallsID++;
   wrapped();
-  if ( !this.quadtree ) return;
-  for ( const edge of this.values() ) this.quadtree.update({ r: edge.bounds, t: edge });
+  if ( !this.quadtree ) {return;}
+  for ( const edge of this.values() ) {this.quadtree.update({ r: edge.bounds, t: edge });}
 }
 
 PATCHES.CANVAS_EDGES.WRAPS = { initialize, set: edgesSet, delete: edgesDelete, clear, refresh };

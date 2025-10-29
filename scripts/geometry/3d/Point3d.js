@@ -59,13 +59,14 @@ export class Point3d extends PIXI.Point {
     let index = 0;
     return {
       next() {
-        if ( index < 3 ) return {
+        if ( index < 3 ) {return {
           value: data[keys[index++]],
-          done: false };
-        else return { done: true };
+          done: false };}
+        else {return { done: true };}
       }
     };
   }
+
   /**
    * Construct a Point3d from any object that has x and y and z properties.
    * Recognizes elevationZ and elevation as potential z properties.
@@ -74,7 +75,7 @@ export class Point3d extends PIXI.Point {
    */
   static fromObject(obj) {
     const pt = super.fromObject(obj);
-    pt.z = obj.z ?? obj.elevationZ ?? (CONFIG.GeometryLib.utils.gridUnitsToPixels(obj.elevation) || 0); // gridUnitsToPixels(undefined) = NaN. Use || b/c NaN || 0 returns 0.
+    pt.z = obj.z ?? obj.elevationZ ?? (CONFIG.GeometryLib.utils.gridUnitsToPixels(obj.elevation) || 0); // GridUnitsToPixels(undefined) = NaN. Use || b/c NaN || 0 returns 0.
     return pt;
   }
 
@@ -372,7 +373,7 @@ export class Point3d extends PIXI.Point {
    * @returns {Point3d} The point instance itself
    */
   copyPartial(p) {
-    if ( Object.hasOwn(p, "z") ) this.z = p.z;
+    if ( Object.hasOwn(p, "z") ) {this.z = p.z;}
     return super.copyPartial(p);
   }
 
@@ -616,8 +617,11 @@ export class Point3d extends PIXI.Point {
 
   // Temporary points that can be passed to PIXI.Point methods
   static _tmp = new this();
+
   static _tmp1 = new this();
+
   static _tmp2 = new this();
+
   static _tmp3 = new this();
 }
 

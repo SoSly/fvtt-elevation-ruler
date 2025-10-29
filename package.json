@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "scripts": {
+    "lint": "npm run lint:code",
+    "lint:code": "npx eslint -c .eslintrc.json \"scripts/**/*.js\" --ignore-pattern \"scripts/delaunator/**\" --ignore-pattern \"scripts/geometry/**\""
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}

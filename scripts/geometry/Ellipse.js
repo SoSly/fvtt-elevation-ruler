@@ -188,7 +188,7 @@ export class Ellipse extends PIXI.Ellipse {
    */
   contains(x, y) {
     const { width, height } = this;
-    if ( width <= 0 || height <= 0 ) return false;
+    if ( width <= 0 || height <= 0 ) {return false;}
 
     // Move point to Ellipse-space
     const pt = new PIXI.Point(x, y);
@@ -198,7 +198,7 @@ export class Ellipse extends PIXI.Ellipse {
     if ( pt.x < -width
       || pt.x > width
       || pt.y < -height
-      || pt.y > height ) return false;
+      || pt.y > height ) {return false;}
 
     // Just like PIXI.Ellipse.prototype.contains but we are already at 0, 0
     // Normalize the coords to an ellipse
@@ -218,7 +218,7 @@ export class Ellipse extends PIXI.Ellipse {
    */
   pointIsOn(point, epsilon = 1e-08) {
     const { width, height } = this;
-    if ( width <= 0 || height <= 0 ) return false;
+    if ( width <= 0 || height <= 0 ) {return false;}
 
     // Move point to Ellipse-space
     const pt = PIXI.Point.fromObject(point);
@@ -228,7 +228,7 @@ export class Ellipse extends PIXI.Ellipse {
     if ( pt.x < -width
       || pt.x > width
       || pt.y < -height
-      || pt.y > height ) return false;
+      || pt.y > height ) {return false;}
 
     // Just like PIXI.Ellipse.prototype.contains but we are already at 0, 0
     // Normalize the coords to an ellipse
@@ -290,7 +290,7 @@ export class Ellipse extends PIXI.Ellipse {
     const dist2 = PIXI.Point.distanceSquaredBetween(a, b);
     return cir.segmentIntersections(a, b).map(ix => {
       const newIx = this.toCartesianCoords(this.fromCircleCoords(ix));
-      newIx.t0 =  Math.sqrt(PIXI.Point.distanceSquaredBetween(a, ix) / dist2);
+      newIx.t0 = Math.sqrt(PIXI.Point.distanceSquaredBetween(a, ix) / dist2);
       return newIx;
     });
   }
@@ -347,7 +347,7 @@ export class Ellipse extends PIXI.Ellipse {
    * @returns {PIXI.Polygon|null}       The intersected polygon or null if no solution was present
    */
   intersectPolygon(polygon, { density, clipType, weilerAtherton=true, ...options } = {}) {
-    if ( !this.major || !this.minor ) return new PIXI.Polygon([]);
+    if ( !this.major || !this.minor ) {return new PIXI.Polygon([]);}
 
     // Default to the larger radius for density
     density ??= PIXI.Circle.approximateVertexDensity(this.major);
@@ -356,7 +356,7 @@ export class Ellipse extends PIXI.Ellipse {
     // Use Weiler-Atherton for efficient intersection or union.
     if ( weilerAtherton && polygon._isPositive ) {
       const res = WeilerAthertonClipper.combine(polygon, this, { clipType, density, ...options });
-      if ( !res.length ) return new PIXI.Polygon([]);
+      if ( !res.length ) {return new PIXI.Polygon([]);}
       return res[0];
     }
 

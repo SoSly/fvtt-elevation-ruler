@@ -136,7 +136,7 @@ Hooks.once("init", function() {
       textScale: 1,
 
       /** For custom ruler labels, how large to make the lines relative to the distance number */
-      secondaryTextScale: 2/3,
+      secondaryTextScale: 2/3
     }
   };
 
@@ -207,7 +207,7 @@ const PATHFINDING_CONTROL = {
 // Render the pathfinding control.
 // Render the prefer token control if that setting is enabled.
 Hooks.on("getSceneControlButtons", controls => {
-  if ( !canvas.scene || !Settings.get(Settings.KEYS.PATHFINDING.ENABLE) ) return;
+  if ( !canvas.scene || !Settings.get(Settings.KEYS.PATHFINDING.ENABLE) ) {return;}
   const tokenTools = controls.find(c => c.name === "token");
   tokenTools.tools.push(PATHFINDING_CONTROL);
 });
@@ -219,18 +219,18 @@ Hooks.on("canvasInit", function(_canvas) {
 
 Hooks.on("renderSceneControls", async function(controls, _html, _data) {
   // Monitor enabling/disabling of custom controls.
-  if ( controls.activeControl !== "token" ) return;
+  if ( controls.activeControl !== "token" ) {return;}
 
   const toggle = controls.control.tools.find(t => t.name === Settings.KEYS.CONTROLS.PATHFINDING);
-  if ( toggle ) await Settings.set(Settings.KEYS.CONTROLS.PATHFINDING, toggle.active);
+  if ( toggle ) {await Settings.set(Settings.KEYS.CONTROLS.PATHFINDING, toggle.active);}
 });
 
 export function updatePathfindingControl(enable) {
-  if ( !Settings.get(Settings.KEYS.PATHFINDING.ENABLE) ) return;
+  if ( !Settings.get(Settings.KEYS.PATHFINDING.ENABLE) ) {return;}
   enable ??= Settings.get(Settings.KEYS.CONTROLS.PATHFINDING);
   const tokenTools = ui.controls.controls.find(c => c.name === "token");
   const index = tokenTools.tools.findIndex(b => b.name === Settings.KEYS.CONTROLS.PATHFINDING);
-  if ( !~index ) tokenTools.tools.push(PATHFINDING_CONTROL);
+  if ( !~index ) {tokenTools.tools.push(PATHFINDING_CONTROL);}
   PATHFINDING_CONTROL.active = Settings.get(Settings.KEYS.CONTROLS.PATHFINDING);
   // Do in the hook instead to avoid repetition: ui.controls.render(true);
 }

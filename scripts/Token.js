@@ -34,10 +34,10 @@ PATCHES.PATHFINDING = {};
 function preUpdateToken(document, changes, _options, _userId) {
   const token = document.object;
   if ( token.isPreview
-    || !(Object.hasOwn(changes, "x") || Object.hasOwn(changes, "y") || Object.hasOwn(changes, "elevation")) ) return;
+    || !(Object.hasOwn(changes, "x") || Object.hasOwn(changes, "y") || Object.hasOwn(changes, "elevation")) ) {return;}
 
   // Don't update move data if the move flag is being updated (likely due to control-z undo).
-  if ( foundry.utils.hasProperty(changes, `flags.${MODULE_ID}.${FLAGS.MOVEMENT_HISTORY}`) ) return;
+  if ( foundry.utils.hasProperty(changes, `flags.${MODULE_ID}.${FLAGS.MOVEMENT_HISTORY}`) ) {return;}
 
   // Store the move data in a token flag so it survives reloads and can be updated on control-z undo by another user.
   // First determine the current move data.
@@ -63,8 +63,8 @@ function preUpdateToken(document, changes, _options, _userId) {
     // Map to each unique combat.
     const combatData = {...token._combatMoveData};
     if ( _options.firstRulerSegment ) {
-      if (combatData.lastRound < game.combat.round ) combatData.lastMoveDistance = lastMoveDistance;
-      else combatData.lastMoveDistance += lastMoveDistance;
+      if (combatData.lastRound < game.combat.round ) {combatData.lastMoveDistance = lastMoveDistance;}
+      else {combatData.lastMoveDistance += lastMoveDistance;}
     }
     combatData.numDiagonal = numDiagonal;
     combatData.lastRound = game.combat.round;
@@ -89,10 +89,10 @@ function preUpdateToken(document, changes, _options, _userId) {
 function updateToken(document, changed, _options, _userId) {
   const token = document.object;
   if ( token.isPreview
-    || !(Object.hasOwn(changed, "x") || Object.hasOwn(changed, "y") || Object.hasOwn(changed, "elevation")) ) return;
-  if ( !game.combat?.started ) return;
-  if ( canvas.controls.ruler.active && canvas.controls.ruler.token === token ) return; // Ruler movement history stored already.
-  if ( !Settings.get(Settings.KEYS.MEASURING.COMBAT_HISTORY) ) return;
+    || !(Object.hasOwn(changed, "x") || Object.hasOwn(changed, "y") || Object.hasOwn(changed, "elevation")) ) {return;}
+  if ( !game.combat?.started ) {return;}
+  if ( canvas.controls.ruler.active && canvas.controls.ruler.token === token ) {return;} // Ruler movement history stored already.
+  if ( !Settings.get(Settings.KEYS.MEASURING.COMBAT_HISTORY) ) {return;}
 
   // Add the move to the stored ruler history. Use the token center, not the top left, to match the ruler history.
   token[MODULE_ID] ??= {};
@@ -118,7 +118,7 @@ function _onDragLeftStart(wrapped, event) {
   wrapped(event);
 
   // If Token Ruler, start a ruler measurement.
-  if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) return;
+  if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) {return;}
 
   canvas.controls.ruler._onDragStart(event, { isTokenDrag: true });
 }
@@ -135,8 +135,8 @@ function _onDragLeftCancel(wrapped, event) {
   if ( event.button === 2 && ruler._isTokenRuler && ruler.active && ruler.state === Ruler.STATES.MEASURING ) {
     log("Token#_onDragLeftMove|Token ruler active");
     event.preventDefault();
-    if ( event.ctrlKey ) ruler._removeWaypoint(event.interactionData.destination, {snap: !event.shiftKey});
-    else ruler._addWaypoint(event.interactionData.destination, {snap: !event.shiftKey});
+    if ( event.ctrlKey ) {ruler._removeWaypoint(event.interactionData.destination, {snap: !event.shiftKey});}
+    else {ruler._addWaypoint(event.interactionData.destination, {snap: !event.shiftKey});}
     return false;
   }
 
@@ -144,8 +144,8 @@ function _onDragLeftCancel(wrapped, event) {
 
   // Cancel a Ruler measurement.
   // If moving, handled by the drag left drop.
-  if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) return;
-  if ( ruler._state !== Ruler.STATES.MOVING ) canvas.controls.ruler._onMouseUp(event);
+  if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) {return;}
+  if ( ruler._state !== Ruler.STATES.MOVING ) {canvas.controls.ruler._onMouseUp(event);}
 }
 
 /**
@@ -158,20 +158,20 @@ function _onDragLeftMove(wrapped, event) {
   // Gridless snapping: pause the mouse position at the token speed boundary.
   const er = this[MODULE_ID] ??= {};
   const gridlessSnap = gridlessSnapping(this, event);
-  // console.log(`GridlessSnap ${gridlessSnap}| ${event.interactionData.destination.x},${event.interactionData.destination.y} | cached ${er.gridless?.x},${er.gridless?.y}`);
-  if (  gridlessSnap ) {
+  // Console.log(`GridlessSnap ${gridlessSnap}| ${event.interactionData.destination.x},${event.interactionData.destination.y} | cached ${er.gridless?.x},${er.gridless?.y}`);
+  if ( gridlessSnap ) {
     er.gridless ??= { ...event.interactionData.destination };
     event.interactionData.destination.x = er.gridless.x;
     event.interactionData.destination.y = er.gridless.y;
-  } else er.gridless = null;
+  } else {er.gridless = null;}
 
   // Default token drag move.
   wrapped(event);
 
   // Continue a Ruler measurement.
-  if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) return;
+  if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) {return;}
   const ruler = canvas.controls.ruler;
-  if ( ruler._state > 0 ) ruler._onMouseMove(event);
+  if ( ruler._state > 0 ) {ruler._onMouseMove(event);}
 }
 
 /**
@@ -202,21 +202,21 @@ SOFTWARE.
 
  */
 function gridlessSnapping(token, event) {
-  if ( !canvas.grid.isGridless ) return false;
-  if ( !Settings.useSpeedHighlighting(token) ) return false;
+  if ( !canvas.grid.isGridless ) {return false;}
+  if ( !Settings.useSpeedHighlighting(token) ) {return false;}
 
   const ruler = canvas.controls.ruler;
-  if ( !ruler.state === Ruler.STATES.MEASURING ) return false;
+  if ( !ruler.state === Ruler.STATES.MEASURING ) {return false;}
 
   const snapDistance = CONFIG[MODULE_ID]?.gridlessSnapDistance();
-  if ( !snapDistance ) return false;
+  if ( !snapDistance ) {return false;}
 
   // Add the new destination and check the segments.
   let res = true;
   const oldDestination = { ...ruler.destination};
   const snap = !event.shiftKey;
   const newDest = ruler._getMeasurementDestination(event.interactionData.destination, { snap });
-  // console.log(`eventDest ${event.interactionData.destination.x},${event.interactionData.destination.y}; newDest: ${newDest.x},${newDest.y}`);
+  // Console.log(`eventDest ${event.interactionData.destination.x},${event.interactionData.destination.y}; newDest: ${newDest.x},${newDest.y}`);
   ruler.destination = newDest;
   ruler.segments = ruler._getMeasurementSegments();
   ruler._computeDistance();
@@ -224,17 +224,17 @@ function gridlessSnapping(token, event) {
   // Test if we just passed the prior speed category limit.
   const splitterFn = tokenSpeedSegmentSplitter(canvas.controls.ruler, token);
   const segments = [];
-  for ( const segment of ruler.segments ) segments.push(...splitterFn(segment));
-  if ( segments.length < 2 ) res = false;
+  for ( const segment of ruler.segments ) {segments.push(...splitterFn(segment));}
+  if ( segments.length < 2 ) {res = false;}
   if ( res ) {
     res = false;
     const targetDistance = segments.at(-2).maxSpeedCategoryDistance;
     const distance = segments.at(-1).cumulativeCost;
-    // console.log(`distance ${distance} | targetDistance ${targetDistance} | ${snapDistance} | ${distance < (targetDistance + snapDistance) && distance >= targetDistance}`);
+    // Console.log(`distance ${distance} | targetDistance ${targetDistance} | ${snapDistance} | ${distance < (targetDistance + snapDistance) && distance >= targetDistance}`);
 
     // Determine how to adjust the mouse movement.
     // If just past the target distance, make the mouse movement "sticky".
-    if ( distance >= targetDistance && distance < (targetDistance + snapDistance) ) res = true;
+    if ( distance >= targetDistance && distance < (targetDistance + snapDistance) ) {res = true;}
   }
   ruler.destination = oldDestination;
   return res;
@@ -244,16 +244,17 @@ function gridlessSnapping(token, event) {
  * Reverse the calculation to get the destination for the ruler position.
  * Used with gridless snapping to set the destination.
  */
+// eslint-disable-next-line no-unused-vars
 function invertMeasurementDestination(point, { snap = true } = {}) {
   const origPoint = PIXI.Point.fromObject(point);
 
   point = wrapped(point, { snap });
   const token = this.token;
-  if ( !this._isTokenRuler || !token ) return point;
-  if ( !token._preview ) return point;
+  if ( !this._isTokenRuler || !token ) {return point;}
+  if ( !token._preview ) {return point;}
 
   // Shift to token center or snapped center
-  if ( !snap ) return point;
+  if ( !snap ) {return point;}
 
   // See Token#_onDragLeftMove.
   const origin = token.getCenterPoint();
@@ -283,7 +284,7 @@ function _onUpdate(wrapped, data, options, userId) {
 async function _onDragLeftDrop(wrapped, event) {
   // End the ruler measurement
   const ruler = canvas.controls.ruler;
-  if ( !ruler.active || !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) return wrapped(event);
+  if ( !ruler.active || !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) {return wrapped(event);}
   const destination = event.interactionData.destination;
 
   // Ensure the cursor destination is within bounds
@@ -307,7 +308,7 @@ async function _onDragLeftDrop(wrapped, event) {
 function lastMoveDistance() {
   if ( game.combat?.started ) {
     const combatData = this._combatMoveData;
-    if ( combatData.lastRound < game.combat.round ) return 0;
+    if ( combatData.lastRound < game.combat.round ) {return 0;}
     return combatData.lastMoveDistance;
   }
   return this.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_HISTORY)?.lastMoveDistance || 0;
@@ -324,7 +325,7 @@ function lastMoveDistance() {
 function _combatMoveData() {
   const combatId = game.combat?.id;
   const defaultData = { lastMoveDistance: 0, lastRound: -1 };
-  if ( typeof combatId === "undefined" ) return defaultData;
+  if ( typeof combatId === "undefined" ) {return defaultData;}
   const combatMoveData = this.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_HISTORY)?.combatMoveData ?? { };
   return combatMoveData[combatId] ?? defaultData;
 }
@@ -352,7 +353,7 @@ PATCHES.MOVEMENT_TRACKING.GETTERS = { lastMoveDistance, _combatMoveData };
  * @returns {function}
  */
 function noStartEase(easing) {
-  if ( typeof easing === "string" ) easing = CanvasAnimation[easing];
+  if ( typeof easing === "string" ) {easing = CanvasAnimation[easing];}
   return pt => (pt < 0.5) ? pt : easing(pt);
 }
 
@@ -362,6 +363,6 @@ function noStartEase(easing) {
  * @returns {function}
  */
 function noEndEase(easing) {
-  if ( typeof easing === "string" ) easing = CanvasAnimation[easing];
+  if ( typeof easing === "string" ) {easing = CanvasAnimation[easing];}
   return pt => (pt > 0.5) ? pt : easing(pt);
 }

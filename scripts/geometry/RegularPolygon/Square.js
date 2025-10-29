@@ -122,20 +122,20 @@ export class Square extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon {
     const { x, y } = origin;
 
     // Oriented []
-    if ( squareRotations.has(rotation) ) return [
+    if ( squareRotations.has(rotation) ) {return [
       apothem + x, apothem + y,
       -apothem + x, apothem + y,
       -apothem + x, -apothem + y,
       apothem + x, -apothem + y
-    ];
+    ];}
 
     // Oriented [] turned 45º
-    if ( diagonalRotations.has(rotation) ) return [
+    if ( diagonalRotations.has(rotation) ) {return [
       radius + x, y,
       x, radius + y,
       -radius + x, y,
       x, -radius + y
-    ];
+    ];}
 
     return super._generatePoints();
   }
@@ -146,10 +146,10 @@ export class Square extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon {
     const { x, y } = origin;
 
     // Oriented []
-    if ( squareRotations.has(rotation) ) return new PIXI.Rectangle(-apothem + x, -apothem + y, sideLength, sideLength);
+    if ( squareRotations.has(rotation) ) {return new PIXI.Rectangle(-apothem + x, -apothem + y, sideLength, sideLength);}
 
     // Oriented [] turned 45º
-    if ( diagonalRotations.has(rotation) ) return new PIXI.Rectangle(fp[2].x, fp[3].y, sideLength, sideLength);
+    if ( diagonalRotations.has(rotation) ) {return new PIXI.Rectangle(fp[2].x, fp[3].y, sideLength, sideLength);}
 
     return super.getBounds();
   }

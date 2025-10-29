@@ -6,3 +6,5 @@ sync_module.sh
 *.sh
 
 eslint.config.mjs
+node_modules
+.claude

@@ -1,13 +1,8 @@
 /* globals
-canvas,
-Wall
 */
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 "use strict";
 
-import { MODULE_ID } from "../const.js";
-import { SCENE_GRAPH } from "./WallTracer.js";
-import { Pathfinder } from "./pathfinding.js";
 import { Settings } from "../settings.js";
 
 // Track wall creation, update, and deletion, constructing WallTracerEdges as we go.

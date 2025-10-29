@@ -41,8 +41,8 @@ export function calculatePathPointsForSegment(segment, token) {
   try {
     const path = pf.runPath(A, B);
     pathPoints = Pathfinder.getPathPoints(path);
-  } catch (error) {
-    log(`calculatePathPointsForSegment|Error using pathfinding.`, path, error);
+  } catch(error) {
+    log("calculatePathPointsForSegment|Error using pathfinding.", path, error);
     return [];
   }
   const t1 = performance.now();
@@ -83,7 +83,7 @@ export function constructPathfindingSegments(segments, segmentMap) {
   // For each segment, check the map for pathfinding points.
   // If any, replace segment with the points.
   // Make sure to keep the label for the last segment piece only
-  if ( !segmentMap.size ) return segments;
+  if ( !segmentMap.size ) {return segments;}
   const newSegments = [];
   const Point3d = CONFIG.GeometryLib.threeD.Point3d;
   for ( const segment of segments ) {
@@ -120,8 +120,8 @@ export function constructPathfindingSegments(segments, segmentMap) {
   }
   const firstSegment = newSegments.at(0);
   const lastSegment = newSegments.at(-1);
-  if ( firstSegment ) firstSegment.first = true;
-  if ( lastSegment ) lastSegment.last = true;
+  if ( firstSegment ) {firstSegment.first = true;}
+  if ( lastSegment ) {lastSegment.last = true;}
   return newSegments;
 }
 
@@ -158,12 +158,12 @@ export function elevateSegments(ruler, segments) {  // Add destination as the fi
       const Bz = segment.ray.B.z ?? gridUnitsToPixels(waypoints[0].elevation);
       segment.ray = Ray3d.from2d(segment.ray, { Az, Bz });
     }
-    if ( !~segment.waypoint.idx ) continue;
+    if ( !~segment.waypoint.idx ) {continue;}
 
     // Add the waypoint elevations to the corresponding segment endpoints.
     const startWaypoint = waypoints[segment.waypoint.idx];
     const endWaypoint = waypoints[segment.waypoint.idx + 1];
-    if ( !startWaypoint || !endWaypoint ) continue; // Should not happen.
+    if ( !startWaypoint || !endWaypoint ) {continue;} // Should not happen.
 
     // Convert to 3d Rays
     const Az = gridUnitsToPixels(startWaypoint.elevation);

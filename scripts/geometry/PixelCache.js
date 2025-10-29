@@ -76,7 +76,7 @@ export class PixelCache extends PIXI.Rectangle {
     // Define this local rectangle.
     super(0, 0, pixelWidth, pixelHeight);
     this.pixels = pixels;
-    if ( opts.scale ) foundry.utils.mergeObject(this.scale, opts.scale);
+    if ( opts.scale ) {foundry.utils.mergeObject(this.scale, opts.scale);}
   }
 
   // ----- NOTE: Getters and setters ----- //
@@ -122,7 +122,7 @@ export class PixelCache extends PIXI.Rectangle {
    * @returns {Matrix}
    */
   _calculateToLocalTransform() {
-    const mTranslate = CONFIG.GeometryLib.Matrix.translation(-this.scale.x, -this.scale.y)
+    const mTranslate = CONFIG.GeometryLib.Matrix.translation(-this.scale.x, -this.scale.y);
 
     // Scale based on resolution.
     const resolution = this.scale.resolution;
@@ -139,7 +139,7 @@ export class PixelCache extends PIXI.Rectangle {
    */
   getThresholdLocalBoundingBox(threshold = 0.75) {
     const map = this.#thresholdLocalBoundingBoxes;
-    if ( !map.has(threshold) ) map.set(threshold, this.#calculateLocalBoundingBox(threshold));
+    if ( !map.has(threshold) ) {map.set(threshold, this.#calculateLocalBoundingBox(threshold));}
     return map.get(threshold);
   }
 
@@ -150,7 +150,7 @@ export class PixelCache extends PIXI.Rectangle {
    */
   getThresholdCanvasBoundingBox(threshold = 0.75) {
     const map = this.#thresholdCanvasBoundingBoxes;
-    if ( !map.has(threshold) ) map.set(threshold, this.#calculateCanvasBoundingBox(threshold));
+    if ( !map.has(threshold) ) {map.set(threshold, this.#calculateCanvasBoundingBox(threshold));}
     return map.get(threshold);
   }
 
@@ -205,9 +205,9 @@ export class PixelCache extends PIXI.Rectangle {
           break;
         }
       }
-      if ( ~minLeft ) break;
+      if ( ~minLeft ) {break;}
     }
-    if ( !~minLeft ) return new PIXI.Rectangle();
+    if ( !~minLeft ) {return new PIXI.Rectangle();}
 
     // Test right side
     for ( let x = right; x >= left; x -= 1 ) {
@@ -218,7 +218,7 @@ export class PixelCache extends PIXI.Rectangle {
           break;
         }
       }
-      if ( ~maxRight ) break;
+      if ( ~maxRight ) {break;}
     }
 
     // Test top side
@@ -230,7 +230,7 @@ export class PixelCache extends PIXI.Rectangle {
           break;
         }
       }
-      if ( ~minTop ) break;
+      if ( ~minTop ) {break;}
     }
 
     // Test bottom side
@@ -242,7 +242,7 @@ export class PixelCache extends PIXI.Rectangle {
           break;
         }
       }
-      if ( ~maxBottom ) break;
+      if ( ~maxBottom ) {break;}
     }
 
     // Pad right/bottom by 1 b/c otherwise they would be inset.
@@ -284,9 +284,9 @@ export class PixelCache extends PIXI.Rectangle {
     const maxIdx = this.pixels.length - 1;
     for ( let xi = -1; xi < 2; xi += 1 ) {
       for ( let yi = -1; yi < 2; yi += 1 ) {
-        if ( !(xi || yi) ) continue;
+        if ( !(xi || yi) ) {continue;}
         const neighborIdx = this.localPixelStep(currIdx, xi, yi);
-        if ( trimBorder && !neighborIdx.between(0, maxIdx) ) continue;
+        if ( trimBorder && !neighborIdx.between(0, maxIdx) ) {continue;}
         arr.push(neighborIdx);
       }
     }
@@ -329,7 +329,7 @@ export class PixelCache extends PIXI.Rectangle {
    */
   _indexAtLocal(x, y) {
     const { width, height } = this;
-    if ( x < 0 || y < 0 || x >= width || y >= height ) return -1;
+    if ( x < 0 || y < 0 || x >= width || y >= height ) {return -1;}
 
     // Use floor to ensure consistency when converting to/from coordinates <--> index.
     return ((~~y) * width) + (~~x);
@@ -411,7 +411,7 @@ export class PixelCache extends PIXI.Rectangle {
     return canvas;
   }
 
- /**
+  /**
    * Test whether the pixel cache contains a specific canvas point.
    * See Tile.prototype.containsPixel
    * @param {number} x    Canvas x-coordinate
@@ -422,7 +422,7 @@ export class PixelCache extends PIXI.Rectangle {
   containsPixel(x, y, alphaThreshold = 0.75) {
     // First test against the bounding box
     const bounds = this.getThresholdCanvasBoundingBox(alphaThreshold);
-    if ( !bounds.contains(x, y) ) return false;
+    if ( !bounds.contains(x, y) ) {return false;}
 
     // Next test a specific pixel
     const value = this.pixelAtCanvas(x, y);
@@ -509,11 +509,11 @@ export class PixelCache extends PIXI.Rectangle {
    * @returns {PIXI.Rectangle|PIXI.Polygon|PIXI.Circle|PIXI.Ellipse}
    */
   _shapeToLocalCoordinates(shape) {
-    if ( shape instanceof PIXI.Rectangle ) return this._rectangleToLocalCoordinates(shape);
-    else if ( shape instanceof PIXI.Polygon ) return this._polygonToLocalCoordinates(shape);
-    else if ( shape instanceof PIXI.Circle ) return this._circleToLocalCoordinates(shape);
-    else if ( shape instanceof PIXI.Ellipse ) return this._ellipseToLocalCoordinates(shape);
-    else console.error("applyFunctionToShape: shape not recognized.");
+    if ( shape instanceof PIXI.Rectangle ) {return this._rectangleToLocalCoordinates(shape);}
+    else if ( shape instanceof PIXI.Polygon ) {return this._polygonToLocalCoordinates(shape);}
+    else if ( shape instanceof PIXI.Circle ) {return this._circleToLocalCoordinates(shape);}
+    else if ( shape instanceof PIXI.Ellipse ) {return this._ellipseToLocalCoordinates(shape);}
+    else {console.error("applyFunctionToShape: shape not recognized.");}
   }
 
   // ----- NOTE: Segment pixel extraction ----- //
@@ -557,7 +557,7 @@ export class PixelCache extends PIXI.Rectangle {
    */
   _extractAllPixelValuesAlongCanvasRay(a, b, { alphaThreshold, localOffsets, reducerFn } = {}) {
     const localBoundsIx = this._trimCanvasRayToLocalBounds(a, b, alphaThreshold);
-    if ( !localBoundsIx ) return []; // Ray never intersects the cache bounds.
+    if ( !localBoundsIx ) {return [];} // Ray never intersects the cache bounds.
 
     const pixels = this._extractAllPixelValuesAlongLocalRay(
       localBoundsIx[0], localBoundsIx[1], localOffsets, reducerFn);
@@ -585,7 +585,7 @@ export class PixelCache extends PIXI.Rectangle {
       const pt = new PIXI.Point(bresPts[i], bresPts[i + 1]);
       const pixelsAtPoint = this._pixelsForRelativePointsFromLocal(pt.x, pt.y, localOffsets);
       const currPixel = reducerFn(pixelsAtPoint);
-      pt.currPixel = currPixel
+      pt.currPixel = currPixel;
       pixels[j] = pt;
     }
     return pixels;
@@ -611,11 +611,11 @@ export class PixelCache extends PIXI.Rectangle {
   _extractAllMarkedPixelValuesAlongCanvasRay(a, b, markPixelFn,
     { alphaThreshold, skipFirst, forceLast, localOffsets, reducerFn } = {}) {
     const localBoundsIx = this._trimCanvasRayToLocalBounds(a, b, alphaThreshold);
-    if ( !localBoundsIx ) return []; // Ray never intersects the cache bounds.
+    if ( !localBoundsIx ) {return [];} // Ray never intersects the cache bounds.
 
     const pixels = this._extractAllMarkedPixelValuesAlongLocalRay(
       localBoundsIx[0], localBoundsIx[1], markPixelFn, skipFirst, forceLast, localOffsets, reducerFn);
-    pixels.forEach(pt => this._toCanvasCoordinates(pt.x, pt.y, pt)); // inline replacement
+    pixels.forEach(pt => this._toCanvasCoordinates(pt.x, pt.y, pt)); // Inline replacement
     return pixels;
   }
 
@@ -646,7 +646,7 @@ export class PixelCache extends PIXI.Rectangle {
     if ( skipFirst ) {
       const x = bresPts.shift();
       const y = bresPts.shift();
-      if ( typeof y === "undefined" ) return pixels; // No more pixels!
+      if ( typeof y === "undefined" ) {return pixels;} // No more pixels!
       const pixelsAtPoint = this._pixelsForRelativePointsFromLocal(x, y, localOffsets);
       prevPixel = reducerFn(pixelsAtPoint);
     }
@@ -692,12 +692,12 @@ export class PixelCache extends PIXI.Rectangle {
     { alphaThreshold, skipFirst, forceLast, localOffsets, reducerFn } = {}) {
 
     const localBoundsIx = this._trimCanvasRayToLocalBounds(a, b, alphaThreshold);
-    if ( !localBoundsIx ) return null; // Ray never intersects the cache bounds.
+    if ( !localBoundsIx ) {return null;} // Ray never intersects the cache bounds.
 
     const pixel = this._extractNextMarkedPixelValueAlongLocalRay(
       localBoundsIx[0], localBoundsIx[1], markPixelFn, skipFirst, forceLast, localOffsets, reducerFn);
-    if ( !pixel ) return pixel;
-    this._toCanvasCoordinates(pixel.x, pixel.y, pixel); // inline replacement
+    if ( !pixel ) {return pixel;}
+    this._toCanvasCoordinates(pixel.x, pixel.y, pixel); // Inline replacement
     return pixel;
   }
 
@@ -725,7 +725,7 @@ export class PixelCache extends PIXI.Rectangle {
     if ( skipFirst ) {
       // Iterate over the first value
       pt = bresIter.next().value;
-      if ( !pt ) return null; // No more pixels!
+      if ( !pt ) {return null;} // No more pixels!
       const pixelsAtPoint = this._pixelsForRelativePointsFromLocal(pt.x, pt.y, localOffsets);
       prevPixel = reducerFn(pixelsAtPoint);
     }
@@ -786,7 +786,7 @@ export class PixelCache extends PIXI.Rectangle {
   }
 
   // ----- NOTE: Aggregators ----- //
-    /**
+  /**
    * Utility method to construct a function that can aggregate pixel array generated from offsets
    * @param {string} type     Type of aggregation to perform
    *   - first: take the first value, which in the case of offsets will be [0,0]
@@ -805,14 +805,14 @@ export class PixelCache extends PIXI.Rectangle {
       case "first": return pixels => pixels[0];
       case "min": {
         reducerFn = (acc, curr) => {
-          if ( curr == null ) return acc; // Undefined or null.
+          if ( curr == null ) {return acc;} // Undefined or null.
           return Math.min(acc, curr);
         };
         break;
       }
       case "max": {
         reducerFn = (acc, curr) => {
-          if ( curr == null ) return acc;
+          if ( curr == null ) {return acc;}
           return Math.max(acc, curr);
         };
         break;
@@ -822,8 +822,8 @@ export class PixelCache extends PIXI.Rectangle {
         startValue = { numNull: 0, numPixels: 0, total: 0 };
         reducerFn = (acc, curr) => {
           acc.numPixels += 1;
-          if ( curr == null ) acc.numNull += 1; // Undefined or null.
-          else acc.total += curr;
+          if ( curr == null ) {acc.numNull += 1;} // Undefined or null.
+          else {acc.total += curr;}
           return acc;
         };
 
@@ -842,8 +842,8 @@ export class PixelCache extends PIXI.Rectangle {
         startValue = { numNull: 0, numPixels: 0, threshold, count: 0 };
         reducerFn = (acc, curr) => {
           acc.numPixels += 1;
-          if ( curr == null ) acc.numNull += 1; // Undefined or null.
-          else if ( curr === acc.threshold ) acc.count += 1;
+          if ( curr == null ) {acc.numNull += 1;} // Undefined or null.
+          else if ( curr === acc.threshold ) {acc.count += 1;}
           return acc;
         };
 
@@ -861,8 +861,8 @@ export class PixelCache extends PIXI.Rectangle {
         startValue = { numNull: 0, numPixels: 0, threshold, count: 0 };
         reducerFn = (acc, curr) => {
           acc.numPixels += 1;
-          if ( curr == null ) acc.numNull += 1; // Undefined or null.
-          else if ( curr > acc.threshold ) acc.count += 1;
+          if ( curr == null ) {acc.numNull += 1;} // Undefined or null.
+          else if ( curr > acc.threshold ) {acc.count += 1;}
           return acc;
         };
 
@@ -881,8 +881,8 @@ export class PixelCache extends PIXI.Rectangle {
           const nPixels = pixels.length;
           const half = Math.floor(nPixels / 2);
           pixels.sort((a, b) => a - b);
-          if ( nPixels % 2 ) return pixels[half];
-          else return Math.round((pixels[half - 1] + pixels[half]) / 2);
+          if ( nPixels % 2 ) {return pixels[half];}
+          else {return Math.round((pixels[half - 1] + pixels[half]) / 2);}
         };
       }
 
@@ -892,8 +892,8 @@ export class PixelCache extends PIXI.Rectangle {
           const nPixels = pixels.length;
           const half = Math.floor(nPixels / 2);
           pixels.sort((a, b) => a - b);
-          if ( nPixels % 2 ) return pixels[half];
-          else return Math.round((pixels[half - 1] + pixels[half]) / 2);
+          if ( nPixels % 2 ) {return pixels[half];}
+          else {return Math.round((pixels[half - 1] + pixels[half]) / 2);}
         };
       }
     }
@@ -920,9 +920,9 @@ export class PixelCache extends PIXI.Rectangle {
    */
   static reducePixels(pixels, reducerFn, startValue) {
     const numPixels = pixels.length;
-    if ( numPixels < 2 ) return pixels[0];
+    if ( numPixels < 2 ) {return pixels[0];}
 
-    if ( reducerFn.initialize ) reducerFn.initialize();
+    if ( reducerFn.initialize ) {reducerFn.initialize();}
     let acc = startValue;
     let startI = 0;
     if ( typeof startValue === "undefined" ) {
@@ -934,7 +934,7 @@ export class PixelCache extends PIXI.Rectangle {
       acc = reducerFn(acc, curr);
     }
 
-    if ( reducerFn.finalize ) acc = reducerFn.finalize(acc);
+    if ( reducerFn.finalize ) {acc = reducerFn.finalize(acc);}
     return acc;
   }
 
@@ -946,9 +946,9 @@ export class PixelCache extends PIXI.Rectangle {
    * Used to walk a line and aggregate pixels that are covered by that shape.
    */
   static pixelOffsetGrid(shape, skip = 0) {
-    if ( shape instanceof PIXI.Rectangle ) return this.rectanglePixelOffsetGrid(shape, skip);
-    if ( shape instanceof PIXI.Polygon ) return this.polygonPixelOffsetGrid(shape, skip);
-    if ( shape instanceof PIXI.Circle ) return this.shapePixelOffsetGrid(shape, skip);
+    if ( shape instanceof PIXI.Rectangle ) {return this.rectanglePixelOffsetGrid(shape, skip);}
+    if ( shape instanceof PIXI.Polygon ) {return this.polygonPixelOffsetGrid(shape, skip);}
+    if ( shape instanceof PIXI.Circle ) {return this.shapePixelOffsetGrid(shape, skip);}
     console.warn("PixelCache|pixelOffsetGrid|shape not recognized.", shape);
     return this.polygonPixelOffsetGrid(shape.toPolygon(), skip);
   }
@@ -1094,7 +1094,7 @@ export class PixelCache extends PIXI.Rectangle {
     const polyOffsets = []; // Unclear how many pixels until we test containment.
     polyOffsets._centerPoint = offsets._centerPoint;
     for ( let i = 0, j = 0; i < nOffsets; i += 2 ) {
-      if ( isContained[j++] ) polyOffsets.push(offsets[i], offsets[i + 1]);
+      if ( isContained[j++] ) {polyOffsets.push(offsets[i], offsets[i + 1]);}
     }
     return polyOffsets;
   }
@@ -1108,7 +1108,7 @@ export class PixelCache extends PIXI.Rectangle {
   static polygonMultipleContains(poly, testPoints) {
     // Modification of PIXI.Polygon.prototype.contains
     const nPoints = testPoints.length;
-    if ( nPoints < 2 ) return undefined;
+    if ( nPoints < 2 ) {return undefined;}
     const res = new Uint8Array(nPoints * 0.5); // If we really need speed, could use bit packing
     const r = poly.points.length / 2;
     for ( let n = 0, o = r - 1; n < r; o = n++ ) {
@@ -1143,7 +1143,7 @@ export class PixelCache extends PIXI.Rectangle {
     for ( let i = 0; i < nOffsets; i += 2 ) {
       const xOffset = offsets[i];
       const yOffset = offsets[i + 1];
-      if ( shape.contains(x + xOffset, y + yOffset) ) shapeOffsets.push(xOffset, yOffset);
+      if ( shape.contains(x + xOffset, y + yOffset) ) {shapeOffsets.push(xOffset, yOffset);}
     }
     return shapeOffsets;
   }
@@ -1158,7 +1158,7 @@ export class PixelCache extends PIXI.Rectangle {
     const canvasOrigin = this._toCanvasCoordinates(0, 0);
     const xShift = this._fromCanvasCoordinates(canvasOrigin.x + 1, canvasOrigin.y);
     const yShift = this._fromCanvasCoordinates(canvasOrigin.x, canvasOrigin.y + 1);
-    if ( xShift.equals(new PIXI.Point(1, 0)) && yShift.equals(new PIXI.Point(0, 1)) ) return canvasOffsets;
+    if ( xShift.equals(new PIXI.Point(1, 0)) && yShift.equals(new PIXI.Point(0, 1)) ) {return canvasOffsets;}
 
     const nOffsets = canvasOffsets.length;
     const localOffsets = Array(nOffsets);
@@ -1174,7 +1174,7 @@ export class PixelCache extends PIXI.Rectangle {
   }
 
   // ----- NOTE: Static constructors ----- //
-    /**
+  /**
    * Construct a pixel cache from a texture.
    * Will automatically adjust the resolution of the pixel cache based on the texture resolution.
    * @param {PIXI.Texture} texture      Texture from which to pull pixel data
@@ -1364,7 +1364,7 @@ export class PixelCache extends PIXI.Rectangle {
     skip += 1; // For incrementing i.
     for ( let i = 0; i < ln; i += skip ) {
       const value = this.pixels[i];
-      if ( !value ) continue;
+      if ( !value ) {continue;}
       const alpha = Math.pow(value / this.maximumPixelValue, gammaExp);
       const pt = coordFn.call(this, i, PIXI.Point._tmp);
       CONFIG.GeometryLib.Draw.point(pt, { color, alpha, radius });
@@ -1388,14 +1388,14 @@ export class PixelCache extends PIXI.Rectangle {
       valueFn = (localX, localY) => {
         const canvasPt = this._toCanvasCoordinates(localX, localY, PIXI.Point._tmp);
         return this.pixelAtCanvas(canvasPt.x, canvasPt.y);
-      }
+      };
     }
 
     skip += 1; // For incrementing.
     for ( let localX = left; localX <= right; localX += skip ) {
       for ( let localY = top; localY <= bottom; localY += skip ) {
         const value = valueFn.call(this, localX, localY);
-        if ( !value ) continue;
+        if ( !value ) {continue;}
         const alpha = Math.pow(value / 255, gammaExp);
         const pt = coordFn.call(this, localX, localY);
         CONFIG.GeometryLib.Draw.point(pt, { color, alpha, radius });
@@ -1478,16 +1478,16 @@ export class TrimmedPixelCache extends PixelCache {
     for ( let i = 3, y = 0; y < height; y++ ) {
       for ( let x = 0; x < width; x++, i += 4 ) {
         const alpha = pixels[i];
-        if ( alpha === 0 ) continue;
-        if ( x < minX ) minX = x;
-        if ( x >= maxX ) maxX = x + 1;
-        if ( y < minY ) minY = y;
-        if ( y >= maxY ) maxY = y + 1;
+        if ( alpha === 0 ) {continue;}
+        if ( x < minX ) {minX = x;}
+        if ( x >= maxX ) {maxX = x + 1;}
+        if ( y < minY ) {minY = y;}
+        if ( y >= maxY ) {maxY = y + 1;}
       }
     }
 
     // Special case when the whole texture is alpha 0
-    if ( minX > maxX ) minX = minY = maxX = maxY = 0;
+    if ( minX > maxX ) {minX = minY = maxX = maxY = 0;}
     return { minX, minY, maxX, maxY };
   }
 
@@ -1502,8 +1502,8 @@ export class TrimmedPixelCache extends PixelCache {
     const mTranslate = CONFIG.GeometryLib.Matrix.translation(this.#fullLocalBounds.x, this.#fullLocalBounds.y);
     return super._calculateToLocalTransform().multiply3x3(mTranslate);
 
-    //const mTranslate = CONFIG.GeometryLib.Matrix.translation(this.#fullLocalBounds.x, this.#fullLocalBounds.y);
-    //return mTranslate.multiply3x3(super._calculateToLocalTransform());
+    // Const mTranslate = CONFIG.GeometryLib.Matrix.translation(this.#fullLocalBounds.x, this.#fullLocalBounds.y);
+    // return mTranslate.multiply3x3(super._calculateToLocalTransform());
   }
 
   /**
@@ -1514,7 +1514,7 @@ export class TrimmedPixelCache extends PixelCache {
    *   If the {x,y} falls within the trimmed border, returns 0.
    */
   _pixelAtLocal(x, y) {
-    if ( this.#fullLocalBounds.contains(x, y) && !this.contains(x, y) ) return 0;
+    if ( this.#fullLocalBounds.contains(x, y) && !this.contains(x, y) ) {return 0;}
     return super._pixelAtLocal(x, y);
   }
 
@@ -1526,10 +1526,10 @@ export class TrimmedPixelCache extends PixelCache {
    */
   pixelAtCanvas(x, y) {
     const idx = this._indexAtCanvas(x, y);
-    if ( idx ) return this.pixels[idx];
+    if ( idx ) {return this.pixels[idx];}
 
     const localPt = this._fromCanvasCoordinates(x, y, PIXI.Point._tmp);
-    if ( this.#fullLocalBounds.contains(localPt.x, localPt.y) ) return 0;
+    if ( this.#fullLocalBounds.contains(localPt.x, localPt.y) ) {return 0;}
     return null;
   }
 }
@@ -1769,14 +1769,14 @@ export class Marker {
     if ( this.t === t ) { return this; }
 
     // Insert further down the line if necessary.
-    if ( this.next && this.next.t < t ) return this.next.addSubsequentMarker(t, opts);
+    if ( this.next && this.next.t < t ) {return this.next.addSubsequentMarker(t, opts);}
 
     // Merge the options with this marker's options and create a new marker.
-    if ( t < this.t ) console.error("Marker asked to create a next marker with a previous t value.");
+    if ( t < this.t ) {console.error("Marker asked to create a next marker with a previous t value.");}
     const next = new this.constructor(t, this.range.start, this.range.end, { ...this.options, ...opts });
 
     // Insert at the correct position.
-    if ( this.next ) next.next = this.next;
+    if ( this.next ) {next.next = this.next;}
     this.next = next;
     return next;
   }

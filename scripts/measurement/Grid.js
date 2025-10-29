@@ -33,7 +33,7 @@ PATCHES_HexagonalGrid.BASIC = {};
 function getDirectPathGridless(wrapped, waypoints) {
   const GridCoordinates = CONFIG.GeometryLib.GridCoordinates;
   const offsets2d = wrapped(waypoints);
-  if ( !(waypoints[0] instanceof CONFIG.GeometryLib.threeD.Point3d) ) return offsets2d.map(o => GridCoordinates.fromOffset(o));
+  if ( !(waypoints[0] instanceof CONFIG.GeometryLib.threeD.Point3d) ) {return offsets2d.map(o => GridCoordinates.fromOffset(o));}
 
   // 1-to-1 relationship between the waypoints and the offsets2d for gridless.
   const GridCoordinates3d = CONFIG.GeometryLib.threeD.GridCoordinates3d;
@@ -55,7 +55,7 @@ function getDirectPathGridless(wrapped, waypoints) {
 function getDirectPathGridded(wrapped, waypoints) {
   const { HexGridCoordinates3d, GridCoordinates3d, Point3d } = CONFIG.GeometryLib.threeD;
   const GridCoordinates = CONFIG.GeometryLib.GridCoordinates;
-  if ( !(waypoints[0] instanceof Point3d) ) return wrapped(waypoints).map(o => GridCoordinates.fromObject(o));
+  if ( !(waypoints[0] instanceof Point3d) ) {return wrapped(waypoints).map(o => GridCoordinates.fromObject(o));}
 
   let prevWaypoint = GridCoordinates3d.fromObject(waypoints[0]);
   const path3d = [];
@@ -82,7 +82,7 @@ function getDirectPathGridded(wrapped, waypoints) {
  * @param {GridMeasurePathResult} result    The measurement result that the measurements need to be written to
  */
 function _measurePath(wrapped, waypoints, { cost }, result) {
-  if ( !(waypoints[0] instanceof CONFIG.GeometryLib.threeD.Point3d) ) return wrapped(waypoints, { cost }, result);
+  if ( !(waypoints[0] instanceof CONFIG.GeometryLib.threeD.Point3d) ) {return wrapped(waypoints, { cost }, result);}
   const GridCoordinates3d = CONFIG.GeometryLib.threeD.GridCoordinates3d;
   initializeResultObject(result);
   result.waypoints.forEach(waypoint => initializeResultObject(waypoint));
@@ -100,7 +100,7 @@ function _measurePath(wrapped, waypoints, { cost }, result) {
   const altGridDistanceFn = GridCoordinates3d.alternatingGridDistanceFn();
   let diagonals = canvas.grid.diagonals ?? game.settings.get("core", "gridDiagonals");
   const D = GridCoordinates3d.GRID_DIAGONALS;
-  if ( diagonals === D.EXACT && Settings.get(Settings.KEYS.MEASURING.EUCLIDEAN_GRID_DISTANCE) ) diagonals = D.EUCLIDEAN;
+  if ( diagonals === D.EXACT && Settings.get(Settings.KEYS.MEASURING.EUCLIDEAN_GRID_DISTANCE) ) {diagonals = D.EUCLIDEAN;}
   for ( let i = 1, n = waypoints.length; i < n; i += 1 ) {
     const end = waypoints[i];
     const path3d = canvas.grid.getDirectPath([start, end]);

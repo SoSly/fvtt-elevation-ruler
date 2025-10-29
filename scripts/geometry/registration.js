@@ -90,26 +90,26 @@ const PATCHES = {
   "PIXI.Rectangle": PATCHES_Rectangle,
 
   // PixelCache
-  "Tile": PATCHES_Tile,
+  Tile: PATCHES_Tile,
 
   // Elevation patches.
   "foundry.canvas.sources.BaseEffectSource": PATCHES_ELEVATION.PointSource,
   "foundry.canvas.sources.PointVisionSource": PATCHES_ELEVATION.VisionSource,
-  "PlaceableObject": PATCHES_ELEVATION.PlaceableObject,
-  "Wall": PATCHES_ELEVATION.Wall,
+  PlaceableObject: PATCHES_ELEVATION.PlaceableObject,
+  Wall: PATCHES_ELEVATION.Wall,
 
   // Elevation and Constrained Token patches
-  "Token": foundry.utils.mergeObject(PATCHES_ELEVATION.Token, PATCHES_Token),
+  Token: foundry.utils.mergeObject(PATCHES_ELEVATION.Token, PATCHES_Token),
   "foundry.canvas.edges.CanvasEdges": PATCHES_CanvasEdges,
   "foundry.canvas.edges.Edge": PATCHES_Edge,
-  "ConstrainedTokenBorder": PATCHES_ConstrainedTokenBorder
-}
+  ConstrainedTokenBorder: PATCHES_ConstrainedTokenBorder
+};
 
 export function registerGeometry() {
   CONFIG.GeometryLib ??= {};
   CONFIG.GeometryLib.registered ??= new Set();
   const currentVersion = CONFIG.GeometryLib.version;
-  if ( currentVersion && !foundry.utils.isNewerVersion(VERSION, currentVersion) ) return;
+  if ( currentVersion && !foundry.utils.isNewerVersion(VERSION, currentVersion) ) {return;}
   registerFoundryUtilsMethods();
   registerGeometryLibConstants();
   foundry.utils.mergeObject(CONFIG.GeometryLib, GEOMETRY_CONFIG);
@@ -127,7 +127,7 @@ export function registerGeometryLibConstants() {
 
 export function registerGeometryLibPatches() {
   // If older PATCHER is present, deregister it and remove it.
-  if ( CONFIG.GeometryLib.PATCHER ) deRegister();
+  if ( CONFIG.GeometryLib.PATCHER ) {deRegister();}
 
   // Create a new Patcher object and register the patches.
   CONFIG.GeometryLib.PATCHER = new Patcher();

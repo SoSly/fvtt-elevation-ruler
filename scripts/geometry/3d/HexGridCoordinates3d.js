@@ -71,7 +71,7 @@ export class HexGridCoordinates3d extends GEOMETRY_CONFIG.threeD.GridCoordinates
 
   /** @type {number} */
   set s(value) {
-    // s = 0 - q - r
+    // S = 0 - q - r
     // r = 0 - q - s
     this.r = 0 - this.q - value;
   }
@@ -94,9 +94,9 @@ export class HexGridCoordinates3d extends GEOMETRY_CONFIG.threeD.GridCoordinates
    */
   setToHexCube(hexCube, elevation) {
     if ( typeof elevation === "undefined" ) {
-      if ( typeof hexCube.z !== "undefined" ) elevation = GEOMETRY_CONFIG.utils.pixelsToGridUnits(hexCube.z);
-      else if ( typeof hexCube.k !== "undefined" ) elevation = this.constructor.elevationForUnit(hexCube.k);
-      else elevation = 0;
+      if ( typeof hexCube.z !== "undefined" ) {elevation = GEOMETRY_CONFIG.utils.pixelsToGridUnits(hexCube.z);}
+      else if ( typeof hexCube.k !== "undefined" ) {elevation = this.constructor.elevationForUnit(hexCube.k);}
+      else {elevation = 0;}
     }
     const { x, y } = canvas.grid.cubeToPoint(hexCube);
     this.x = roundNearWhole(x);
@@ -198,15 +198,15 @@ export class HexGridCoordinates3d extends GEOMETRY_CONFIG.threeD.GridCoordinates
 function directPath3dHex(start, end) {
   start = HexGridCoordinates3d.fromObject(start);
   end = HexGridCoordinates3d.fromObject(end);
-  if ( start.offsetsEqual(end) ) return [start, end];
+  if ( start.offsetsEqual(end) ) {return [start, end];}
   const points = CONFIG.GeometryLib.utils.bresenhamHexLine3d(start, end);
   const path3d = [start];
   // Convert points to GridCoordinates3d. Start and end repeat; skip.
-  for ( let i = 4, n = points.length - 4; i < n; i += 4 ) path3d.push(HexGridCoordinates3d.fromHexCube({
+  for ( let i = 4, n = points.length - 4; i < n; i += 4 ) {path3d.push(HexGridCoordinates3d.fromHexCube({
     q: points[i],
     r: points[i + 1],
     s: points[i + 2],
-    k: points[i + 3] }));
+    k: points[i + 3] }));}
   path3d.push(end);
   return path3d;
 }

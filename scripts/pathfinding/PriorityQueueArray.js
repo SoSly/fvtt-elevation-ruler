@@ -27,7 +27,7 @@ export class PriorityQueueArray {
       case "high": break;
       case "low": this.comparator = (elem, obj) => (elem._priority - obj._priority) < 0; break;
       default: this.comparator = comparator;
-     }
+    }
   }
 
   /** @type {number} */
@@ -77,8 +77,8 @@ export class PriorityQueueArray {
    * @param {number} idx   Location to insert
    */
   _insertAt(obj, idx) {
-    if ( ~idx ) this.data.splice(idx, undefined, obj);
-    else this.data.push(obj);
+    if ( ~idx ) {this.data.splice(idx, undefined, obj);}
+    else {this.data.push(obj);}
   }
 
   /**

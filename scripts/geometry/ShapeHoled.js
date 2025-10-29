@@ -38,7 +38,7 @@ export class ShapeHoled {
    *   (So duplicate these shapes if you are not using them as holes elsewhere.)
    */
   constructor(shapes = [], { holes } = {}) {
-    if ( holes ) holes.forEach(idx => shapes[idx].isHole = true);
+    if ( holes ) {holes.forEach(idx => shapes[idx].isHole = true);}
     shapes.forEach(s => {
       const arr = s.isHole ? this.holes : this.shapes;
       arr.push(s);
@@ -53,7 +53,7 @@ export class ShapeHoled {
    * @param {Shape}
    */
   add(shape) {
-    if ( shape.isHole ) return this.addHole(shape);
+    if ( shape.isHole ) {return this.addHole(shape);}
     this.shapes.push(shape);
     this.#bounds = undefined;
   }
@@ -87,7 +87,7 @@ export class ShapeHoled {
    * @returns {boolean}
    */
   contains(x, y) {
-    if ( !this.shapes.some(s => s.contains(x, y)) ) return false;
+    if ( !this.shapes.some(s => s.contains(x, y)) ) {return false;}
     return this.holes.every(h => !h.contains(x, y));
   }
 
@@ -118,10 +118,10 @@ export class ShapeHoled {
    */
   toClipperPaths() {
     this.holes.forEach(h => {
-      if ( h.isClockwise ) h.reverseOrientation();
+      if ( h.isClockwise ) {h.reverseOrientation();}
     });
 
-    const polygons = [...this.shapes, ...this.holes].map(s => s.toPolygon())
+    const polygons = [...this.shapes, ...this.holes].map(s => s.toPolygon());
     return CONFIG.GeometryLib.ClipperPaths.fromPolygons(polygons);
   }
 
@@ -171,7 +171,7 @@ export class ShapeHoled {
     }
 
     // If no holes, just return the array of shapes.
-    if ( !this.holes.length ) return filteredShapes;
+    if ( !this.holes.length ) {return filteredShapes;}
 
     // Determine if any shapes are not interacting with a hole, and pull those out separately.
     const standaloneShapes = [];
@@ -192,7 +192,7 @@ export class ShapeHoled {
    * @returns {boolean}
    */
   overlaps(other) {
-    if ( !this.shapes.some(s => s.overlaps(other)) ) return false;
+    if ( !this.shapes.some(s => s.overlaps(other)) ) {return false;}
     return !this.holes.some(h => h.encompasses(other));
   }
 
@@ -205,7 +205,7 @@ export class ShapeHoled {
    * @returns {boolean}
    */
   envelops(other) {
-    if ( !this.shapes.some(s => s.envelops(other)) ) return false;
+    if ( !this.shapes.some(s => s.envelops(other)) ) {return false;}
     return !this.holes.some(h => h.overlaps(other));
   }
 }

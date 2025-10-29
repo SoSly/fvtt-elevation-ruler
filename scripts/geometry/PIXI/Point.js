@@ -73,7 +73,7 @@ function angleBetween(a, b, c, { clockwiseAngle = false } = {}) {
   const denom = ba.magnitude() * bc.magnitude();
 
   let angle = Math.acos(dot / denom);
-  if ( clockwiseAngle && foundry.utils.orient2dFast(a, b, c) > 0 ) angle = (Math.PI * 2) - angle;
+  if ( clockwiseAngle && foundry.utils.orient2dFast(a, b, c) > 0 ) {angle = (Math.PI * 2) - angle;}
   return angle;
 }
 
@@ -170,8 +170,8 @@ function fromAngle(radians, distance, outPoint) {
  * @returns {Point3d} The point instance itself
  */
 function copyPartial(p) {
-  if ( Object.hasOwn(p, "x") ) this.x = p.x;
-  if ( Object.hasOwn(p, "y") ) this.y = p.y;
+  if ( Object.hasOwn(p, "x") ) {this.x = p.x;}
+  if ( Object.hasOwn(p, "y") ) {this.y = p.y;}
   return this;
 }
 
@@ -414,7 +414,7 @@ function projectToAxisValue(other, value, coordinate, outPoint) {
   outPoint ??= new this.constructor();
   coordinate ??= "x";
   other.subtract(this, outPoint);
-  if ( outPoint[coordinate] === 0 ) return null; // Line is parallel to that coordinate axis.
+  if ( outPoint[coordinate] === 0 ) {return null;} // Line is parallel to that coordinate axis.
 
   const t = (value - this[coordinate]) / outPoint[coordinate];
   this.add(outPoint.multiplyScalar(t, outPoint), outPoint);
@@ -477,13 +477,13 @@ PIXI.Point.prototype[Symbol.iterator] = function() {
   const data = this;
   return {
     next() {
-      if ( index < 2 ) return {
+      if ( index < 2 ) {return {
         value: data[keys[index++]],
-        done: false };
-      else return { done: true };
+        done: false };}
+      else {return { done: true };}
     }
   };
-}
+};
 
 PATCHES.PIXI.GETTERS = {
   key,

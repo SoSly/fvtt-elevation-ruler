@@ -31,7 +31,7 @@ export class Patcher {
 
   /** @type {Set<PatchAbstract>} */
   groupPatches(groupName) {
-    if ( !this.groupings.has(groupName) ) this.groupings.set(groupName, new Set());
+    if ( !this.groupings.has(groupName) ) {this.groupings.set(groupName, new Set());}
     return this.groupings.get(groupName);
   }
 
@@ -43,7 +43,7 @@ export class Patcher {
   addPatch(patch, register = true) {
     this.patches.add(patch);
     this.groupPatches(patch.group).add(patch);
-    if ( register && this.groupIsRegistered(patch.group) ) this.registerPatch(patch);
+    if ( register && this.groupIsRegistered(patch.group) ) {this.registerPatch(patch);}
   }
 
   /**
@@ -53,14 +53,14 @@ export class Patcher {
    * @param {boolean} [deregister=true] Whether to deregister the patch when removing it
    */
   removePatch(patch, deregister = true) {
-    if ( !this.patches.has(patch) ) return;
-    if ( deregister && this.registeredPatches.has(patch) ) this.deregisterPatch(patch);
+    if ( !this.patches.has(patch) ) {return;}
+    if ( deregister && this.registeredPatches.has(patch) ) {this.deregisterPatch(patch);}
     this.patches.delete(patch);
     const patchGroup = this.groupPatches(patch.group);
     patchGroup.delete(patch);
 
     // If last patch in a group is removed, mark the group as unregistered.
-    if ( !patchGroup.size ) this.registeredGroups.delete(patch.group);
+    if ( !patchGroup.size ) {this.registeredGroups.delete(patch.group);}
   }
 
   /**
@@ -71,8 +71,8 @@ export class Patcher {
    * @param {PatchAbstract} patch     Patch to register
    */
   registerPatch(patch) {
-    if ( !this.patches.has(patch) ) this.addPatch(patch);
-    if ( this.registeredPatches.has(patch) ) return;
+    if ( !this.patches.has(patch) ) {this.addPatch(patch);}
+    if ( this.registeredPatches.has(patch) ) {return;}
     patch.register();
     this.registeredPatches.add(patch);
   }
@@ -82,7 +82,7 @@ export class Patcher {
    * @param {PatchAbstract} patch   Patch to deregister
    */
   deregisterPatch(patch) {
-    if ( !this.registeredPatches.has(patch) ) return;
+    if ( !this.registeredPatches.has(patch) ) {return;}
     patch.deregister();
     this.registeredPatches.delete(patch);
   }
@@ -92,7 +92,7 @@ export class Patcher {
    * @param {string} groupName    Name of group to register
    */
   registerGroup(groupName) {
-    if ( this.groupIsRegistered(groupName) || !this.groupings.has(groupName) ) return;
+    if ( this.groupIsRegistered(groupName) || !this.groupings.has(groupName) ) {return;}
     this.groupings.get(groupName).forEach(patch => this.registerPatch(patch));
     this.registeredGroups.add(groupName);
   }
@@ -102,7 +102,7 @@ export class Patcher {
    * @param {string} groupName    Name of group to deregister
    */
   deregisterGroup(groupName) {
-    if ( !this.groupIsRegistered(groupName) ) return;
+    if ( !this.groupIsRegistered(groupName) ) {return;}
     this.groupings.get(groupName).forEach(patch => this.deregisterPatch(patch));
     this.registeredGroups.delete(groupName);
   }
@@ -178,18 +178,18 @@ export class Patcher {
    * @returns {undefined|object<id{string}} Either undefined if the getter already exists or the cl.prototype.name.
    */
   static addClassMethod(cl, name, fn, { getter = false, setter = false, optional = false } = {}) {
-    if ( optional && Object.hasOwn(cl, name) ) return undefined;
+    if ( optional && Object.hasOwn(cl, name) ) {return undefined;}
     const descriptor = { configurable: true };
 
     // For getters and setters, keep the getter when creating a setter and vice-versa
     if ( getter ) {
       descriptor.get = fn;
       const currentSetter = Object.getOwnPropertyDescriptor(cl, name)?.set;
-      if ( currentSetter ) descriptor.set = currentSetter;
+      if ( currentSetter ) {descriptor.set = currentSetter;}
     } else if ( setter ) {
       descriptor.set = fn;
       const currentGetter = Object.getOwnPropertyDescriptor(cl, name)?.get;
-      if ( currentGetter ) descriptor.get = currentGetter;
+      if ( currentGetter ) {descriptor.get = currentGetter;}
     } else {
       descriptor.writable = true;
       descriptor.value = fn;
@@ -210,7 +210,7 @@ export class Patcher {
    * @returns {class}
    */
   static lookupByClassName(className, { returnPathString = false } = {}) {
-    if ( className === "Ruler" ) return returnPathString ? "CONFIG.Canvas.rulerClass" : CONFIG.Canvas.rulerClass;
+    if ( className === "Ruler" ) {return returnPathString ? "CONFIG.Canvas.rulerClass" : CONFIG.Canvas.rulerClass;}
     let isDoc = className.endsWith("Document");
     let isConfig = className.endsWith("Config");
     let baseClass = isDoc ? className.replace("Document", "")
@@ -221,12 +221,12 @@ export class Patcher {
     if ( isConfig && configObj && configObj.sheetClasses?.base ) {
       // Attempt to locate a base sheet class.
       for ( const [key, obj] of Object.entries(configObj.sheetClasses.base) ) {
-        if ( !(obj.default && obj.cls) ) continue;
+        if ( !(obj.default && obj.cls) ) {continue;}
         return returnPathString ? `CONFIG.${baseClass}.sheetClasses.base["${key}"].cls` : obj.cls;
       }
     }
 
-    if ( !configObj || isConfig ) return returnPathString ? className : eval?.(`"use strict";(${className})`);
+    if ( !configObj || isConfig ) {return returnPathString ? className : eval?.(`"use strict";(${className})`);}
 
     // Do this the hard way to catch inconsistencies
     switch ( className ) {
@@ -241,7 +241,7 @@ export class Patcher {
       return returnPathString ? `CONFIG.${baseClass}.documentClass` : configObj.documentClass;
     }
 
-    if ( configObj.objectClass ) return returnPathString ? `CONFIG.${baseClass}.objectClass` : configObj.objectClass;
+    if ( configObj.objectClass ) {return returnPathString ? `CONFIG.${baseClass}.objectClass` : configObj.objectClass;}
     return returnPathString ? className : eval?.(`"use strict";(${className})`);
   }
 
@@ -258,7 +258,7 @@ export class Patcher {
     str = str.split(".");
     const methodName = str.pop();
     const notStatic = str.at(-1) === "prototype";
-    if ( notStatic ) str.pop();
+    if ( notStatic ) {str.pop();}
     const className = str.join(".");
     return { className, isStatic: !notStatic, methodName };
   }
@@ -289,7 +289,7 @@ class AbstractPatch {
    */
   constructor(token, target, patchFn) {
     // Needed so that create can be the primary function.
-    if ( token !== secretToken ) console.error("AbstractPatch constructor is private! Use static `create` method.");
+    if ( token !== secretToken ) {console.error("AbstractPatch constructor is private! Use static `create` method.");}
     this.target = target;
     this.patchFn = patchFn;
   }
@@ -316,7 +316,7 @@ class AbstractPatch {
    */
   static createFromObject(obj, config) {
     const patches = [];
-    for ( const [target, patchFn] of Object.entries(obj) ) patches.push(this.create(target, patchFn, config));
+    for ( const [target, patchFn] of Object.entries(obj) ) {patches.push(this.create(target, patchFn, config));}
     return patches;
   }
 
@@ -342,7 +342,7 @@ export class HookPatch extends AbstractPatch {
    * Register this hook.
    */
   register() {
-    if ( this.isRegistered ) return;
+    if ( this.isRegistered ) {return;}
     this.regId = Hooks.on(this.target, this.patchFn);
   }
 
@@ -350,7 +350,7 @@ export class HookPatch extends AbstractPatch {
    * Deregister this hook.
    */
   deregister() {
-    if ( !this.isRegistered ) return;
+    if ( !this.isRegistered ) {return;}
     Hooks.off(this.target, this.regId);
     this.regId = undefined;
   }
@@ -381,7 +381,7 @@ export class MethodPatch extends AbstractPatch {
 
     cfg.isGetter = Boolean(config.isGetter);
     cfg.isSetter = Boolean(config.isSetter);
-    if ( cfg.isGetter && cfg.isSetter ) console.warn("Patcher|Getter and Setter both true; you probably only want 1 at a time!");
+    if ( cfg.isGetter && cfg.isSetter ) {console.warn("Patcher|Getter and Setter both true; you probably only want 1 at a time!");}
 
     cfg.isStatic = Boolean(config.isStatic);
     this.cl = config.className;
@@ -392,23 +392,23 @@ export class MethodPatch extends AbstractPatch {
 
   set cl(value) {
     const cfg = this.config;
-    if ( typeof value !== "string" ) value = value.name; // Can pass the class or the class name as string.
+    if ( typeof value !== "string" ) {value = value.name;} // Can pass the class or the class name as string.
     cfg.className = value;
     this.#cl = Patcher.lookupByClassName(cfg.className);
-    if ( !this.#cl ) console.error(`Patcher|${cfg.className} not found!`);
-    if ( !cfg.isStatic ) this.#cl = this.#cl.prototype;
+    if ( !this.#cl ) {console.error(`Patcher|${cfg.className} not found!`);}
+    if ( !cfg.isStatic ) {this.#cl = this.#cl.prototype;}
   }
 
   /**
    * Register this method.
    */
   register() {
-    if ( this.isRegistered ) return;
+    if ( this.isRegistered ) {return;}
 
     this.prevMethod = Object.getOwnPropertyDescriptor(this.#cl, this.target);
-    if ( this.config.isGetter ) this.prevMethod = this.prevMethod?.get;
-    else if ( this.config.isSetter ) this.prevMethod = this.prevMethod?.set;
-    else this.prevMethod = this.prevMethod?.value;
+    if ( this.config.isGetter ) {this.prevMethod = this.prevMethod?.get;}
+    else if ( this.config.isSetter ) {this.prevMethod = this.prevMethod?.set;}
+    else {this.prevMethod = this.prevMethod?.value;}
 
     this.regId = Patcher.addClassMethod(this.#cl, this.target, this.patchFn, {
       getter: this.config.isGetter, setter: this.config.isSetter
@@ -419,7 +419,7 @@ export class MethodPatch extends AbstractPatch {
    * Deregister this method.
    */
   deregister() {
-    if ( !this.isRegistered ) return;
+    if ( !this.isRegistered ) {return;}
     delete this.#cl[this.target]; // Remove the patched method entirely.
 
     // Add back the original, if any.
@@ -465,11 +465,11 @@ export class LibWrapperPatch extends AbstractPatch {
 
   set className(value) {
     const cfg = this.config;
-    if ( typeof value !== "string" ) value = value.name; // Can pass the class or the class name as string.
+    if ( typeof value !== "string" ) {value = value.name;} // Can pass the class or the class name as string.
     cfg.className = value;
     this.#className = Patcher.lookupByClassName(value, { returnPathString: true });
-    if ( !this.#className ) console.error(`Patcher|${cfg.className} not found!`);
-    if ( !cfg.isStatic ) this.#className = `${this.#className}.prototype`;
+    if ( !this.#className ) {console.error(`Patcher|${cfg.className} not found!`);}
+    if ( !cfg.isStatic ) {this.#className = `${this.#className}.prototype`;}
   }
 
   get wrapperName() { return `${this.#className}.${this.target}`; }
@@ -478,7 +478,7 @@ export class LibWrapperPatch extends AbstractPatch {
    * Register this wrapper.
    */
   register() {
-    if ( this.isRegistered ) return;
+    if ( this.isRegistered ) {return;}
     const { wrapperName, patchFn, config } = this;
     const { libWrapperType, perf_mode } = config;
     this.regId = libWrapper.register(MODULE_ID, wrapperName, patchFn, libWrapperType, { perf_mode });
@@ -488,7 +488,7 @@ export class LibWrapperPatch extends AbstractPatch {
    * Deregister this wrapper.
    */
   deregister() {
-    if ( !this.isRegistered ) return;
+    if ( !this.isRegistered ) {return;}
     libWrapper.unregister(MODULE_ID, this.regId, false);
     this.regId = undefined;
   }

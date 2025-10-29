@@ -84,7 +84,7 @@ function clipperClip(poly, { cliptype = ClipperLib.ClipType.ctUnion } = {}) {
  */
 function convexHull(points) {
   const ln = points.length;
-  if ( ln <= 1 ) return points;
+  if ( ln <= 1 ) {return points;}
 
   const newPoints = [...points];
   newPoints.sort(convexHullCmpFn);
@@ -105,7 +105,7 @@ function convexHull(points) {
   if ( upperHull.length === 1
     && lowerHull.length === 1
     && upperHull[0].x === lowerHull[0].x
-    && upperHull[0].y === lowerHull[0].y ) return new PIXI.Polygon(upperHull);
+    && upperHull[0].y === lowerHull[0].y ) {return new PIXI.Polygon(upperHull);}
 
   return new PIXI.Polygon(upperHull.concat(lowerHull));
 }
@@ -142,21 +142,21 @@ function isSegmentEnclosed(segment, { epsilon = 1e-08 } = {}) {
   const bInside = this.contains(B.x, B.y);
 
   // If either point outside, then not enclosed
-  if ( !aInside || !bInside ) return false;
+  if ( !aInside || !bInside ) {return false;}
 
   // Could still (a) have an endpoint on an edge or (b) be an edge or (c) cross the polygon edge 2+ times.
   const points = this.points;
   const ln = points.length - 2;
   for ( let i = 0; i < ln; i += 2 ) {
     const edgeA = { x: points[i], y: points[i+1] };
-    if ( edgeA.x.almostEqual(A.x, epsilon) && edgeA.y.almostEqual(A.y, epsilon) ) return false;
-    if ( edgeA.x.almostEqual(B.x, epsilon) && edgeA.y.almostEqual(B.y, epsilon) ) return false;
+    if ( edgeA.x.almostEqual(A.x, epsilon) && edgeA.y.almostEqual(A.y, epsilon) ) {return false;}
+    if ( edgeA.x.almostEqual(B.x, epsilon) && edgeA.y.almostEqual(B.y, epsilon) ) {return false;}
 
     const edgeB = { x: points[i+2], y: points[i+3] };
-    if ( edgeB.x.almostEqual(A.x, epsilon) && edgeB.y.almostEqual(A.y, epsilon) ) return false;
-    if ( edgeB.x.almostEqual(B.x, epsilon) && edgeB.y.almostEqual(B.y, epsilon) ) return false;
+    if ( edgeB.x.almostEqual(A.x, epsilon) && edgeB.y.almostEqual(A.y, epsilon) ) {return false;}
+    if ( edgeB.x.almostEqual(B.x, epsilon) && edgeB.y.almostEqual(B.y, epsilon) ) {return false;}
 
-    if ( foundry.utils.lineSegmentIntersects(edgeA, edgeB, A, B) ) return false;
+    if ( foundry.utils.lineSegmentIntersects(edgeA, edgeB, A, B) ) {return false;}
   }
 
   return true;
@@ -173,7 +173,7 @@ function isSegmentEnclosed(segment, { epsilon = 1e-08 } = {}) {
  */
 function* iterateEdges({close = true} = {}) {
   const ln = this.points.length;
-  if ( ln < 4 ) return;
+  if ( ln < 4 ) {return;}
 
   const firstA = new PIXI.Point(this.points[0], this.points[1]);
   let A = firstA;
@@ -197,14 +197,14 @@ function* iterateEdges({close = true} = {}) {
  */
 function* iteratePoints({ close = true } = {}) {
   const ln = this.points.length;
-  if ( ln < 2 ) return;
+  if ( ln < 2 ) {return;}
 
   const num = ln - (this.isClosed ? 2 : 0);
   for (let i = 0; i < num; i += 2) {
     yield new PIXI.Point(this.points[i], this.points[i + 1]);
   }
 
-  if ( close ) yield new PIXI.Point(this.points[0], this.points[1]);
+  if ( close ) {yield new PIXI.Point(this.points[0], this.points[1]);}
 }
 
 /**
@@ -215,7 +215,7 @@ function* iteratePoints({ close = true } = {}) {
 function linesCross(lines) {
   for ( const edge of this.iterateEdges() ) {
     for ( const line of lines ) {
-      if ( CONFIG.GeometryLib.utils.lineSegmentCrosses(edge.A, edge.B, line.A, line.B) ) return true;
+      if ( CONFIG.GeometryLib.utils.lineSegmentCrosses(edge.A, edge.B, line.A, line.B) ) {return true;}
     }
   }
 
@@ -233,9 +233,9 @@ function linesCross(lines) {
  * @returns {boolean} True if intersects.
  */
 function lineSegmentIntersects(a, b, { inside = false } = {}) {
-  if (this.contains(a.x, a.y) && this.contains(b.x, b.y) ) return inside;
-  for ( const edge of this.pixiEdges()  ) {
-    if ( foundry.utils.lineSegmentIntersects(a, b, edge.A, edge.B) ) return true;
+  if (this.contains(a.x, a.y) && this.contains(b.x, b.y) ) {return inside;}
+  for ( const edge of this.pixiEdges() ) {
+    if ( foundry.utils.lineSegmentIntersects(a, b, edge.A, edge.B) ) {return true;}
   }
 
   return false;
@@ -256,9 +256,9 @@ function segmentIntersections(a, b, { indices = false } = {}) {
   const edges = this.pixiEdges();
   const ixIndices = [];
   edges.forEach((e, i) => {
-    if ( foundry.utils.lineSegmentIntersects(a, b, e.A, e.B) ) ixIndices.push(i);
+    if ( foundry.utils.lineSegmentIntersects(a, b, e.A, e.B) ) {ixIndices.push(i);}
   });
-  if ( indices ) return ixIndices;
+  if ( indices ) {return ixIndices;}
 
   return ixIndices.map(i => {
     const edge = edges[i];
@@ -285,8 +285,8 @@ function pointsBetween(a, b) {
   let ixA = { t: Number.POSITIVE_INFINITY };
   let ixB = { t: Number.NEGATIVE_INFINITY };
   ixIndices.forEach(ix => {
-    if ( ix.t < ixA.t ) ixA = ix;
-    if ( ix.t > ixB.t ) ixB = ix;
+    if ( ix.t < ixA.t ) {ixA = ix;}
+    if ( ix.t > ixB.t ) {ixB = ix;}
   });
 
   // Start at ixA, and get intersection point at start and end
@@ -294,19 +294,19 @@ function pointsBetween(a, b) {
   const startEdge = edges[ixA];
   const startIx = foundry.utils.lineLineIntersection(startEdge.A, startEdge.B, a, b);
   out.push(startIx);
-  if ( !startEdge.B.almostEqual(startIx) ) out.push(startEdge.B);
+  if ( !startEdge.B.almostEqual(startIx) ) {out.push(startEdge.B);}
 
   const ln = edges.length;
-  for ( let i = startIx + 1; i < ln; i += 1 ) out.push(edges[i].B);
+  for ( let i = startIx + 1; i < ln; i += 1 ) {out.push(edges[i].B);}
 
   if ( ixB < ixA ) {
     // Must circle around to the starting edge
-    for ( let i = 0; i < ixB; i += 1 ) out.push(edges[i].B);
+    for ( let i = 0; i < ixB; i += 1 ) {out.push(edges[i].B);}
   }
 
   const endEdge = edges[ixB];
   const endIx = foundry.utils.lineLineIntersection(endEdge.A, endEdge.B, a, b);
-  if ( !endEdge.A.almostEqual(endIx) ) out.push(endIx);
+  if ( !endEdge.A.almostEqual(endIx) ) {out.push(endIx);}
 
   return out;
 }
@@ -320,7 +320,7 @@ function overlaps(other) {
   if ( other instanceof PIXI.Polygon ) { return this._overlapsPolygon(other); }
   if ( other instanceof PIXI.Circle ) { return this._overlapsCircle(other); }
   if ( other instanceof PIXI.Rectangle ) { return other.overlaps(this); }
-  if ( other.toPolygon) return this._overlapsPolygon(other.toPolygon());
+  if ( other.toPolygon) {return this._overlapsPolygon(other.toPolygon());}
   console.warn("overlaps|shape not recognized.", other);
   return false;
 }
@@ -335,7 +335,7 @@ function envelops(shape) {
   if ( shape instanceof PIXI.Polygon ) { return this._envelopsPolygon(shape); }
   if ( shape instanceof PIXI.Circle ) { return this._envelopsCircle(shape); }
   if ( shape instanceof PIXI.Rectangle ) { return this._envelopsRectangle(shape); }
-  if ( shape.toPolygon) return this._envelopsPolygon(shape.toPolygon());
+  if ( shape.toPolygon) {return this._envelopsPolygon(shape.toPolygon());}
   console.warn("overlaps|shape not recognized.", shape);
   return false;
 }
@@ -349,18 +349,18 @@ function _overlapsPolygon(other) {
   const polyBounds = this.getBounds();
   const otherBounds = other.getBounds();
 
-  if ( !polyBounds.overlaps(otherBounds) ) return false;
+  if ( !polyBounds.overlaps(otherBounds) ) {return false;}
 
   const pts1 = this.iteratePoints({ close: true });
   let a = pts1.next().value;
-  if ( other.contains(a.x, a.y) ) return true;
+  if ( other.contains(a.x, a.y) ) {return true;}
 
   for ( const b of pts1 ) {
-    if ( other.contains(b.x, b.y) ) return true;
+    if ( other.contains(b.x, b.y) ) {return true;}
     const pts2 = other.iteratePoints({ close: true });
     let c = pts2.next().value;
     for ( const d of pts2 ) {
-      if ( foundry.utils.lineSegmentIntersects(a, b, c, d) || this.contains(d.x, d.y) ) return true;
+      if ( foundry.utils.lineSegmentIntersects(a, b, c, d) || this.contains(d.x, d.y) ) {return true;}
       c = d;
     }
     a = b;
@@ -377,11 +377,11 @@ function _overlapsPolygon(other) {
  */
 function _overlapsCircle(circle) {
   // If the circle center is contained, we are done.
-  if ( this.contains(circle) ) return true;
+  if ( this.contains(circle) ) {return true;}
 
   // If the bounding boxes of the circle and this polygon do not overlap, we are done.
   const polyBounds = this.getBounds();
-  if ( !polyBounds.overlaps(circle.getBounds()) ) return false;
+  if ( !polyBounds.overlaps(circle.getBounds()) ) {return false;}
 
   // If the center of the circle is not contained, then the polygon cannot envelope the circle.
   // Therefore, some part of a polygon edge must be within the circle.
@@ -389,7 +389,7 @@ function _overlapsCircle(circle) {
   for ( const s of segments ) {
     // Get point on the line closest to segment from circle center
     const c = foundry.utils.closestPointToSegment(circle, s.A, s.B);
-    if ( circle.contains(c.x, c.y) ) return true;
+    if ( circle.contains(c.x, c.y) ) {return true;}
   }
 
   return false;
@@ -404,18 +404,18 @@ function _envelopsPolygon(poly) {
   // Not terribly efficient (sweepline would be better) but simple in concept.
   // Step 1: Check the bounding box.
   // (Could test both bounds, but it would iterate over the second polygon to create bounds.)
-  if ( !this.getBounds().envelops(poly) ) return false;
+  if ( !this.getBounds().envelops(poly) ) {return false;}
 
   // Step 2: All polygon points must be contained.
   const iter = poly.iteratePoints({ close: false });
   for ( const pt of iter ) {
-    if ( !this.contains(pt.x, pt.y) ) return false;
+    if ( !this.contains(pt.x, pt.y) ) {return false;}
   }
 
   // Step 3: Cannot have intersecting lines.
   const edges = poly.iterateEdges();
   for ( const edge of edges ) {
-    if ( this.lineSegmentIntersects(edge.A, edge.B) ) return false;
+    if ( this.lineSegmentIntersects(edge.A, edge.B) ) {return false;}
   }
   return true;
 }
@@ -431,12 +431,12 @@ function _envelopsRectangle(rect) {
   if ( !(this.contains(left, top)
        && this.contains(right, top)
        && this.contains(right, bottom)
-       && this.contains(left, bottom)) ) return false;
+       && this.contains(left, bottom)) ) {return false;}
 
   // Step 2: No intersecting edges.
   const edges = rect.iterateEdges();
   for ( const edge of edges ) {
-    if ( this.lineSegmentIntersects(edge.A, edge.B) ) return false;
+    if ( this.lineSegmentIntersects(edge.A, edge.B) ) {return false;}
   }
   return true;
 }
@@ -448,16 +448,16 @@ function _envelopsRectangle(rect) {
  */
 function _envelopsCircle(circle) {
   // Step 1: Center point must be contained.
-  if ( !this.contains(circle.x, circle.y) ) return false;
+  if ( !this.contains(circle.x, circle.y) ) {return false;}
 
   // Step 2: Circle cannot envelop this polygon.
-  if ( circle._envelopsPolygon(this) ) return false;
+  if ( circle._envelopsPolygon(this) ) {return false;}
 
   // Step 3: No intersecting edges.
   const edges = this.iterateEdges();
   for ( const edge of edges ) {
     const ixs = circle.segmentIntersections(edge.A, edge.B);
-    if ( ixs.length ) return false;
+    if ( ixs.length ) {return false;}
   }
   return true;
 }
@@ -504,13 +504,13 @@ function scaledArea({ scalingFactor = 1 } = {}) {
 function signedArea({ scalingFactor } = {}) {
   const pts = [...this.iteratePoints({close: true})];
 
-  if ( scalingFactor ) pts.forEach(pt => {
+  if ( scalingFactor ) {pts.forEach(pt => {
     pt.x = Math.round(pt.x * scalingFactor);
     pt.y = Math.round(pt.y * scalingFactor);
-  });
+  });}
 
   const ln = pts.length;
-  if ( ln < 4 ) return 0; // Incl. closing point, should have 4
+  if ( ln < 4 ) {return 0;} // Incl. closing point, should have 4
 
   // (first + second) * (first - second)
   // ...
@@ -524,7 +524,7 @@ function signedArea({ scalingFactor } = {}) {
     area += (iPt.x + jPt.x) * (iPt.y - jPt.y);
   }
 
-  if ( scalingFactor ) area /= Math.pow(scalingFactor, 2);
+  if ( scalingFactor ) {area /= Math.pow(scalingFactor, 2);}
 
   return -area * 0.5;
 }
@@ -540,8 +540,8 @@ function testHullPoint(hull, p) {
     const q = hull[hull.length - 1];
     const r = hull[hull.length - 2];
     // TO-DO: Isn't this a version of orient2d? Replace?
-    if ( (q.x - r.x) * (p.y - r.y) >= (q.y - r.y) * (p.x - r.x) ) hull.pop();
-    else break;
+    if ( (q.x - r.x) * (p.y - r.y) >= (q.y - r.y) * (p.x - r.x) ) {hull.pop();}
+    else {break;}
   }
   hull.push(p);
 }
@@ -560,7 +560,7 @@ function translate(dx, dy) {
   }
   const out = new this.constructor(pts);
   out._isPositive = this._isPositive;
-  if ( this.bounds ) out.bounds = out.getBounds(); // Bounds will have changed due to translate
+  if ( this.bounds ) {out.bounds = out.getBounds();} // Bounds will have changed due to translate
 
   return out;
 }
@@ -590,22 +590,22 @@ function wrapslice(arr, start, end) {
  * @returns {boolean}
  */
 function testMaxCWAngle(pt, origin, center, angle, maxAngle) {
-  if ( angle < maxAngle ) return false;
-  if ( foundry.utils.orient2dFast(origin, center, pt) > 0 ) return false; // CCW
+  if ( angle < maxAngle ) {return false;}
+  if ( foundry.utils.orient2dFast(origin, center, pt) > 0 ) {return false;} // CCW
 
   // If the angles are equal, pick the closest point.
   const dist2Between = PIXI.Point.distanceSquaredBetween;
-  if ( angle === maxAngle ) return dist2Between(origin, pt) < dist2Between(origin, pt);
+  if ( angle === maxAngle ) {return dist2Between(origin, pt) < dist2Between(origin, pt);}
   return true;
 }
 
 function testMaxCCWAngle(pt, origin, center, angle, maxAngle) {
-  if ( angle < maxAngle ) return false;
-  if ( foundry.utils.orient2dFast(origin, center, pt) < 0 ) return false; // CW
+  if ( angle < maxAngle ) {return false;}
+  if ( foundry.utils.orient2dFast(origin, center, pt) < 0 ) {return false;} // CW
 
   // If the angles are equal, pick the closest point.
   const dist2Between = PIXI.Point.distanceSquaredBetween;
-  if ( angle === maxAngle ) return dist2Between(origin, pt) < dist2Between(origin, pt);
+  if ( angle === maxAngle ) {return dist2Between(origin, pt) < dist2Between(origin, pt);}
   return true;
 }
 
@@ -638,11 +638,11 @@ function viewablePoints(origin, { returnKeys = false, outermostOnly = false } = 
   if ( nPoints < 3 || this.contains(origin.x, origin.y) ) {
     // Test if we have a single line segment collinear to the origin; keep the closest point.
     if ( nPoints === 2 && !foundry.utils.orient2dFast(origin, pts[0], pts[1]) ) {
-      if ( PIXI.Point.distanceSquaredBetween(origin, pts[0]) < PIXI.Point.distanceSquaredBetween(origin, pts[1]) ) pts.pop();
-      else pts.shift();
+      if ( PIXI.Point.distanceSquaredBetween(origin, pts[0]) < PIXI.Point.distanceSquaredBetween(origin, pts[1]) ) {pts.pop();}
+      else {pts.shift();}
     }
 
-    if ( returnKeys ) return Array.fromRange(pts.length);
+    if ( returnKeys ) {return Array.fromRange(pts.length);}
     return pts;
   }
   // Find the points with the largest angle from center --> origin --> pt.
@@ -677,8 +677,8 @@ function viewablePoints(origin, { returnKeys = false, outermostOnly = false } = 
   }
 
   // Given the starting max angles, should not happen.
-  if ( !cwPt ) cwPt = ccwPt;
-  if ( !ccwPt ) ccwPt = cwPt;
+  if ( !cwPt ) {cwPt = ccwPt;}
+  if ( !ccwPt ) {ccwPt = cwPt;}
 
   // Should have defined both by now.
   if ( !cwPt ) {
@@ -686,10 +686,10 @@ function viewablePoints(origin, { returnKeys = false, outermostOnly = false } = 
     return [];
   }
 
-  if ( cwPt.equals(ccwPt) ) return returnKeys ? [cwIdx] : [cwPt];
+  if ( cwPt.equals(ccwPt) ) {return returnKeys ? [cwIdx] : [cwPt];}
 
   if ( outermostOnly ) {
-    if ( returnKeys ) return [cwIdx, ccwIdx];
+    if ( returnKeys ) {return [cwIdx, ccwIdx];}
     return [cwPt, ccwPt];
   }
 
@@ -700,7 +700,7 @@ function viewablePoints(origin, { returnKeys = false, outermostOnly = false } = 
     for ( let i = 0; i < ln; i += 1 ) {
       const j = (cwIdx + i) % ln;
       indices.push(j);
-      if ( j === ccwIdx ) break;
+      if ( j === ccwIdx ) {break;}
     }
     return indices;
   }
@@ -729,7 +729,7 @@ export function elementsByIndex(arr, indices) {
  * @returns {PIXI.Polygon}    This polygon
  */
 function clean({epsilon = 1e-8, epsilonCollinear = 1e-12} = {}) {
-  if ( this.points.length < 6 ) return this;
+  if ( this.points.length < 6 ) {return this;}
 
   const pts = this.iteratePoints({close: true});
   let prev = pts.next().value;
@@ -761,7 +761,7 @@ function clean({epsilon = 1e-8, epsilonCollinear = 1e-12} = {}) {
   // Set the points and reset clockwise
   this.points = cleanPoints;
   this._isPositive = undefined;
-  if ( !this.isClockwise ) this.reverseOrientation();
+  if ( !this.isClockwise ) {this.reverseOrientation();}
   return this;
 }
 
@@ -798,8 +798,8 @@ function key() {
  * @returns {boolean}
  */
 function equals(other) {
-  if ( this.points.length !== other.points.length ) return false;
-  if ( this.isClockwise ^ other.isClockwise ) return false;
+  if ( this.points.length !== other.points.length ) {return false;}
+  if ( this.isClockwise ^ other.isClockwise ) {return false;}
 
   const thisPoints = this.iteratePoints({close: false});
   const otherPoints = [...other.iteratePoints({close: false})];
@@ -807,14 +807,14 @@ function equals(other) {
   // Find the matching point
   const startPoint = thisPoints.next().value;
   const startIdx = otherPoints.findIndex(pt => pt.equals(startPoint));
-  if ( !~startIdx ) return false;
+  if ( !~startIdx ) {return false;}
 
   // Test each point sequentially from each array
   let k = startIdx + 1; // +1 b/c already tested startPoint.
   const nPoints = otherPoints.length;
   for ( const thisPoint of thisPoints ) {
     k = k % nPoints;
-    if ( !thisPoint.equals(otherPoints[k]) ) return false;
+    if ( !thisPoint.equals(otherPoints[k]) ) {return false;}
     k += 1;
   }
 

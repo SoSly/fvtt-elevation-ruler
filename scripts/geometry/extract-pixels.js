@@ -21,9 +21,9 @@ class CustomBufferResource extends PIXI.BufferResource {
     internalFormat ??= PIXI.GL_FORMATS.RGBA;
     format ??= PIXI.GL_FORMATS.RGBA;
     type ??= PIXI.GL_TYPES.UNSIGNED_BYTE;
-    if ( !PIXI.GL_FORMATS[internalFormat] ) throw new Error("CustomResourceBuffer internal format not recognized.");
-    if ( !PIXI.GL_FORMATS[format] ) throw new Error("CustomResourceBuffer format not recognized.");
-    if ( !PIXI.GL_TYPES[type] ) throw new Error("CustomResourceBuffer type not recognized.");
+    if ( !PIXI.GL_FORMATS[internalFormat] ) {throw new Error("CustomResourceBuffer internal format not recognized.");}
+    if ( !PIXI.GL_FORMATS[format] ) {throw new Error("CustomResourceBuffer format not recognized.");}
+    if ( !PIXI.GL_TYPES[type] ) {throw new Error("CustomResourceBuffer type not recognized.");}
 
     this.data = source;
     this.internalFormat = internalFormat;
@@ -59,7 +59,7 @@ class CustomBufferResource extends PIXI.BufferResource {
 }
 
 /*
-const resource = new CustomBufferResource(dataArray, {
+Const resource = new CustomBufferResource(dataArray, {
   width: 3,
   height: 3,
   internalFormat: 'R32F',
@@ -158,7 +158,7 @@ function readPixels(gl, frame, resolution, { type, format, pixels } = {}) {
 export function extractPixelsAdvanced(renderer, texture, { frame, format, type, pixels } = {}) {
   const baseTexture = texture?.baseTexture;
   if (texture
-    && (!baseTexture || !baseTexture.valid || baseTexture.parentTextureArray)) throw new Error("Texture is invalid");
+    && (!baseTexture || !baseTexture.valid || baseTexture.parentTextureArray)) {throw new Error("Texture is invalid");}
 
   const gl = renderer.gl;
   format ??= gl.RGBA;

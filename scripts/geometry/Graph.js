@@ -25,7 +25,7 @@ export class GraphVertex {
    *                      Typically a string, but may be a number or object.
    */
   constructor(value) {
-    if ( typeof value === "undefined" ) throw new Error("Graph vertex must have a value");
+    if ( typeof value === "undefined" ) {throw new Error("Graph vertex must have a value");}
     this.value = value;
   }
 
@@ -187,7 +187,7 @@ export class Graph {
    */
   addVertex(newVertex) {
     const key = newVertex.key;
-    if ( this.vertices.has(key) ) return this.vertices.get(key);
+    if ( this.vertices.has(key) ) {return this.vertices.get(key);}
     this.vertices.set(key, newVertex);
     return newVertex;
   }
@@ -235,7 +235,7 @@ export class Graph {
    */
   addEdge(edge) {
     const key = edge.key;
-    if ( this.edges.has(key) ) return this.edges.get(key);
+    if ( this.edges.has(key) ) {return this.edges.get(key);}
     this.edges.set(key, edge);
 
     // Ensure the vertices are linked and stored in the vertices map.
@@ -283,7 +283,7 @@ export class Graph {
    */
   _addEdge(edge) {
     const key = edge.key;
-    if ( this.edges.has(key) ) return this.edges.get(key);
+    if ( this.edges.has(key) ) {return this.edges.get(key);}
     this.edges.set(key, edge);
     return edge;
   }
@@ -305,8 +305,8 @@ export class Graph {
     B.deleteEdge(edge);
 
     // Remove the vertex if the vertex has no edges.
-    if ( !A._edgeSet.size ) this.vertices.delete(A.key);
-    if ( !B._edgeSet.size ) this.vertices.delete(B.key);
+    if ( !A._edgeSet.size ) {this.vertices.delete(A.key);}
+    if ( !B._edgeSet.size ) {this.vertices.delete(B.key);}
   }
 
   /**
@@ -316,7 +316,7 @@ export class Graph {
    */
   findEdge(A, B) {
     const vertex = this.getVertexByKey(A.key);
-    if ( !vertex ) return null;
+    if ( !vertex ) {return null;}
     return vertex.findEdge(B);
   }
 
@@ -395,7 +395,7 @@ export class Graph {
       const start = edge.A;
       const end = edge.B;
       const cycle = findCycle2(spanningTree, start, end);
-      if ( cycle.length > 2 ) cycles.push(cycle);
+      if ( cycle.length > 2 ) {cycles.push(cycle);}
     }
 
     return cycles;
@@ -411,14 +411,14 @@ export class Graph {
     const rejectedEdges = new Map();
     const vertices = this.getAllVertices();
     for ( const v of vertices ) {
-      if ( !spanningTree.has(v.key) ) continue;
+      if ( !spanningTree.has(v.key) ) {continue;}
       for ( const edge of v._edgeSet ) {
         // Opposite vertex for edge is the neighbor. Test whether neighbor is in span for this vertex.
         const neighbor = edge.otherVertex(v);
-        if ( spanningTree.get(v.key).has(neighbor.key) ) continue;
+        if ( spanningTree.get(v.key).has(neighbor.key) ) {continue;}
         // Add v --> neighbor edge to rejected set. But only if rejected set does not have neighbor --> v.
         const [edgeVN, edgeNV] = edge.A.key === v.key ? [edge, edge.reverse()] : [edge.reverse(), edge];
-        if ( !rejectedEdges.has(edgeNV.key) ) rejectedEdges.set(edgeVN.key, edgeVN); // This is a critical flip.
+        if ( !rejectedEdges.has(edgeNV.key) ) {rejectedEdges.set(edgeVN.key, edgeVN);} // This is a critical flip.
       }
     }
 
@@ -441,7 +441,7 @@ export class Graph {
 
     // Initialize graph that'll contain the MST
     const MST = new Map();
-    if ( !vertices.length ) return MST;
+    if ( !vertices.length ) {return MST;}
 
     const vertexKeys = vertices.map(v => {
       const key = v.key;
@@ -463,8 +463,8 @@ export class Graph {
         // If not all vertices of the graph in MST, mapA or mapB may be undefined.
         const mapA = MST.get(keyA);
         const mapB = MST.get(keyB);
-        if ( mapA ) mapA.set(keyB, edge.B);
-        if ( mapB ) mapB.set(keyA, edge.A);
+        if ( mapA ) {mapA.set(keyB, edge.B);}
+        if ( mapB ) {mapB.set(keyA, edge.A);}
         uf.union(keyA, keyB);
       }
     }
@@ -550,16 +550,16 @@ class UnionFind {
     let rootB = this.find(b);
 
     // Roots are same so these are already connected.
-    if ( rootA === rootB ) return;
+    if ( rootA === rootB ) {return;}
 
     // Always make the element with smaller root the parent.
     const parentA = this.parent.get(a);
     const parentB = this.parent.get(b);
     if (rootA < rootB) {
-      if ( parentB !== b ) this.union(parentB, a);
+      if ( parentB !== b ) {this.union(parentB, a);}
       this.parent.set(b, parentA);
     } else {
-      if ( parentA !== a ) this.union(parentA, b);
+      if ( parentA !== a ) {this.union(parentA, b);}
       this.parent.set(a, parentB);
     }
   }
@@ -601,19 +601,19 @@ class UnionFind {
 function findCycle2(spanningTree, start, end) {
   const explored = new Set([start.key]);
   const cycle = _findCycle2Recursion(spanningTree, start, end, explored);
-  if ( cycle ) return [start, ...cycle];
+  if ( cycle ) {return [start, ...cycle];}
   return [];
 }
 
 function _findCycle2Recursion(spanningTree, start, end, explored) {
-  if ( start.key === end.key ) return [];
+  if ( start.key === end.key ) {return [];}
 
   const verticesMap = spanningTree.get(start.key);
   for ( const nextVertex of verticesMap.values() ) {
-    if ( explored.has(nextVertex.key) ) continue;
+    if ( explored.has(nextVertex.key) ) {continue;}
     explored.add(nextVertex.key);
     const cycle = _findCycle2Recursion(spanningTree, nextVertex, end, explored);
-    if ( cycle ) return [nextVertex, ...cycle];
+    if ( cycle ) {return [nextVertex, ...cycle];}
   }
   return null;
 }

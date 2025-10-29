@@ -49,15 +49,15 @@ Hooks.once("init", function() {
 
   // Add specialized system categories
   const moveCategoryFn = SPECIALIZED_SPEED_CATEGORIES[game.system.id];
-  if ( moveCategoryFn ) moveCategoryFn();
+  if ( moveCategoryFn ) {moveCategoryFn();}
 
   // Add specialized category distance function
   const categoryDistanceFn = SPECIALIZED_CATEGORY_DISTANCE[game.system.id];
-  if ( categoryDistanceFn ) SPEED.maximumCategoryDistance = categoryDistanceFn;
+  if ( categoryDistanceFn ) {SPEED.maximumCategoryDistance = categoryDistanceFn;}
 
   // Add specialized token speed function
   const tokenSpeedFn = SPECIALIZED_TOKEN_SPEED[game.system.id];
-  if ( tokenSpeedFn ) SPEED.tokenSpeed = tokenSpeedFn;
+  if ( tokenSpeedFn ) {SPEED.tokenSpeed = tokenSpeedFn;}
 });
 
 // ----- NOTE: Attributes ----- //
@@ -280,18 +280,18 @@ function dnd5eTokenSpeed(token, movementType) {
   let speed = null;
   switch ( token.actor?.type ) {
     case "group": {
-      if ( movementType === MOVEMENT_TYPES.WALK ) speed = foundry.utils.getProperty(token, "actor.system.attributes.movement.land");
-      else if ( movementType === MOVEMENT_TYPES.FLY ) speed = foundry.utils.getProperty(token, "actor.system.attributes.movement.air");
+      if ( movementType === MOVEMENT_TYPES.WALK ) {speed = foundry.utils.getProperty(token, "actor.system.attributes.movement.land");}
+      else if ( movementType === MOVEMENT_TYPES.FLY ) {speed = foundry.utils.getProperty(token, "actor.system.attributes.movement.air");}
       break;
     }
     default: speed = foundry.utils.getProperty(token, SPEED.ATTRIBUTES[keyForValue(MOVEMENT_TYPES, movementType)]);
   }
-  if ( speed == null ) return null;
+  if ( speed == null ) {return null;}
   return Number(speed);
 }
 
 /**
- * sfrpg
+ * Sfrpg
  * Given a token, retrieve its base speed.
  * @param {Token} token                     Token whose speed is required
  * @param {MOVEMENT_TYPES} [movementType]   Type of movement; if omitted automatically determined
@@ -305,7 +305,7 @@ function sfrpgTokenSpeed(token, movementType) {
     case "starship": speed = foundry.utils.getProperty(token, "actor.system.attributes.speed.value"); break;
     case "vehicle": speed = foundry.utils.getProperty(token, "actor.system.attributes.speed.drive"); break;
   }
-  if ( speed == null ) return null;
+  if ( speed == null ) {return null;}
   return Number(speed);
 }
 
@@ -326,16 +326,16 @@ function pf2eTokenSpeed(token, movementType) {
     case MOVEMENT_TYPES.WALK: speed = tokenSpeed.total; break;
     case MOVEMENT_TYPES.FLY: {
       const flySpeed = tokenSpeed.otherSpeeds.find(x => x.type === "fly");
-      if ( typeof flySpeed !== "undefined" ) speed = flySpeed.total;
+      if ( typeof flySpeed !== "undefined" ) {speed = flySpeed.total;}
       break;
     }
     case MOVEMENT_TYPES.BURROW: {
       const burrowSpeed = tokenSpeed.otherSpeeds.find(x => x.type === "burrow");
-      if ( typeof burrowSpeed !== "undefined" ) speed = burrowSpeed.total;
+      if ( typeof burrowSpeed !== "undefined" ) {speed = burrowSpeed.total;}
       break;
     }
   }
-  if (speed === null) return null;
+  if (speed === null) {return null;}
   return Number(speed);
 }
 
@@ -368,13 +368,13 @@ function sfrpgCategoryDistance(token, speedCategory, tokenSpeed) {
   // Override default speed for certain vehicles.
   switch ( speedCategory.name ) {
     case "sfrpg.speeds.dash": {
-      if ( type === "starship" ) speed = tokenSpeed * 1.5;
+      if ( type === "starship" ) {speed = tokenSpeed * 1.5;}
       break;
     }
 
     case "sfrpg.speeds.run": {
-      if ( type === "starship" ) speed = 0;
-      if ( type === "vehicle" ) speed = foundry.utils.getProperty(token, "actor.system.attributes.speed.full");
+      if ( type === "starship" ) {speed = 0;}
+      if ( type === "vehicle" ) {speed = foundry.utils.getProperty(token, "actor.system.attributes.speed.full");}
       break;
     }
   }
@@ -391,7 +391,7 @@ function sfrpgCategoryDistance(token, speedCategory, tokenSpeed) {
  * @returns {number}
  */
 function wfrp4eCategoryDistance(token, speedCategory, tokenSpeed) {
-  if ( speedCategory.name === "Dash" ) return foundry.utils.getProperty(token, "actor.system.details.move.run");
+  if ( speedCategory.name === "Dash" ) {return foundry.utils.getProperty(token, "actor.system.details.move.run");}
   return tokenSpeed;
 }
 
@@ -434,10 +434,10 @@ const SPECIALIZED_CATEGORY_DISTANCE = {
 function getActionCount(token) {
   // Get the token's actor
   const actor = token.actor;
-  if ( !actor ) return 0;
+  if ( !actor ) {return 0;}
 
   // Check to see if the actor is immobilized, paralyzed, petrified, or unconscious. If so they have 0 actions.
-  if ( actor.hasCondition("immobilized", "paralyzed", "petrified", "unconscious") ) return 0;
+  if ( actor.hasCondition("immobilized", "paralyzed", "petrified", "unconscious") ) {return 0;}
 
   // Determine the actor's maximum number of actions.
   const maxActions = (actor.traits?.has("minion") ? 2 : 3) + (actor.hasCondition("quickened") ? 1 : 0);
@@ -445,7 +445,7 @@ function getActionCount(token) {
   // Check to see if there is an encounter, if that encounter is active, and if the token is in that encounter
   if ( game.combat == null
     || !game.combat.active
-    || (game.combat.turns.find(x => x.tokenId == token.id) == null) ) return maxActions; // eslint-disable-line eqeqeq
+    || (game.combat.turns.find(x => x.tokenId == token.id) == null) ) {return maxActions;} // eslint-disable-line eqeqeq
 
   // Check to see if the actor is stunned or slowed, and if so the value
   const stunned = actor.getCondition("stunned")?.value ?? 0;
@@ -462,7 +462,7 @@ function getActionCount(token) {
       // We are going to check to see if the combatant's last round matches the stun reduction round
       // Note - A combatant's last round is updated at the start of their turn
       const combatant = game.combat.turns.find(x => x.tokenId === token.id);
-      if ( combatant && combatant.roundOfLastTurn === stunReduction.round ) reduction = stunReduction.reducedBy;
+      if ( combatant && combatant.roundOfLastTurn === stunReduction.round ) {reduction = stunReduction.reducedBy;}
     }
   }
 

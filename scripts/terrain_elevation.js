@@ -143,7 +143,7 @@ export function originElevation() { return this.origin?.elevation; }
  * @returns {number|undefined} Elevation, in grid units. Undefined if ruler not active.
  */
 export function destinationElevation() {
-  if ( !this.destination ) return undefined;
+  if ( !this.destination ) {return undefined;}
   const waypoint = this.waypoints.at(-1);
   return elevationFromWaypoint(waypoint, this.destination, this.token);
 }
@@ -167,11 +167,11 @@ export function elevationFromWaypoint(waypoint, location, token) {
   // For debugging, test at certain distance
   if ( CONFIG[MODULE_ID].debug ) {
     const dist = CONFIG.GeometryLib.utils.pixelsToGridUnits(PIXI.Point.distanceBetween(waypoint, location));
-    if ( dist > 40 ) console.debug(`elevationFromWaypoint ${dist}`);
-    else if ( dist > 30 ) console.debug(`elevationFromWaypoint ${dist}`);
-    else if ( dist > 20 ) console.debug(`elevationFromWaypoint ${dist}`);
-    else if ( dist > 10 ) console.debug(`elevationFromWaypoint ${dist}`);
-    else if ( dist > 5 ) console.debug(`elevationFromWaypoint ${dist}`);
+    if ( dist > 40 ) {console.debug(`elevationFromWaypoint ${dist}`);}
+    else if ( dist > 30 ) {console.debug(`elevationFromWaypoint ${dist}`);}
+    else if ( dist > 20 ) {console.debug(`elevationFromWaypoint ${dist}`);}
+    else if ( dist > 10 ) {console.debug(`elevationFromWaypoint ${dist}`);}
+    else if ( dist > 5 ) {console.debug(`elevationFromWaypoint ${dist}`);}
   }
 
   let locationElevation;
@@ -184,18 +184,18 @@ export function elevationFromWaypoint(waypoint, location, token) {
     if ( !Settings.FORCE_TO_GROUND ) {
       maxTokenE = maxTokenElevationAtLocation(location, terrainE > waypoint.elevation ? terrainE : undefined);
     }
-    if ( maxTokenE ) locationElevation = maxTokenE;
+    if ( maxTokenE ) {locationElevation = maxTokenE;}
 
     // If the starting elevation is on the ground or force-to-ground is enabled, use the ground elevation.
-    else locationElevation = elevationAtLocation(location, {
+    else {locationElevation = elevationAtLocation(location, {
       startE: waypoint.elevation,
       forceToGround: Settings.FORCE_TO_GROUND
         || waypoint.elevation.almostEqual(terrainElevationAtLocation(waypoint, waypoint.elevation))
-    });
-  } else locationElevation = tokenElevationForMovement(waypoint, location, {
+    });}
+  } else {locationElevation = tokenElevationForMovement(waypoint, location, {
     token,
     forceToGround: Settings.FORCE_TO_GROUND
-  });
+  });}
   return locationElevation + userElevationChangeAtWaypoint(waypoint);
 }
 
@@ -260,10 +260,10 @@ export function terrainElevationAtLocation(location, startingElevation = 0) {
   // If certain modules are active, use them to calculate elevation.
   // For now, take the first one that is present.
   const tmRes = TMElevationAtPoint(location, startingElevation);
-  if ( isFinite(tmRes) ) return tmRes;
+  if ( isFinite(tmRes) ) {return tmRes;}
 
   const levelsRes = LevelsElevationAtPoint(location, startingElevation);
-  if ( levelsRes !== null && isFinite(levelsRes) ) return levelsRes;
+  if ( levelsRes !== null && isFinite(levelsRes) ) {return levelsRes;}
 
   // Default is the scene or location elevation.
   return location.elevation ?? 0;
@@ -312,10 +312,10 @@ function retrieveVisibleTokens() {
  */
 function TMElevationAtPoint(location, startingElevation = Number.POSITIVE_INFINITY) {
   const api = OTHER_MODULES.TERRAIN_MAPPER.API;
-  if ( !api || !api.ElevationHandler ) return undefined;
+  if ( !api || !api.ElevationHandler ) {return undefined;}
   const waypoint = { ...location, elevation: startingElevation };
   const res = api.ElevationHandler.nearestGroundElevation(waypoint);
-  if ( isFinite(res) ) return res;
+  if ( isFinite(res) ) {return res;}
   return canvas.scene?.flags?.terrainmapper?.[FLAGS.SCENE.BACKGROUND_ELEVATION] ?? 0;
 }
 
@@ -328,7 +328,7 @@ function TMElevationAtPoint(location, startingElevation = Number.POSITIVE_INFINI
  */
 function TMElevationForMovement(start, end, opts) {
   const api = OTHER_MODULES.TERRAIN_MAPPER.API;
-  if ( !api || !api.ElevationHandler ) return undefined;
+  if ( !api || !api.ElevationHandler ) {return undefined;}
   return TMPathForMovement(start, end, opts).at(-1)?.elevation;
 }
 
@@ -344,7 +344,7 @@ function TMPathForMovement(start, end, opts) {
   start.elevation ??= CONFIG.GeometryLib.utils.pixelsToGridUnits(start.z);
   end.elevation ??= CONFIG.GeometryLib.utils.pixelsToGridUnits(end.z);
   const api = OTHER_MODULES.TERRAIN_MAPPER.API;
-  if ( !api || !api.ElevationHandler ) return [start, end];
+  if ( !api || !api.ElevationHandler ) {return [start, end];}
   return api.ElevationHandler.constructPath(start, end, opts);
 }
 
@@ -365,10 +365,10 @@ function TMPathForMovement(start, end, opts) {
  * @return {Number|undefined} Levels elevation or undefined if levels is inactive or no levels found.
  */
 export function LevelsElevationAtPoint(p, startingElevation = 0) {
-  if ( !OTHER_MODULES.LEVELS.ACTIVE ) return undefined;
+  if ( !OTHER_MODULES.LEVELS.ACTIVE ) {return undefined;}
 
   let tiles = [...levelsTilesAtPoint(p)];
-  if ( !tiles.length ) return null;
+  if ( !tiles.length ) {return null;}
 
   tiles = tiles
     .filter(t => startingElevation >= t.document.flags.levels.rangeBottom
@@ -376,7 +376,7 @@ export function LevelsElevationAtPoint(p, startingElevation = 0) {
     .sort((a, b) => a.document.flags.levels.rangeBottom - b.document.flags.levels.rangeBottom);
 
   const ln = tiles.length;
-  if ( !ln ) return undefined;
+  if ( !ln ) {return undefined;}
   return tiles[ln - 1].document.flags.levels.rangeBottom;
 }
 
@@ -391,8 +391,8 @@ function levelsTilesAtPoint({x, y}) {
   const collisionTest = (o, rect) => {
     // The object o constains n (Quadtree node), r (rect), t (object to test)
     const flags = o.t.document?.flags?.levels;
-    if ( !flags ) return false;
-    if ( !isFinite(flags.rangeTop) || !isFinite(flags.rangeBottom) ) return false;
+    if ( !flags ) {return false;}
+    if ( !isFinite(flags.rangeTop) || !isFinite(flags.rangeBottom) ) {return false;}
     return true;
   };
 

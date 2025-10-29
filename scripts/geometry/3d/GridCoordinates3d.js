@@ -60,7 +60,7 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
   static fromOffset(offset, elevation) {
     const pt = new this();
     pt.setOffset(offset);
-    if ( typeof elevation !== "undefined" ) pt.elevation = elevation;
+    if ( typeof elevation !== "undefined" ) {pt.elevation = elevation;}
     return pt;
   }
 
@@ -82,20 +82,20 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
    */
   static fromObject(obj) {
     const newObj = super.fromObject(obj);
-    if ( Object.hasOwn(obj, "i") && !Object.hasOwn(obj, "x") ) newObj.i = obj.i;
-    if ( Object.hasOwn(obj, "j") && !Object.hasOwn(obj, "y") ) newObj.j = obj.j;
+    if ( Object.hasOwn(obj, "i") && !Object.hasOwn(obj, "x") ) {newObj.i = obj.i;}
+    if ( Object.hasOwn(obj, "j") && !Object.hasOwn(obj, "y") ) {newObj.j = obj.j;}
     if ( Object.hasOwn(obj, "k")
       && !(Object.hasOwn(obj, "z")
         || Object.hasOwn(obj, "elevationZ")
-        || Object.hasOwn(obj, "elevation")) ) newObj.k = obj.k;
+        || Object.hasOwn(obj, "elevation")) ) {newObj.k = obj.k;}
     return newObj;
   }
 
   /** @type {number} */
-  get i() { return canvas.grid.getOffset({ x: this.x, y: this.y }).i }
+  get i() { return canvas.grid.getOffset({ x: this.x, y: this.y }).i; }
 
   /** @type {number} */
-  get j() { return canvas.grid.getOffset({ x: this.x, y: this.y }).j }
+  get j() { return canvas.grid.getOffset({ x: this.x, y: this.y }).j; }
 
   /** @type {number} */
   get k() { return this.constructor.unitElevation(CONFIG.GeometryLib.utils.pixelsToGridUnits(this.z)); }
@@ -214,7 +214,7 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
    * @returns {number}
    */
   static numDiagonal(aOffset, bOffset) {
-    if ( canvas.grid.isHexagonal ) return Math.abs(aOffset.k - bOffset.k);
+    if ( canvas.grid.isHexagonal ) {return Math.abs(aOffset.k - bOffset.k);}
     let di = Math.abs(aOffset.i - bOffset.i);
     let dj = Math.abs(aOffset.j - bOffset.j);
     let dk = Math.abs(aOffset.k - bOffset.k);
@@ -288,7 +288,7 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
     let prevPathPt = path3d[0];
     for ( let i = 1, n = path3d.length; i < n; i += 1 ) {
       const currPathPt = path3d[i];
-      distance += this.gridDistanceBetween(prevPathPt, currPathPt, { altGridDistanceFn, diagonals })
+      distance += this.gridDistanceBetween(prevPathPt, currPathPt, { altGridDistanceFn, diagonals });
       offsetDistance += offsetDistanceFn(prevPathPt, currPathPt);
       prevPathPt = currPathPt;
     }
@@ -302,7 +302,7 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
     b = this.fromObject(b);
     const altGridDistanceFn = this.alternatingGridDistanceFn();
     const offsetDistanceFn = this.getOffsetDistanceFn(numPrevDiagonal);
-    const distance = this.gridDistanceBetween(a, b, { altGridDistanceFn, diagonals })
+    const distance = this.gridDistanceBetween(a, b, { altGridDistanceFn, diagonals });
     const offsetDistance = offsetDistanceFn(a, b);
     return { distance, offsetDistance, numDiagonal: offsetDistanceFn.diagonals };
   }
@@ -325,7 +325,7 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
    * @param {RegionMovementWaypoint3d} end
    * @returns {GridCoordinates3d[]}
    */
-  static directPath = getDirectPath
+  static directPath = getDirectPath;
 
   static _directPathSquare = directPath3dSquare;
 
@@ -355,7 +355,7 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
         const s = isStraight2dMove ^ isElevationMove;
         const d1 = (isDiagonal2dMove && !isElevationMove) || (isStraight2dMove && isElevationMove);
         const d2 = isDiagonal2dMove && isElevationMove;
-        if ( d1 || d2 ) nDiag++;
+        if ( d1 || d2 ) {nDiag++;}
         const k = kFn();
         return (s + (k * d1) + (k * d2)) * canvas.grid.distance;
       };
@@ -389,7 +389,9 @@ export class GridCoordinates3d extends GEOMETRY_CONFIG.threeD.RegionMovementWayp
 
   // Temporary instances for performance.
   static _tmp = new this();
+
   static _tmp2 = new this();
+
   static _tmp3 = new this();
 }
 
@@ -422,19 +424,17 @@ function directPathGridless(start, end) {
 function directPath3dSquare(start, end) {
   start = GridCoordinates3d.fromObject(start);
   end = GridCoordinates3d.fromObject(end);
-  if ( start.offsetsEqual(end) ) return [start, end];
+  if ( start.offsetsEqual(end) ) {return [start, end];}
   const points = CONFIG.GeometryLib.utils.bresenhamLine3d(start.i, start.j, start.k, end.i, end.j, end.k);
   const path3d = [start];
   // Convert points to GridCoordinates3d. Start and end repeat; skip.
-  for ( let i = 3, n = points.length - 3; i < n; i += 3 ) path3d.push(GridCoordinates3d.fromOffset({
+  for ( let i = 3, n = points.length - 3; i < n; i += 3 ) {path3d.push(GridCoordinates3d.fromOffset({
     i: points[i],
     j: points[i + 1],
-    k: points[i + 2] }));
+    k: points[i + 2] }));}
   path3d.push(end);
   return path3d;
 }
-
-
 
 
 GEOMETRY_CONFIG.threeD.GridCoordinates3d ??= GridCoordinates3d;

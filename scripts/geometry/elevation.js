@@ -98,7 +98,7 @@ function pointSourceElevationE() {
 }
 
 async function setPointSourceElevationE(value) {
-  if ( !this.object ) return;
+  if ( !this.object ) {return;}
   return this.object.setElevationE(value);
 }
 
@@ -265,9 +265,9 @@ function preUpdateWallHook(wallD, changed, _options, _userId) {
       const docWHValue = foundry.utils.getProperty(wallD, whFlag);
       useEV = docEVValue !== foundry.utils.getProperty(flatData, evFlag)
         || docWHValue === foundry.utils.getProperty(flatData, whFlag);
-    } else if ( flatChanges.has(evFlag) ) useEV = true;
-    else if ( flatChanges.has(whFlag) ) useEV = false;
-    else continue; // No update.
+    } else if ( flatChanges.has(evFlag) ) {useEV = true;}
+    else if ( flatChanges.has(whFlag) ) {useEV = false;}
+    else {continue;} // No update.
 
     if ( useEV ) {
       const e = flatData[evFlag];

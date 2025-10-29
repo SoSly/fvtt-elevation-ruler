@@ -52,9 +52,9 @@ export class RegionMovementWaypoint3d extends GEOMETRY_CONFIG.threeD.Point3d {
 
     // Process elevation.
     const newPt = new this(x, y);
-    if ( Object.hasOwn(pt, "z") ) newPt.z = pt.z;
-    else if ( Object.hasOwn(pt, "elevation") ) newPt.elevation = pt.elevation;
-    else if ( Object.hasOwn(pt, "k") ) newPt.elevation = elevationForUnit(pt.k);
+    if ( Object.hasOwn(pt, "z") ) {newPt.z = pt.z;}
+    else if ( Object.hasOwn(pt, "elevation") ) {newPt.elevation = pt.elevation;}
+    else if ( Object.hasOwn(pt, "k") ) {newPt.elevation = elevationForUnit(pt.k);}
     return newPt;
   }
 
@@ -97,7 +97,9 @@ export class RegionMovementWaypoint3d extends GEOMETRY_CONFIG.threeD.Point3d {
 
   // Temporary points that can be passed to RegionMovementWaypoint3d methods
   static _tmp = new this();
+
   static _tmp2 = new this();
+
   static _tmp3 = new this();
 }
 

@@ -120,8 +120,8 @@ export class RegularStar extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon 
     const pt = this.fromCartesianCoords({ x, y });
 
     // Test the outer and inner circles
-    if ( !this.outerCircle.contains(pt.x, pt.y) ) return false;
-    if ( this.innerCircle.contains(pt.x, pt.y) ) return true;
+    if ( !this.outerCircle.contains(pt.x, pt.y) ) {return false;}
+    if ( this.innerCircle.contains(pt.x, pt.y) ) {return true;}
 
     // Use orientation to test the point.
     // Moving clockwise, must be clockwise to each side (meaning, the outside points)
@@ -129,7 +129,7 @@ export class RegularStar extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon 
     for ( let i = 0; i < numSides; i += 1 ) {
       const op0 = op[i];
       const op1 = op[(i + 1) % numSides];
-      if ( foundry.utils.orient2dFast(op0, op1, pt) >= 0 ) return false;
+      if ( foundry.utils.orient2dFast(op0, op1, pt) >= 0 ) {return false;}
     }
 
     // Point could still be between the spaces of the points.
@@ -143,7 +143,7 @@ export class RegularStar extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon 
       const nextOP = fp[(i + 1) % ln];
       const ip = fp[i];
       if ( foundry.utils.orient2dFast(ip, prevOP, pt) <= 0
-        && foundry.utils.orient2dFast(ip, nextOP, pt) >= 0 ) return false;
+        && foundry.utils.orient2dFast(ip, nextOP, pt) >= 0 ) {return false;}
       prevOP = nextOP;
     }
 
@@ -175,7 +175,7 @@ export class RegularStar extends GEOMETRY_CONFIG.RegularPolygons.RegularPolygon 
    * @returns {PIXI.Polygon|null}       The intersected polygon or null if no solution was present
    */
   intersectPolygon(polygon, {clipType, scalingFactor}={}) {
-    if ( !this.radius ) return new PIXI.Polygon([]);
+    if ( !this.radius ) {return new PIXI.Polygon([]);}
     return polygon.intersectPolygon(this.toPolygon(), {clipType, scalingFactor});
   }
 

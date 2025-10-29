@@ -30,7 +30,6 @@ import {
  */
 
 
-
 /**
  * A 2d point that can function as Point|GridOffset. For just a point, use PIXI.Point.
  */
@@ -57,16 +56,16 @@ export class GridCoordinates extends PIXI.Point {
    */
   static fromObject(obj) {
     const newObj = super.fromObject(obj);
-    if ( Object.hasOwn(obj, "i") && !Object.hasOwn(obj, "x") ) newObj.i = obj.i;
-    if ( Object.hasOwn(obj, "j") && !Object.hasOwn(obj, "y") ) newObj.j = obj.j;
+    if ( Object.hasOwn(obj, "i") && !Object.hasOwn(obj, "x") ) {newObj.i = obj.i;}
+    if ( Object.hasOwn(obj, "j") && !Object.hasOwn(obj, "y") ) {newObj.j = obj.j;}
     return newObj;
   }
 
   /** @type {number} */
-  get i() { return canvas.grid.getOffset({ x: this.x, y: this.y }).i }
+  get i() { return canvas.grid.getOffset({ x: this.x, y: this.y }).i; }
 
   /** @type {number} */
-  get j() { return canvas.grid.getOffset({ x: this.x, y: this.y }).j }
+  get j() { return canvas.grid.getOffset({ x: this.x, y: this.y }).j; }
 
   /** @type {number} */
   set i(value) { this.y = canvas.grid.getCenterPoint({ i: value, j: this.j }).y; }
@@ -148,7 +147,7 @@ export class GridCoordinates extends PIXI.Point {
    * @returns {number}
    */
   static numDiagonal(aOffset, bOffset) {
-    if ( canvas.grid.isHexagonal ) return 0;
+    if ( canvas.grid.isHexagonal ) {return 0;}
     let di = Math.abs(aOffset.i - bOffset.i);
     let dj = Math.abs(aOffset.j - bOffset.j);
     return Math.min(di, dj);
@@ -226,7 +225,9 @@ export class GridCoordinates extends PIXI.Point {
 
   // Temporary instances for performance.
   static _tmp = new this();
+
   static _tmp2 = new this();
+
   static _tmp3 = new this();
 }
 

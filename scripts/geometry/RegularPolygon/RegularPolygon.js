@@ -148,7 +148,7 @@ export class RegularPolygon extends PIXI.Polygon {
   translate(dx, dy) {
     const copy = new this.constructor(this.origin.add({x: dx, y: dy}), this.radius,
       { numSides: this.numSides, rotation: this.rotation });
-    if ( this._fixedPoints ) copy._fixedPoints = [...this._fixedPoints]; // Copy the points.
+    if ( this._fixedPoints ) {copy._fixedPoints = [...this._fixedPoints];} // Copy the points.
     return copy;
   }
 
@@ -199,7 +199,7 @@ export class RegularPolygon extends PIXI.Polygon {
    */
   fromCartesianCoords(a, outPoint) {
     const { x, y } = this.origin;
-    outPoint ??= new PIXI.Point;
+    outPoint ??= new PIXI.Point();
     a = PIXI.Point._tmp.copyFrom(a);
     a.translate(-x, -y, outPoint).rotate(-this.radians, outPoint);
     return outPoint;
@@ -213,7 +213,7 @@ export class RegularPolygon extends PIXI.Polygon {
    */
   toCartesianCoords(a, outPoint) {
     const { x, y } = this.origin;
-    outPoint ??= new PIXI.Point;
+    outPoint ??= new PIXI.Point();
     a = PIXI.Point._tmp.copyFrom(a);
     a.rotate(this.radians, outPoint).translate(x, y, outPoint);
     return outPoint;
@@ -229,8 +229,8 @@ export class RegularPolygon extends PIXI.Polygon {
     const pt = this.fromCartesianCoords(new PIXI.Point(x, y));
 
     // Test the outer and inner circles
-    if ( !this.outerCircle.contains(pt.x, pt.y) ) return false;
-    if ( this.innerCircle.contains(pt.x, pt.y) ) return true;
+    if ( !this.outerCircle.contains(pt.x, pt.y) ) {return false;}
+    if ( this.innerCircle.contains(pt.x, pt.y) ) {return true;}
 
     // Use orientation to test the point.
     // Moving clockwise, must be clockwise to each side.
@@ -239,7 +239,7 @@ export class RegularPolygon extends PIXI.Polygon {
     for ( let i = 0; i < numSides; i += 1 ) {
       const fp0 = fp[i];
       const fp1 = fp[(i + 1) % numSides];
-      if ( orient2dFast(fp0, fp1, pt) >= 0 ) return false;
+      if ( orient2dFast(fp0, fp1, pt) >= 0 ) {return false;}
     }
 
     return true;
@@ -261,7 +261,7 @@ export class RegularPolygon extends PIXI.Polygon {
       const fp0 = fp[i];
       const fp1 = fp[(i + 1) % numSides];
       const closestPoint = closestPointToSegment(point, fp0, fp1);
-      if ( pt.almostEqual(closestPoint, epsilon) ) return true;
+      if ( pt.almostEqual(closestPoint, epsilon) ) {return true;}
     }
     return false;
   }
@@ -289,7 +289,7 @@ export class RegularPolygon extends PIXI.Polygon {
 
     // To ensure intersections are clockwise, start with the side for a
     let aSide = this._getSide(a);
-    if ( !~aSide ) aSide = 0;
+    if ( !~aSide ) {aSide = 0;}
 
     let prevIx = {x: 0, y: 0}; // If polygon has radius, no intersections at 0,0.
     for ( let i = 0; i < ln; i += 1 ) {
@@ -316,16 +316,16 @@ export class RegularPolygon extends PIXI.Polygon {
    * @returns {Point[]}
    */
   pointsBetween(a, b) {
-    if ( a.x.almostEqual(b.x) && a.y.almostEqual(b.y) ) return [];
+    if ( a.x.almostEqual(b.x) && a.y.almostEqual(b.y) ) {return [];}
 
     a = this.fromCartesianCoords(a);
     b = this.fromCartesianCoords(b);
 
     const aSide = this._getSide(a);
-    if ( !~aSide ) return []; // A is inside
+    if ( !~aSide ) {return [];} // A is inside
 
     const bSide = this._getSide(b);
-    if ( !~bSide ) return []; // B is inside
+    if ( !~bSide ) {return [];} // B is inside
 
     const pts = [];
     const { numSides, fixedPoints: fp } = this;
@@ -333,7 +333,7 @@ export class RegularPolygon extends PIXI.Polygon {
     if ( aSide === bSide ) {
       // Either a is before b moving clockwise (no points)
       // or a is after b moving clockwise (all points)
-      if ( foundry.utils.orient2dFast({x: 0, y: 0}, a, b) < 0 ) return [];
+      if ( foundry.utils.orient2dFast({x: 0, y: 0}, a, b) < 0 ) {return [];}
       pts.push(...Array.fromRange(numSides).map(i => fp[(i + aSide + 1) % numSides]));
     } else {
       let currSide = aSide;
@@ -344,7 +344,7 @@ export class RegularPolygon extends PIXI.Polygon {
     }
 
     // If the last point is collinear to the center, drop
-    if ( !foundry.utils.orient2dFast({x: 0, y: 0}, pts[pts.length - 1], b )) pts.pop();
+    if ( !foundry.utils.orient2dFast({x: 0, y: 0}, pts[pts.length - 1], b )) {pts.pop();}
 
     return pts.map(pt => this.toCartesianCoords(pt));
   }
@@ -361,7 +361,7 @@ export class RegularPolygon extends PIXI.Polygon {
     const numSides = this.numSides;
     for ( let i = 0; i < numSides; i += 1 ) {
       const side = this._checkSide(point, i);
-      if ( ~side ) return side;
+      if ( ~side ) {return side;}
     }
     return -1;
   }
@@ -379,15 +379,15 @@ export class RegularPolygon extends PIXI.Polygon {
     const b = this.fixedPoints[(side + 1) % numSides];
     const o = {x: 0, y: 0};
 
-    if ( a.x.almostEqual(point.x) && b.y.almostEqual(point.y) ) return (side + 1) % numSides;
+    if ( a.x.almostEqual(point.x) && b.y.almostEqual(point.y) ) {return (side + 1) % numSides;}
 
     // If point is in the triangle formed by AOB, it is on this side (where AB is a side).
     // Recall that a, b oriented clockwise around the shape.
     const oa = foundry.utils.orient2dFast(o, a, point);
-    if ( oa > 0 ) return -1; // Point is ccw to OA
+    if ( oa > 0 ) {return -1;} // Point is ccw to OA
 
     const ob = foundry.utils.orient2dFast(o, b, point);
-    if ( ob < 0 ) return -1; // Point is cw to OB
+    if ( ob < 0 ) {return -1;} // Point is cw to OB
 
     return side;
   }
@@ -402,13 +402,13 @@ export class RegularPolygon extends PIXI.Polygon {
    * @returns {PIXI.Polygon|null}       The intersected polygon or null if no solution was present
    */
   _intersectPolygon(polygon, { density, clipType, weilerAtherton = true, ...options } = {}) {
-    if ( !this.radius ) return new PIXI.Polygon([]);
+    if ( !this.radius ) {return new PIXI.Polygon([]);}
     clipType ??= WeilerAthertonClipper.CLIP_TYPES.INTERSECT;
 
     // Use Weiler-Atherton for efficient intersection or union.
     if ( weilerAtherton && polygon._isPositive ) {
       const res = WeilerAthertonClipper.combine(polygon, this, { clipType, density, ...options });
-      if ( !res.length ) return new PIXI.Polygon([]);
+      if ( !res.length ) {return new PIXI.Polygon([]);}
       return res[0];
     }
 
@@ -436,10 +436,10 @@ export class RegularPolygon extends PIXI.Polygon {
     const dx = this.center.x - circle.x;
     const dy = this.center.y - circle.y;
     const distXY2 = Math.pow(dx, 2) + Math.pow(dy, 2);
-    if ( distXY2 > Math.pow(circle.radius + this.radius, 2) ) return false;
+    if ( distXY2 > Math.pow(circle.radius + this.radius, 2) ) {return false;}
 
     // If within inner circle radius, then inside
-    if ( distXY2 <= Math.pow(circle.radius + this.apothem, 2) ) return true;
+    if ( distXY2 <= Math.pow(circle.radius + this.apothem, 2) ) {return true;}
 
     // Default to polygon approach
     return super._overlapsCircle(circle);
