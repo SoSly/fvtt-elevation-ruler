@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+# 0.11.1
+
 ### Fixed
 - Token penalty calculations now work correctly when Token Multiplier is set to values other than 1
 
