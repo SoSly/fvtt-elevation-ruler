@@ -73,7 +73,7 @@ export class MovePenalty {
     // Remove certain hidden tokens.
     // Note this is done only at beginning, but the MoveInstance only intended to last through a ruler measure.
     const filteredTokens = [...this.tokens].filter(t => !(t.document.hidden
-        || t.actor.statuses.intersects(CONFIG[MODULE_ID].pathfindingIgnoreStatuses)));
+        || t.actor?.statuses?.intersects(CONFIG[MODULE_ID].pathfindingIgnoreStatuses)));
     this.tokens = new Set(filteredTokens);
 
     // Initially set the path sets to the full set of placeables.
