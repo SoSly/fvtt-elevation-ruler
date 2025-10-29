@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+# 0.11.0
+
 ### Added
 - Native region-based movement penalties using Region Behaviors instead of TerrainMapper dependency
 - Support for swim and climb movement types in movement penalty calculations
@@ -7,6 +9,7 @@
 ### Changed
 - Convert most settings from per-player to world scope (GM-controlled). Only "Scale Ruler Text" remains player-controlled.
 - Replace TerrainMapper terrain system with native Region Behavior for movement penalties
+- Update repository URLs to point to SoSly fork
 
 ### Fixed
 - Clear movement tracking when reset-movement module resets token position
