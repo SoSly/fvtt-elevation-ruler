@@ -225,6 +225,13 @@ Hooks.on("renderSceneControls", async function(controls, _html, _data) {
   if ( toggle ) {await Settings.set(Settings.KEYS.CONTROLS.PATHFINDING, toggle.active);}
 });
 
+Hooks.on("resetMovement", function(token) {
+  if ( !token || !Settings.get(Settings.KEYS.MEASURING.COMBAT_HISTORY) ) {return;}
+  if ( token[MODULE_ID]?.measurementHistory ) {
+    token[MODULE_ID].measurementHistory = [];
+  }
+});
+
 export function updatePathfindingControl(enable) {
   if ( !Settings.get(Settings.KEYS.PATHFINDING.ENABLE) ) {return;}
   enable ??= Settings.get(Settings.KEYS.CONTROLS.PATHFINDING);

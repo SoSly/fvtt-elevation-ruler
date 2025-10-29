@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Clear movement tracking when reset-movement module resets token position
+
 # 0.10.18
 Rework Bresenham algorithm for grid 3d and hex 3d, to fix skipping of hexes and to ensure
 that the algorithm uses double-diagonals when moving in 3d. Use preallocated array to increase speed. Closes #247.
