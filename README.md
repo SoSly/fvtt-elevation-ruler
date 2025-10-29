@@ -1,10 +1,10 @@
-[![Version (latest)](https://img.shields.io/github/v/release/caewok/fvtt-elevation-ruler)](https://github.com/caewok/fvtt-elevation-ruler/releases/latest)
-[![Foundry Version](https://img.shields.io/badge/dynamic/json.svg?url=https://github.com/caewok/fvtt-elevation-ruler/releases/latest/download/module.json&label=Foundry%20Version&query=$.compatibility.verified&colorB=blueviolet)](https://github.com/caewok/fvtt-elevation-ruler/releases/latest)
-[![License](https://img.shields.io/github/license/caewok/fvtt-elevation-ruler)](LICENSE)
+[![Version (latest)](https://img.shields.io/github/v/release/SoSly/fvtt-elevation-ruler)](https://github.com/SoSly/fvtt-elevation-ruler/releases/latest)
+[![Foundry Version](https://img.shields.io/badge/dynamic/json.svg?url=https://github.com/SoSly/fvtt-elevation-ruler/releases/latest/download/module.json&label=Foundry%20Version&query=$.compatibility.verified&colorB=blueviolet)](https://github.com/SoSly/fvtt-elevation-ruler/releases/latest)
+[![License](https://img.shields.io/github/license/SoSly/fvtt-elevation-ruler)](LICENSE)
 
 ![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https://forge-vtt.com/api/bazaar/package/elevationruler&colorB=4aa94a)
-![Latest Release Download Count](https://img.shields.io/github/downloads/caewok/fvtt-elevation-ruler/latest/module.zip)
-![All Downloads](https://img.shields.io/github/downloads/caewok/fvtt-elevation-ruler/total)
+![Latest Release Download Count](https://img.shields.io/github/downloads/SoSly/fvtt-elevation-ruler/latest/module.zip)
+![All Downloads](https://img.shields.io/github/downloads/SoSly/fvtt-elevation-ruler/total)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H3Y7IJW)
 
@@ -39,7 +39,7 @@ As of v0.7, Elevation Ruler adds a setting to display the Foundry ruler when dra
 As of v0.8, Elevation Ruler adds a toggle to enable pathfinding when using the ruler or dragging tokens with the Token Ruler enabled.
 
 # Installation
-Add this [Manifest URL](https://github.com/caewok/fvtt-elevation-ruler/releases/latest/download/module.json) in Foundry to install.
+Add this [Manifest URL](https://github.com/SoSly/fvtt-elevation-ruler/releases/latest/download/module.json) in Foundry to install.
 
 ## Dependencies
 - [libWrapper](https://github.com/ruipin/fvtt-lib-wrapper)
