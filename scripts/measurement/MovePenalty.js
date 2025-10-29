@@ -1,77 +1,15 @@
 /* globals
 canvas,
 CONFIG,
-foundry,
 game,
 PIXI
 */
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 "use strict";
 
-import { MODULE_ID, FLAGS, OTHER_MODULES, SPEED, MOVEMENT_TYPES } from "../const.js";
+import { MODULE_ID, FLAGS, SPEED, MOVEMENT_TYPES } from "../const.js";
 import { Settings } from "../settings.js";
 import { log } from "../util.js";
-
-/**
- * Class that represents a fake token with a cloned actor
- */
-class TokenClone {
-  /** @type {Actor} */
-  actor;
-
-  /** @type {TokenDocument} */
-  document;
-
-  /** @type {Token} */
-  _original;
-
-  /** @type {boolean} */
-  useTerrains = false;
-
-  constructor(token) {
-    this.useTerrains = OTHER_MODULES.TERRAIN_MAPPER.ACTIVE
-      && canvas.regions.placeables.some(r => r.terrainmapper.hasTerrain);
-    this.actor = this.useTerrains ? token.actor.clone() : token.actor;
-    this._original = token;
-  }
-
-  static fromToken(token) {
-    const tClone = new this(token);
-    tClone.document = new CONFIG.Token.documentClass(token.document.toObject());
-    return tClone;
-  }
-
-  duplicate() {
-    const newTClone = new this.constructor(this);
-    newTClone.document = this.document;
-    return newTClone;
-  }
-
-  get movementType() {
-    const {x, y} = this._original.getCenterPoint(this.document);
-    return new PIXI.Point(x, y);
-  }
-
-  get center() {
-    const {x, y} = this._original.getCenterPoint(this.document);
-    return new PIXI.Point(x, y);
-  }
-
-  get elevationE() { return this.document.elevation; }
-
-  /**
-   * Clear terrains from the token clone
-   */
-  clearTerrains() {
-    if ( !this.useTerrains ) {return;}
-    const Terrain = CONFIG.terrainmapper.Terrain;
-    const tokenTerrains = Terrain.allOnToken(this);
-    if ( !tokenTerrains.length ) {return;}
-    Terrain.removeFromTokenLocally(this, tokenTerrains, { refresh: false });
-    this.actor._initialize(); // This is slow
-  }
-
-}
 
 /**
 Class to measure penalty, as percentage of distance, between two points.
@@ -109,9 +47,6 @@ export class MovePenalty {
   /** @type {MOVEMENT_TYPES} */
   movementType = MOVEMENT_TYPES.WALK;
 
-  /** @type {object} */
-  #localTokenClone;
-
   /**
    * @param {Token} moveToken               The token doing the movement
    */
@@ -119,13 +54,15 @@ export class MovePenalty {
     this.moveToken = moveToken;
     this.movementType = moveToken.movementType;
     const tokenMultiplier = this.constructor.tokenMultiplier;
-    const terrainAPI = this.constructor.terrainAPI;
 
-    // Only regions with terrains; tokens if that setting is enabled; drawings if enabled.
     if ( tokenMultiplier !== 1 ) {canvas.tokens.placeables.forEach(t => this.tokens.add(t));}
-    if ( terrainAPI ) {canvas.regions.placeables.forEach(r => {
-      if ( r.terrainmapper.hasTerrain ) {this.regions.add(r);}
-    });}
+
+    canvas.regions.placeables.forEach(r => {
+      const hasPenalty = r.document.behaviors.some(b => b.type === `${MODULE_ID}.movementPenalty` && !b.disabled);
+      if ( hasPenalty ) {
+        this.regions.add(r);
+      }
+    });
     canvas.drawings.placeables.forEach(d => {
       const penalty = d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY) ?? 1;
       const useFlatPenalty = d.document.getFlag(MODULE_ID, FLAGS.MOVEMENT_PENALTY_FLAT);
@@ -142,10 +79,6 @@ export class MovePenalty {
     this.tokens.forEach(t => this.pathTokens.add(t));
     this.drawings.forEach(d => this.pathDrawings.add(d));
     this.regions.forEach(r => this.pathRegions.add(r));
-
-    // Set up a token clone without any terrains to use in estimating movement.
-    this.#localTokenClone = TokenClone.fromToken(this.moveToken);
-    this.#localTokenClone.clearTerrains();
   }
 
   /**
@@ -168,7 +101,7 @@ export class MovePenalty {
         if ( d.bounds.lineSegmentIntersects(a, b, { inside: true })) {this.pathDrawings.add(d);}
       });
       this.regions.forEach(r => {
-        if ( r.bounds.lineSegmentIntersects(a, b, { inside: true })) {this.pathRegions.add(r);}
+        if ( r.bounds.lineSegmentIntersects(a, b, { inside: true }) ) {this.pathRegions.add(r);}
       });
     }
   }
@@ -183,7 +116,7 @@ export class MovePenalty {
 
   get baseTokenSpeed() {
     return this.#baseTokenSpeed
-      || (this.#baseTokenSpeed = SPEED.tokenSpeed(this.#localTokenClone, this.movementType) || 1);
+      || (this.#baseTokenSpeed = SPEED.tokenSpeed(this.moveToken, this.movementType) || 1);
   }
 
   /**
@@ -205,28 +138,25 @@ export class MovePenalty {
    * @returns {number} The move speed of the move token when in the region(s).
    */
   moveSpeedWithinRegions(regions) {
-    // Confirm Terrain Mapper is active; otherwise return the current token speed
-    const Terrain = CONFIG.terrainmapper?.Terrain;
-    if ( !Terrain ) {return this.moveTokenSpeed;}
-
-    // If no terrains in the regions, return the current token speed without regions.
-    const terrains = regions.flatMap(region => [...region.terrainmapper.terrains]);
-    if ( !terrains.length ) {return this.baseTokenSpeed;}
+    // If no regions, return the base token speed.
+    if ( !regions.length ) {return this.baseTokenSpeed;}
 
     // If these regions already encountered, return the cached token speed.
     const key = regions.map(region => region.id).join("|");
     if ( this._regionPenaltyMap.has(key) ) {return this._regionPenaltyMap.get(key);}
 
-    // Duplicate the token clone and add the region terrain(s).
-    const tClone = this.#localTokenClone.duplicate();
-    Terrain.addToTokenLocally(tClone, [...terrains.values()], { refresh: false });
-    if ( game.system.id === "dnd5e"
-      && OTHER_MODULES.DAE.ACTIVE
-      && !foundry.utils.isNewerVersion(game.system.version, "4") ) {tClone.actor.prepareData();} // Slower; fails in v4.
-    else {tClone.actor.applyActiveEffects();} // Does not work for DAE (at least in dnd5e v3).
+    // Calculate the modified speed by applying movement penalty behaviors from each region.
+    let speed = this.baseTokenSpeed;
 
-    // Determine the speed of the token clone and cache for future reference.
-    const speed = SPEED.tokenSpeed(tClone, this.movementType);
+    for ( const region of regions ) {
+      for ( const behavior of region.document.behaviors.values() ) {
+        if ( behavior.type !== `${MODULE_ID}.movementPenalty` ) {continue;}
+        if ( behavior.disabled ) {continue;}
+
+        const multiplier = behavior.system.getMultiplierForMovementType(this.movementType);
+        speed /= multiplier;
+      }
+    }
     this._regionPenaltyMap.set(key, speed);
     return speed || 1;
   }
@@ -350,10 +280,10 @@ export class MovePenalty {
       return (flatPenalty + (gridMult * costFreeDistance));
     }
 
-    const regions = [...this.regions].filter(r => r.testPoint(centerPt, centerPt.elevation));
-    const tokens = [...this.tokens].filter(t => t.constrainedTokenBorder.contains(centerPt.x, centerPt.y)
+    const regions = [...this.pathRegions].filter(r => r.testPoint(centerPt, centerPt.elevation));
+    const tokens = [...this.pathTokens].filter(t => t.constrainedTokenBorder.contains(centerPt.x, centerPt.y)
       && centerPt.elevation.between(t.bottomE, t.topE));
-    const drawings = [...this.drawings].filter(d => d.bounds.contains(centerPt.x, centerPt.y)
+    const drawings = [...this.pathDrawings].filter(d => d.bounds.contains(centerPt.x, centerPt.y)
       && d.elevationE <= centerPt.elevation);
 
     // Track all speed multipliers and flat penalties for the grid space.
@@ -375,10 +305,10 @@ export class MovePenalty {
     else {currentMultiplier *= (tokens.length ? (tokenMultiplier * tokens.length) : 1);} // Default to 1.
 
     // Regions
-    const testRegions = this.constructor.terrainAPI && regions.length;
+    const testRegions = regions.length;
     let speed = startingSpeed;
     if ( testRegions ) {
-      // Add on all the current terrains from the token but use the non-terrain token as baseline.
+      // Check movement penalty behaviors from regions and use the non-terrain token as baseline.
       startingSpeed = this.baseTokenSpeed;
       speed = this.moveSpeedWithinRegions(regions);
     }
@@ -408,7 +338,6 @@ export class MovePenalty {
    * @returns {number} The number used to multiply the move speed along the segment.
    */
   proportionalCostForSegment(startCoords, endCoords) {
-    // Intersections for each region, token, drawing.
     const cutawayIxs = this._cutawayIntersections(startCoords, endCoords);
     if ( !cutawayIxs.length ) {return 1;}
     return this._penaltiesForIntersections(startCoords, endCoords, cutawayIxs);
@@ -432,12 +361,10 @@ export class MovePenalty {
    */
   _cutawayIntersections(start, end) {
     const cutawayIxs = [];
-    if ( this.constructor.terrainAPI ) {
-      for ( const region of this.pathRegions ) {
-        const ixs = region.terrainmapper._cutawayIntersections(start, end);
-        ixs.forEach(ix => ix.region = region);
-        cutawayIxs.push(...ixs);
-      }
+    for ( const region of this.pathRegions ) {
+      const ixs = this.constructor.regionCutawayIntersections(start, end, region);
+      ixs.forEach(ix => ix.region = region);
+      cutawayIxs.push(...ixs);
     }
     for ( const token of this.pathTokens ) {
       const ixs = this.constructor.tokenCutawayIntersections(start, end, token);
@@ -467,7 +394,7 @@ export class MovePenalty {
     const useTokenFlat = this.constructor.useFlatTokenMultiplier;
 
     // Regions
-    const testRegions = this.constructor.terrainAPI && this.pathRegions;
+    const testRegions = this.pathRegions.size > 0;
     let startingSpeed = this.baseTokenSpeed;
 
     // Traverse each intersection, determining the speed multiplier from starting speed
@@ -487,7 +414,7 @@ export class MovePenalty {
     // Add terrains currently on the token but keep the speed based on the non-terrain token.
     let currRegions = [];
     if ( testRegions ) {
-      const regions = [...this.regions].filter(r => r.testPoint(this.moveToken.center, this.moveToken.elevationE));
+      const regions = [...this.pathRegions].filter(r => r.testPoint(this.moveToken.center, this.moveToken.elevationE));
       currRegions = new Set(regions);
     }
 
@@ -557,9 +484,6 @@ export class MovePenalty {
   /** @type {boolean} */
   static get useFlatTokenMultiplier() { return Settings.get(Settings.KEYS.MEASURING.TOKEN_MULTIPLIER_FLAT); }
 
-  /** @type {object|undefined} */
-  static get terrainAPI() { return OTHER_MODULES.TERRAIN_MAPPER.API; }
-
   // ----- NOTE: Static methods ----- //
 
   /**
@@ -593,6 +517,70 @@ export class MovePenalty {
       }
       return ixs;
     });
+  }
+
+  /**
+   * Construct cutaway polygons for a region based on a line segment.
+   * @param {Point3d} start
+   * @param {Point3d} end
+   * @param {Region} region
+   * @returns {PIXI.Point[]} Intersection points where the segment enters/exits the region
+   */
+  static regionCutawayIntersections(start, end, region) {
+    const bottomZ = region.document.elevation.bottom;
+    const topZ = region.document.elevation.top;
+    const tokenElevation = start.z;
+    const minElev = bottomZ ?? -Infinity;
+    const maxElev = topZ ?? Infinity;
+
+    if ( tokenElevation < minElev || tokenElevation > maxElev ) {
+      return [];
+    }
+
+    if ( bottomZ !== null && topZ !== null ) {
+      const bottomElevationFn = _pt => bottomZ;
+      const topElevationFn = _pt => topZ;
+
+      const dist = -canvas.dimensions.maxR;
+      const a = start.towardsPoint(end, dist);
+      const b = end.towardsPoint(start, dist);
+
+      const cutaways = [];
+      for ( const polygon of region.polygons ) {
+        const polyCutaways = polygon.cutaway(a, b, { start, end, bottomElevationFn, topElevationFn });
+        cutaways.push(...polyCutaways);
+      }
+
+      return cutaways.flatMap(cutaway => {
+        const ixs = cutaway.intersectSegment3d(start, end);
+        if ( cutaway.contains3d(start) ) {
+          const pt = cutaway._to2d(start);
+          pt.movingInto = true;
+          ixs.push(pt);
+        }
+        return ixs;
+      });
+    }
+
+    const allIxs = [];
+    for ( const polygon of region.polygons ) {
+      const ixs = polygon.segmentIntersections(start, end);
+      const startInside = polygon.contains(start.x, start.y);
+
+      if ( startInside ) {
+        const pt = new PIXI.Point(start.x, start.y);
+        pt.movingInto = true;
+        allIxs.push(pt);
+      }
+
+      for ( const ix of ixs ) {
+        const pt = new PIXI.Point(ix.x, ix.y);
+        pt.movingInto = !startInside;
+        allIxs.push(pt);
+      }
+    }
+
+    return allIxs;
   }
 
   /**

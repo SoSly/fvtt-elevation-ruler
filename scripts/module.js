@@ -19,6 +19,9 @@ import { registerGeometry } from "./geometry/registration.js";
 // Move Penalty
 import { MovePenalty } from "./measurement/MovePenalty.js";
 
+// Regions
+import { MovementPenaltyRegionBehaviorType } from "./regions/MovementPenaltyRegionBehaviorType.js";
+
 // Pathfinding
 import { BorderTriangle, BorderEdge } from "./pathfinding/BorderTriangle.js";
 import { Pathfinder } from "./pathfinding/pathfinding.js";
@@ -177,6 +180,19 @@ Hooks.once("init", function() {
 
     Settings
   };
+
+  // Register custom region behaviors
+  Object.assign(CONFIG.RegionBehavior.dataModels, {
+    [`${MODULE_ID}.movementPenalty`]: MovementPenaltyRegionBehaviorType
+  });
+
+  CONFIG.RegionBehavior.typeIcons[`${MODULE_ID}.movementPenalty`] = "fa-solid fa-person-walking";
+
+  console.log("Elevation Ruler: Registered movement penalty behavior", {
+    key: `${MODULE_ID}.movementPenalty`,
+    class: MovementPenaltyRegionBehaviorType,
+    registered: CONFIG.RegionBehavior.dataModels[`${MODULE_ID}.movementPenalty`]
+  });
 
   loadTemplates(Object.values(TEMPLATES)).then(_value => log("Templates loaded."));
 });

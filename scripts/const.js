@@ -48,6 +48,8 @@ export const MOVEMENT_TYPES = {
   BURROW: 0,
   WALK: 1,
   FLY: 2,
+  SWIM: 3,
+  CLIMB: 4,
 
   /**
    * Get the movement type for a given ground versus current elevation.

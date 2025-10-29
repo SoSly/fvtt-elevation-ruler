@@ -34,6 +34,13 @@
   "esmodules": [
     "/scripts/module.js"
   ],
+
+  "documentTypes": {
+    "RegionBehavior": {
+      "movementPenalty": {}
+    }
+  },
+
   "languages": [
     {
       "lang": "en",

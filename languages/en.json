@@ -136,5 +136,25 @@
     "elevationruler.up": "up",
     "elevationruler.down": "down",
     "elevationruler.added": "added",
-    "elevationruler.prior": "prior"
+    "elevationruler.prior": "prior",
+
+    "TYPES.RegionBehavior.elevationruler.movementPenalty": "Movement Penalty",
+
+    "elevationruler.regions.movement-penalty.name": "Movement Penalty",
+    "elevationruler.regions.movement-penalty.hint": "Apply movement cost multipliers to tokens moving through this region. 1 = normal speed, 2 = half speed (difficult terrain), 0.5 = double speed.",
+
+    "elevationruler.regions.movement-penalty.walk-multiplier.name": "Walk Multiplier",
+    "elevationruler.regions.movement-penalty.walk-multiplier.hint": "Movement cost multiplier for walking. 2 = difficult terrain (half speed).",
+
+    "elevationruler.regions.movement-penalty.fly-multiplier.name": "Fly Multiplier",
+    "elevationruler.regions.movement-penalty.fly-multiplier.hint": "Movement cost multiplier for flying.",
+
+    "elevationruler.regions.movement-penalty.burrow-multiplier.name": "Burrow Multiplier",
+    "elevationruler.regions.movement-penalty.burrow-multiplier.hint": "Movement cost multiplier for burrowing.",
+
+    "elevationruler.regions.movement-penalty.swim-multiplier.name": "Swim Multiplier",
+    "elevationruler.regions.movement-penalty.swim-multiplier.hint": "Movement cost multiplier for swimming.",
+
+    "elevationruler.regions.movement-penalty.climb-multiplier.name": "Climb Multiplier",
+    "elevationruler.regions.movement-penalty.climb-multiplier.hint": "Movement cost multiplier for climbing."
 }

@@ -1,10 +1,17 @@
 ## [Unreleased]
 
+### Added
+- Native region-based movement penalties using Region Behaviors instead of TerrainMapper dependency
+- Support for swim and climb movement types in movement penalty calculations
+
 ### Changed
 - Convert most settings from per-player to world scope (GM-controlled). Only "Scale Ruler Text" remains player-controlled.
+- Replace TerrainMapper terrain system with native Region Behavior for movement penalties
 
 ### Fixed
 - Clear movement tracking when reset-movement module resets token position
+- Movement penalties now correctly apply on both gridded and gridless maps
+- Region movement penalties properly calculate for tokens at any elevation when region elevation is infinite (null)
 
 # 0.10.18
 Rework Bresenham algorithm for grid 3d and hex 3d, to fix skipping of hexes and to ensure
