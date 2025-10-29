@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Changed
+- Convert most settings from per-player to world scope (GM-controlled). Only "Scale Ruler Text" remains player-controlled.
+
 ### Fixed
 - Clear movement tracking when reset-movement module resets token position
 

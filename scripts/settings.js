@@ -136,7 +136,7 @@ export class Settings extends ModuleSettingsAbstract {
     // ----- NOTE: Pathfinding ----- //
 
     register(KEYS.CONTROLS.PATHFINDING, {
-      scope: "user",
+      scope: "world",
       config: false,
       default: true,
       type: Boolean,
@@ -146,7 +146,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.PATHFINDING.ENABLE, {
       name: localize(`${KEYS.PATHFINDING.ENABLE}.name`),
       hint: localize(`${KEYS.PATHFINDING.ENABLE}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: true,
       type: Boolean,
@@ -157,7 +157,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.PATHFINDING.TOKENS_BLOCK, {
       name: localize(`${KEYS.PATHFINDING.TOKENS_BLOCK}.name`),
       hint: localize(`${KEYS.PATHFINDING.TOKENS_BLOCK}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: KEYS.PATHFINDING.TOKENS_BLOCK_CHOICES.NO,
       type: String,
@@ -194,7 +194,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.TOKEN_RULER.ENABLED, {
       name: localize(`${KEYS.TOKEN_RULER.ENABLED}.name`),
       hint: localize(`${KEYS.TOKEN_RULER.ENABLED}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: false,
       type: Boolean,
@@ -211,17 +211,12 @@ export class Settings extends ModuleSettingsAbstract {
       requiresReload: false
     });
 
-    // Previously SPEED_HIGHLIGHTING was a boolean. If false, set to Never. Otherwise set to always.
-    const prevSpeedHighlightSetting = this._getStorageValue(KEYS.SPEED_HIGHLIGHTING.DEPRECATED_ENABLED, "client");
-    const speedHighlightingDefault = prevSpeedHighlightSetting === "false"
-      ? KEYS.SPEED_HIGHLIGHTING.CHOICES.NEVER : KEYS.SPEED_HIGHLIGHTING.CHOICES.ALWAYS;
-
     register(KEYS.SPEED_HIGHLIGHTING.CHOICE, {
       name: localize(`${KEYS.SPEED_HIGHLIGHTING.CHOICE}.name`),
       hint: localize(`${KEYS.SPEED_HIGHLIGHTING.CHOICE}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
-      default: speedHighlightingDefault,
+      default: KEYS.SPEED_HIGHLIGHTING.CHOICES.ALWAYS,
       type: String,
       choices: {
         [KEYS.SPEED_HIGHLIGHTING.CHOICES.NEVER]: localize(`${KEYS.SPEED_HIGHLIGHTING.CHOICES.NEVER}`),
@@ -244,7 +239,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.MEASURING.COMBAT_HISTORY, {
       name: localize(`${KEYS.MEASURING.COMBAT_HISTORY}.name`),
       hint: localize(`${KEYS.MEASURING.COMBAT_HISTORY}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: false,
       type: Boolean,
@@ -255,7 +250,7 @@ export class Settings extends ModuleSettingsAbstract {
       register(KEYS.MEASURING.AUTO_MOVEMENT_TYPE, {
         name: localize(`${KEYS.MEASURING.AUTO_MOVEMENT_TYPE}.name`),
         hint: localize(`${KEYS.MEASURING.AUTO_MOVEMENT_TYPE}.hint`),
-        scope: "user",
+        scope: "world",
         config: true,
         default: true,
         type: Boolean,
@@ -286,7 +281,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.LABELING.CUSTOMIZED, {
       name: localize(`${KEYS.LABELING.CUSTOMIZED}.name`),
       hint: localize(`${KEYS.LABELING.CUSTOMIZED}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: false,
       type: Boolean,
@@ -296,7 +291,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.LABELING.HIDE_ELEVATION, {
       name: localize(`${KEYS.LABELING.HIDE_ELEVATION}.name`),
       hint: localize(`${KEYS.LABELING.HIDE_ELEVATION}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: false,
       type: Boolean,
@@ -333,7 +328,7 @@ export class Settings extends ModuleSettingsAbstract {
     register(KEYS.MEASURING.FORCE_GRID_PENALTIES, {
       name: localize(`${KEYS.MEASURING.FORCE_GRID_PENALTIES}.name`),
       hint: localize(`${KEYS.MEASURING.FORCE_GRID_PENALTIES}.hint`),
-      scope: "user",
+      scope: "world",
       config: true,
       default: true,
       type: Boolean,
