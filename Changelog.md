@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Changed
+- Gridless speed snapping now snaps token position to exact speed boundaries (matching drag-ruler behavior)
+
 # 0.11.1
 
 ### Fixed

@@ -8,11 +8,10 @@ Ruler
 */
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 
-import { MODULE_ID, FLAGS } from "./const.js";
+import { MODULE_ID, FLAGS, SPEED } from "./const.js";
 import { Settings } from "./settings.js";
 import { log } from "./util.js";
 import { MovePenalty } from "./measurement/MovePenalty.js";
-import { tokenSpeedSegmentSplitter } from "./token_speed.js";
 
 // Patches for the Token class
 export const PATCHES = {};
@@ -155,20 +154,10 @@ function _onDragLeftCancel(wrapped, event) {
 function _onDragLeftMove(wrapped, event) {
   log("Token#_onDragLeftMove");
 
-  // Gridless snapping: pause the mouse position at the token speed boundary.
-  const er = this[MODULE_ID] ??= {};
-  const gridlessSnap = gridlessSnapping(this, event);
-  // Console.log(`GridlessSnap ${gridlessSnap}| ${event.interactionData.destination.x},${event.interactionData.destination.y} | cached ${er.gridless?.x},${er.gridless?.y}`);
-  if ( gridlessSnap ) {
-    er.gridless ??= { ...event.interactionData.destination };
-    event.interactionData.destination.x = er.gridless.x;
-    event.interactionData.destination.y = er.gridless.y;
-  } else {er.gridless = null;}
+  gridlessSnapping(this, event);
 
-  // Default token drag move.
   wrapped(event);
 
-  // Continue a Ruler measurement.
   if ( !Settings.get(Settings.KEYS.TOKEN_RULER.ENABLED) ) {return;}
   const ruler = canvas.controls.ruler;
   if ( ruler._state > 0 ) {ruler._onMouseMove(event);}
@@ -177,7 +166,7 @@ function _onDragLeftMove(wrapped, event) {
 /**
  * Gridless snapping.
  * Snap to the dragged token's movement limit.
- * Inspired by Drag Ruler's version.
+ * Based on Drag Ruler's implementation.
 MIT License
 
 Copyright (c) 2021 Manuel Vögele
@@ -202,42 +191,50 @@ SOFTWARE.
 
  */
 function gridlessSnapping(token, event) {
-  if ( !canvas.grid.isGridless ) {return false;}
-  if ( !Settings.useSpeedHighlighting(token) ) {return false;}
+  if ( !canvas.grid.isGridless ) {return;}
+  if ( !Settings.useSpeedHighlighting(token) ) {return;}
+  if ( event.shiftKey ) {return;}
 
   const ruler = canvas.controls.ruler;
-  if ( !ruler.state === Ruler.STATES.MEASURING ) {return false;}
+  if ( !ruler.state === Ruler.STATES.MEASURING ) {return;}
 
-  const snapDistance = CONFIG[MODULE_ID]?.gridlessSnapDistance();
-  if ( !snapDistance ) {return false;}
+  const rasterWidth = CONFIG[MODULE_ID]?.gridlessSnapDistance();
+  if ( !rasterWidth ) {return;}
+  const tokenX = event.interactionData.destination.x;
+  const tokenY = event.interactionData.destination.y;
 
-  // Add the new destination and check the segments.
-  let res = true;
-  const oldDestination = { ...ruler.destination};
-  const snap = !event.shiftKey;
-  const newDest = ruler._getMeasurementDestination(event.interactionData.destination, { snap });
-  // Console.log(`eventDest ${event.interactionData.destination.x},${event.interactionData.destination.y}; newDest: ${newDest.x},${newDest.y}`);
-  ruler.destination = newDest;
-  ruler.segments = ruler._getMeasurementSegments();
-  ruler._computeDistance();
+  const mp = ruler._movePenaltyInstance ??= new MovePenalty(token);
+  const tokenSpeed = mp.baseTokenSpeed;
+  if ( !tokenSpeed ) {return;}
 
-  // Test if we just passed the prior speed category limit.
-  const splitterFn = tokenSpeedSegmentSplitter(canvas.controls.ruler, token);
-  const segments = [];
-  for ( const segment of ruler.segments ) {segments.push(...splitterFn(segment));}
-  if ( segments.length < 2 ) {res = false;}
-  if ( res ) {
-    res = false;
-    const targetDistance = segments.at(-2).maxSpeedCategoryDistance;
-    const distance = segments.at(-1).cumulativeCost;
-    // Console.log(`distance ${distance} | targetDistance ${targetDistance} | ${snapDistance} | ${distance < (targetDistance + snapDistance) && distance >= targetDistance}`);
+  const ranges = SPEED.CATEGORIES
+    .map(category => SPEED.maximumCategoryDistance(token, category, tokenSpeed))
+    .filter(distance => distance < Number.POSITIVE_INFINITY);
 
-    // Determine how to adjust the mouse movement.
-    // If just past the target distance, make the mouse movement "sticky".
-    if ( distance >= targetDistance && distance < (targetDistance + snapDistance) ) {res = true;}
+  let origin = token.getCenterPoint();
+  let waypointDistance = 0;
+
+  if ( ruler.waypoints.length > 1 ) {
+    const lastWaypoint = ruler.waypoints[ruler.waypoints.length - 1];
+    origin = { x: lastWaypoint.x, y: lastWaypoint.y };
+    waypointDistance = ruler.totalCost - ruler.segments.at(-1).cost;
   }
-  ruler.destination = oldDestination;
-  return res;
+
+  const deltaX = tokenX - origin.x;
+  const deltaY = tokenY - origin.y;
+  const distance = Math.hypot(deltaX, deltaY);
+
+  const targetDistance = ranges
+    .map(range => range - waypointDistance)
+    .map(range => (range * canvas.dimensions.size) / canvas.dimensions.distance)
+    .filter(range => range < distance)
+    .reduce((a, b) => Math.max(a, b), 0);
+
+  if ( !targetDistance ) {return;}
+  if ( distance >= (targetDistance + rasterWidth) ) {return;}
+
+  event.interactionData.destination.x = origin.x + ((deltaX * targetDistance) / distance);
+  event.interactionData.destination.y = origin.y + ((deltaY * targetDistance) / distance);
 }
 
 /**

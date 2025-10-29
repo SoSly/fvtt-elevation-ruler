@@ -107,11 +107,15 @@ Hooks.once("init", function() {
     debug: false,
 
     /**
-     * When on gridless scenes, define a distance within which the ruler will snap to the previous
-     * token speed limit. Delete or set to zero to disable.
+     * When on gridless scenes, snap token movement to speed category boundaries.
+     * When the mouse is within this distance of a speed boundary, the token position
+     * will snap to that exact boundary, creating a "detent" effect.
+     * This provides visual feedback when transitioning between speed categories.
+     * Set to zero or delete to disable snapping.
+     * Based on Drag Ruler's implementation (uses fixed 35 pixels scaled by zoom).
      * @type {function}
      */
-    gridlessSnapDistance: () => canvas.grid.distance * 0.1,
+    gridlessSnapDistance: () => 35 / canvas.stage.scale.x,
 
     /**
      * Settings related to the ruler text labels.
